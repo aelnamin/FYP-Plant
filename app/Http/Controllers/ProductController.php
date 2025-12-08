@@ -1,0 +1,186 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use App\Models\Product;
+use App\Models\Category;
+use App\Models\Seller;
+use App\Models\ProductImage;
+use Illuminate\Http\Request;
+
+class ProductController extends Controller
+{
+    /* -------------------------------------------------------
+       PUBLIC INDEX (not admin)
+    ------------------------------------------------------- */
+    public function index()
+    {
+        $products = Product::all();
+        return view('products.index', compact('products'));
+    }
+
+
+    /* -------------------------------------------------------
+       ADMIN: LIST PRODUCTS
+    ------------------------------------------------------- */
+    public function adminIndex()
+    {
+        $products = Product::with('category', 'seller', 'images')->get();
+        return view('admin.products.index', compact('products'));
+    }
+
+    public function show($id)
+    {
+        $product = Product::with(['images', 'seller'])->findOrFail($id);
+        return view('products.show', compact('product'));
+    }
+
+
+    public function browse(Request $request)
+    {
+        $query = Product::with(['images', 'seller'])
+            ->where('approved_by', true); // ONLY APPROVED
+
+        if ($request->search) {
+            $query->where('product_name', 'like', '%' . $request->search . '%');
+        }
+
+        $products = $query->paginate(12);
+
+        return view('products.browse', compact('products'));
+    }
+
+
+
+    /* -------------------------------------------------------
+       ADMIN: CREATE PRODUCT FORM
+    ------------------------------------------------------- */
+    public function adminCreate()
+    {
+        $categories = Category::all();
+        $sellers = Seller::all();
+
+        return view('admin.products.create', compact('categories', 'sellers'));
+    }
+
+
+    /* -------------------------------------------------------
+       ADMIN: STORE PRODUCT
+    ------------------------------------------------------- */
+    public function adminStore(Request $request)
+    {
+        $validated = $request->validate([
+            'seller_id' => 'required|exists:sellers,id',
+            'category_id' => 'required|exists:categories,id',
+            'product_name' => 'required',
+            'description' => 'nullable',
+            'price' => 'required|numeric',
+            'stock_quantity' => 'required|integer',
+            'images.*' => 'image|mimes:jpg,jpeg,png'
+        ]);
+
+        $product = Product::create($validated);
+
+        // Save images
+        if ($request->hasFile('images')) {
+            foreach ($request->file('images') as $img) {
+                $filename = time() . '_' . $img->getClientOriginalName();
+                $img->move(public_path('images'), $filename);
+
+                ProductImage::create([
+                    'product_id' => $product->id,
+                    'image_path' => $filename,
+                ]);
+            }
+        }
+
+        return redirect()->route('admin.products.index')->with('success', 'Product added successfully!');
+    }
+
+
+    /* -------------------------------------------------------
+       ADMIN: EDIT PRODUCT
+    ------------------------------------------------------- */
+    public function adminEdit($id)
+    {
+        $product = Product::with('images')->findOrFail($id);
+        $categories = Category::all();
+        $sellers = Seller::all();
+
+        return view('admin.products.edit', compact('product', 'categories', 'sellers'));
+    }
+
+
+    /* -------------------------------------------------------
+       ADMIN: UPDATE PRODUCT
+    ------------------------------------------------------- */
+    public function adminUpdate(Request $request, $id)
+    {
+        $product = Product::findOrFail($id);
+
+        $validated = $request->validate([
+            'seller_id' => 'required|exists:sellers,id',
+            'category_id' => 'required|exists:categories,id',
+            'product_name' => 'required',
+            'description' => 'nullable',
+            'price' => 'required|numeric',
+            'stock_quantity' => 'required|integer',
+            'images.*' => 'image|mimes:jpg,jpeg,png'
+        ]);
+
+        $product->update($validated);
+
+        if ($request->has('remove_images') && is_array($request->remove_images)) {
+            foreach ($request->remove_images as $imageId) {
+                $image = ProductImage::find($imageId);
+                if ($image && $image->product_id == $product->id) { // Security check
+                    $file = public_path('images/' . $image->image_path);
+                    if (file_exists($file)) unlink($file); // Delete file
+                    $image->delete(); // Delete from database
+                }
+            }
+        }
+
+
+        // Save new images (OPTIONAL)
+        if ($request->hasFile('images')) {
+            foreach ($request->file('images') as $img) {
+                $filename = time() . '_' . $img->getClientOriginalName();
+                $img->move(public_path('images'), $filename);
+
+                ProductImage::create([
+                    'product_id' => $product->id,
+                    'image_path' => $filename,
+                ]);
+            }
+        }
+
+        return redirect()->route('admin.products.index')->with('success', 'Product updated successfully!');
+    }
+
+
+    /* -------------------------------------------------------
+       DELETE INDIVIDUAL PRODUCT IMAGE
+    ------------------------------------------------------- */
+    public function deleteImage($id)
+    {
+        $image = ProductImage::findOrFail($id);
+
+        $file = public_path('images/' . $image->image_path);
+        if (file_exists($file)) unlink($file);
+
+        $image->delete();
+
+        return back()->with('success', 'Image removed.');
+    }
+
+
+    /* -------------------------------------------------------
+       ADMIN DELETE PRODUCT
+    ------------------------------------------------------- */
+    public function adminDestroy($id)
+    {
+        Product::destroy($id);
+        return redirect()->route('admin.products.index')->with('success', 'Product deleted!');
+    }
+}
