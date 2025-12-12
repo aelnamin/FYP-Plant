@@ -57,6 +57,11 @@
             Don’t have an account?
             <a href="/register" class="fw-semibold" style="color: #5C7F51;">Register</a>
         </p>
+        <p class="text-center mt-3">
+            Not a seller yet?
+            <a href="{{ route('seller.register') }}" class="text-primary">Register as Seller</a>
+        </p>
+
 
     </div>
 

@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Buyer;
 
+use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Product;
 
@@ -10,8 +11,8 @@ class CartController extends Controller
     // Show cart items
     public function index()
     {
-        $cart = session()->get('cart', []);
-        return view('cart.index', compact('cart'));
+        $cartItems = session()->get('cart', []);
+        return view('buyer.cart', compact('cartItems'));
     }
 
     // Add item to cart
@@ -26,10 +27,10 @@ class CartController extends Controller
             $cart[$id]['quantity'] += $quantity;
         } else {
             $cart[$id] = [
-                "name" => $product->product_name,
-                "price" => $product->price,
+                "name"     => $product->product_name,
+                "price"    => $product->price,
                 "quantity" => $quantity,
-                "image" => $product->images->first()->image_path ?? null,
+                "image"    => $product->images->first()->image_path ?? null,
             ];
         }
 
@@ -63,5 +64,16 @@ class CartController extends Controller
         }
 
         return redirect()->route('buyer.cart')->with('success', 'Item removed from cart!');
+    }
+
+    public function checkout()
+    {
+        $cart = session()->get('cart', []);
+        if (empty($cart)) {
+            return redirect()->route('buyer.cart')->with('error', 'Your cart is empty.');
+        }
+
+        // Here you could handle checkout logic, e.g., redirect to payment page
+        return view('buyer.checkout', compact('cart'));
     }
 }

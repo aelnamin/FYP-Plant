@@ -42,7 +42,7 @@ class AuthController extends Controller
                 return redirect()->route('admin.dashboard');
 
             case 'seller':
-                return redirect()->route('seller.dashboard');
+                return redirect()->route('sellers.dashboard');
 
             case 'buyer':
                 return redirect()->route('home');

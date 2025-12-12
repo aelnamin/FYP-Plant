@@ -20,6 +20,7 @@ class Product extends Model
         'watering_frequency',
         'difficulty_level',
         'growth_stage',
+        'approved_by',
         'approval_status'
     ];
 

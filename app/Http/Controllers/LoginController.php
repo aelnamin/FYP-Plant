@@ -46,7 +46,7 @@ class LoginController extends Controller
                 if ($seller) {
                     Session::put('seller_id', $seller->id);
                 }
-                return redirect()->route('seller.dashboard');
+                return redirect()->route('sellers.dashboard');
             case 'buyer':
                 return redirect()->route('buyer.dashboard');
             default:

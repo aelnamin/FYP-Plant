@@ -135,7 +135,8 @@ class ProductController extends Controller
                 $image = ProductImage::find($imageId);
                 if ($image && $image->product_id == $product->id) { // Security check
                     $file = public_path('images/' . $image->image_path);
-                    if (file_exists($file)) unlink($file); // Delete file
+                    if (file_exists($file))
+                        unlink($file); // Delete file
                     $image->delete(); // Delete from database
                 }
             }
@@ -167,7 +168,8 @@ class ProductController extends Controller
         $image = ProductImage::findOrFail($id);
 
         $file = public_path('images/' . $image->image_path);
-        if (file_exists($file)) unlink($file);
+        if (file_exists($file))
+            unlink($file);
 
         $image->delete();
 

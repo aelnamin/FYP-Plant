@@ -54,7 +54,7 @@
 
 <div class="row mt-4 gy-4">
 
-    <!-- LEFT IMAGE SECTION -->
+    <!-- IMAGE SECTION -->
     <div class="col-md-6">
         <img id="mainPreview"
             src="{{ asset('images/' . $product->images->first()->image_path) }}"
@@ -69,7 +69,7 @@
             @endforeach
         </div>
 
-        <!-- Product Description (moved BELOW image) -->
+        <!-- Product Description -->
         <div class="mt-4">
             <h4 class="fw-bold">Product Description</h4>
             <p style="line-height: 1.6;">
@@ -122,7 +122,7 @@
 
         <h3 class="text-success fw-bold">RM {{ number_format($product->price, 2) }}</h3>
 
-        <!-- Stock indicator (NO white container) -->
+        <!-- Stock indicator -->
         <div class="mt-3">
             @if ($product->stock_quantity > 0)
             <div class="d-flex align-items-center">

@@ -19,9 +19,11 @@
         <td>{{ $seller->name }}</td>
         <td>{{ $seller->email }}</td>
         <td>
-            <a href="{{ route('sellers.show', $seller->id) }}" class="btn btn-info btn-sm">View</a>
-            <a href="{{ route('sellers.edit', $seller->id) }}" class="btn btn-warning btn-sm">Edit</a>
-            <form action="{{ route('sellers.destroy', $seller->id) }}" method="POST" style="display:inline;">
+            <a href="{{ route('sellers.inventory.create') }}" class="btn btn-success mb-3">Add New Product</a>
+            <a href="{{ route('sellers.inventory.edit', $p->id) }}" class="btn btn-warning btn-sm">Edit</a>
+            <a href="{{ route('sellers.inventory.show', $p->id) }}" class="btn btn-info btn-sm">View</a>
+            <form action="{{ route('sellers.inventory.delete', $p->id) }}" method="POST" class="d-inline">
+
                 @csrf
                 @method('DELETE')
                 <button class="btn btn-danger btn-sm" onclick="return confirm('Delete seller?')">Delete</button>
