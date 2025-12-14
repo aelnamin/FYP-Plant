@@ -1,28 +1,54 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Buyer;
 
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Session;
+use App\Http\Controllers\Controller;
+use App\Models\Product;
+use App\Models\Seller;
+use Illuminate\Support\Facades\Auth;
 
 class BuyerDashboardController extends Controller
 {
-    // Middleware to ensure only logged-in buyers can access
+    /**
+     * Ensure only authenticated buyers can access this controller
+     */
     public function __construct()
     {
-        $this->middleware(function ($request, $next) {
-            if (Session::get('role') !== 'buyer') {
-                return redirect()->route('login.form')->with('login_error', 'Access denied.');
-            }
-            return $next($request);
-        });
+        $this->middleware(['auth', 'role:buyer']);
     }
 
-    // Show the buyer dashboard
+    /**
+     * Show Buyer Dashboard
+     */
     public function index()
     {
-        $name = Session::get('name'); // Example: get buyer's name from session
+        $user = Auth::user();
 
-        return view('buyer.dashboard', compact('name'));
+        // Best Sellers (example: latest approved products)
+        $bestSellers = Product::with(['images', 'seller'])
+            ->where('approval_status', 'Approved')
+            ->latest()
+            ->take(8)
+            ->get();
+
+        // Latest Products (latest approved products)
+        $latestProducts = Product::with(['images', 'seller'])
+            ->where('approval_status', 'Approved')
+            ->latest()
+            ->take(8)
+            ->get();
+
+        // Top Sellers (approved sellers)
+        $topSellers = Seller::where('verification_status', 'Approved')
+            ->latest()
+            ->take(4)
+            ->get();
+
+        return view('buyer.dashboard', compact(
+            'user',
+            'bestSellers',
+            'latestProducts',
+            'topSellers'
+        ));
     }
 }

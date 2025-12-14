@@ -52,12 +52,12 @@
                         <td>{{ $p->stock_quantity }}</td>
                         <td>{{ $p->approval_status ?? 'Pending' }}</td>
                         <td>
-                            <a href="{{ route('sellers.inventory.show', $p->id) }}" class="btn btn-info btn-sm">View</a>
-                            <a href="{{ route('sellers.inventory.edit', $p->id) }}" class="btn btn-warning btn-sm">Edit</a>
+                            <a href="{{ route('sellers.inventory.show', $p->id) }}" class="btn btn-primary btn-sm">View</a>
+                            <a href="{{ route('sellers.inventory.edit', $p->id) }}" class="btn btn-primary btn-sm">Edit</a>
                             <form action="{{ route('sellers.inventory.destroy', $p->id) }}" method="POST" class="d-inline">
                                 @csrf
                                 @method('DELETE')
-                                <button class="btn btn-danger btn-sm">Delete</button>
+                                <button class="btn btn-warning btn-sm">Delete</button>
                             </form>
                         </td>
                     </tr>

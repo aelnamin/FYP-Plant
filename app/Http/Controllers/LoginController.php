@@ -3,9 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Facades\Auth;
 
 class LoginController extends Controller
 {
@@ -16,47 +14,37 @@ class LoginController extends Controller
 
     public function processLogin(Request $request)
     {
-        $request->validate([
+        $credentials = $request->validate([
             'email' => 'required|email',
-            'password' => 'required',
+            'password' => 'required'
         ]);
 
-        $user = DB::table('users')->where('email', $request->email)->first();
-
-        if (!$user) {
-            return back()->with('login_error', 'Account not found.');
+        if (!Auth::attempt($credentials)) {
+            return back()->with('login_error', 'Invalid email or password');
         }
 
-        if (!Hash::check($request->password, $user->password)) {
-            return back()->with('login_error', 'Invalid password.');
+        $request->session()->regenerate();
+
+        $user = Auth::user();
+
+        if ($user->role === 'admin') {
+            return redirect()->route('admin.dashboard');
         }
 
-        Session::flush();
-
-        Session::put('user_id', $user->id);
-        Session::put('name', $user->name);
-        Session::put('email', $user->email);
-        Session::put('role', $user->role);
-
-        switch ($user->role) {
-            case 'admin':
-                return redirect()->route('admin.dashboard');
-            case 'seller':
-                $seller = DB::table('sellers')->where('user_id', $user->id)->first();
-                if ($seller) {
-                    Session::put('seller_id', $seller->id);
-                }
-                return redirect()->route('sellers.dashboard');
-            case 'buyer':
-                return redirect()->route('buyer.dashboard');
-            default:
-                return back()->with('login_error', 'Unknown role.');
+        if ($user->role === 'seller') {
+            return redirect()->route('sellers.dashboard');
         }
+
+        return redirect()->route('buyer.dashboard');
     }
 
-    public function logout()
+    public function logout(Request $request)
     {
-        Session::flush();
-        return redirect()->route('login.form');
+        Auth::logout();
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+
+        return redirect()->route('auth.login');
     }
 }
+

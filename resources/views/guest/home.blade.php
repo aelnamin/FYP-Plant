@@ -2,53 +2,58 @@
 
 @section('content')
 
-    <!-- BANNER SECTION WITH SEARCH BAR ON TOP -->
-    <section style="position: relative;">
+    {{-- SHOW BANNER ONLY FOR GUESTS / NON-BUYERS --}}
+    @if(!Auth::check() || Auth::user()->role !== 'buyer')
 
-        <!-- SEARCH BAR OVERLAY -->
-        <div style="
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            z-index: 10;
-            width: 100%;
-            max-width: 700px;
-            text-align: center;
-            color: white;
-        ">
-            <h1 class="fw-bold text-shadow">Welcome to Aether & Leaf Co.</h1>
-            <p class="text-shadow">Your trusted place for indoor plants & gardening essentials</p>
+        <!-- BANNER SECTION WITH SEARCH BAR ON TOP -->
+        <section style="position: relative;">
 
-            <form method="GET" action="{{ route('home.search') }}" class="d-flex justify-content-center mt-3">
-                <input type="text" name="search" class="form-control w-50" placeholder="Search products...">
-                <button class="btn btn-success ms-2">Search</button>
-            </form>
-        </div>
+            <!-- SEARCH BAR OVERLAY -->
+            <div style="
+                            position: absolute;
+                            top: 50%;
+                            left: 50%;
+                            transform: translate(-50%, -50%);
+                            z-index: 10;
+                            width: 100%;
+                            max-width: 700px;
+                            text-align: center;
+                            color: white;
+                        ">
+                <h1 class="fw-bold text-shadow">Welcome to Aether & Leaf Co.</h1>
+                <p class="text-shadow">Your trusted place for indoor plants & gardening essentials</p>
 
-        <!-- BANNER -->
-        <div id="plantBanner" class="carousel slide" data-bs-ride="carousel" data-bs-interval="3000">
-            <div class="carousel-inner">
-
-                <div class="carousel-item active">
-                    <img src="{{ asset('images/banner1.jpg') }}" class="d-block w-100"
-                        style="height: 529px; object-fit: cover; border-radius: 20px;">
-                </div>
-
-                <div class="carousel-item">
-                    <img src="{{ asset('images/banner2.jpg') }}" class="d-block w-100"
-                        style="height: 529px; object-fit: cover; border-radius: 20px;">
-                </div>
-
-                <div class="carousel-item">
-                    <img src="{{ asset('images/banner10.jpg') }}" class="d-block w-100"
-                        style="height: 529px; object-fit: cover; border-radius: 20px;">
-                </div>
-
+                <form method="GET" action="{{ route('home.search') }}" class="d-flex justify-content-center mt-3">
+                    <input type="text" name="search" class="form-control w-50" placeholder="Search products...">
+                    <button class="btn btn-success ms-2">Search</button>
+                </form>
             </div>
-        </div>
 
-    </section>
+            <!-- IMAGE CAROUSEL -->
+            <div id="plantBanner" class="carousel slide" data-bs-ride="carousel" data-bs-interval="3000">
+                <div class="carousel-inner">
+
+                    <div class="carousel-item active">
+                        <img src="{{ asset('images/banner1.jpg') }}" class="d-block w-100"
+                            style="height: 529px; object-fit: cover; border-radius: 20px;">
+                    </div>
+
+                    <div class="carousel-item">
+                        <img src="{{ asset('images/banner2.jpg') }}" class="d-block w-100"
+                            style="height: 529px; object-fit: cover; border-radius: 20px;">
+                    </div>
+
+                    <div class="carousel-item">
+                        <img src="{{ asset('images/banner10.jpg') }}" class="d-block w-100"
+                            style="height: 529px; object-fit: cover; border-radius: 20px;">
+                    </div>
+
+                </div>
+            </div>
+
+        </section>
+
+    @endif
 
     <style>
         .text-shadow {

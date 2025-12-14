@@ -16,12 +16,13 @@ class Product extends Model
         'description',
         'price',
         'stock_quantity',
+        'approval_status',
         'sunlight_requirement',
         'watering_frequency',
         'difficulty_level',
         'growth_stage',
         'approved_by',
-        'approval_status'
+
     ];
 
     public function seller()

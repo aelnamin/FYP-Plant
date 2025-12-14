@@ -39,6 +39,59 @@
                 <input type="number" name="stock_quantity" class="form-control">
             </div>
 
+            {{-- Sunlight Requirement --}}
+            <div class="mb-3">
+                <label class="form-label">Sunlight Requirement</label>
+                <select name="sunlight_requirement" class="form-control">
+                    <option value="">Select</option>
+                    <option value="Full Sun to Partial Shade">Full Sun to Partial Shade</option>
+                    <option value="Not Applicable (Accessory)">Not Applicable (Accessory)</option>
+                    <option value="Not Applicable (Cut Flowers)">Not Applicable (Cut Flowers)</option>
+                    <option value="Full Sun">Full Sun</option>
+                    <option value="Bright Indirect">Bright Indirect</option>
+                </select>
+            </div>
+
+            {{-- Watering Frequency --}}
+            <div class="mb-3">
+                <label class="form-label">Watering Frequency</label>
+                <select name="watering_frequency" class="form-control">
+                    <option value="">Select</option>
+                    <option value="Daily">Daily</option>
+                    <option value="Consistent">Consistent</option>
+                    <option value="Weekly">Weekly</option>
+                    <option value="Not Applicable (Accessory)">Not Applicable (Accessory)</option>
+                    <option value="Infrequent (Dormancy)">Infrequent (Dormancy)</option>
+                    <option value="Infrequent (Allow Soil to Dry)">Infrequent (Allow Soil to Dry)</option>
+                    <option value="Moderate">Moderate</option>
+                </select>
+            </div>
+
+            {{-- Difficulty Level --}}
+            <div class="mb-3">
+                <label class="form-label">Difficulty Level</label>
+                <select name="difficulty_level" class="form-control">
+                    <option value="">Select</option>
+                    <option value="Easy">Easy</option>
+                    <option value="Medium">Medium</option>
+                    <option value="Hard">Hard</option>
+                </select>
+            </div>
+
+            {{-- Growth Stage --}}
+            <div class="mb-3">
+                <label class="form-label">Growth Stage</label>
+                <select name="growth_stage" class="form-control">
+                    <option value="">Select</option>
+                    <option value="Cut Flowers">Cut Flowers</option>
+                    <option value="Bulb">Bulb</option>
+                    <option value="Mature">Mature</option>
+                    <option value="Young">Young</option>
+                    <option value="Tuber">Tuber</option>
+                </select>
+            </div>
+
+
             <div class="mb-3">
                 <label>Upload Images</label>
                 <input type="file" name="images[]" class="form-control" multiple>

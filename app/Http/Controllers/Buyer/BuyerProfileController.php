@@ -22,14 +22,14 @@ class BuyerProfileController extends Controller
         $user = Auth::user();
 
         $request->validate([
-            'name'    => 'required|string|max:255',
-            'phone'   => 'nullable|string|max:20',
+            'name' => 'required|string|max:255',
+            'phone' => 'nullable|string|max:20',
             'address' => 'nullable|string|max:500',
         ]);
 
         DB::table('users')->where('id', $user->id)->update([
-            'name'    => $request->name,
-            'phone'   => $request->phone,
+            'name' => $request->name,
+            'phone' => $request->phone,
             'address' => $request->address,
         ]);
 
@@ -60,7 +60,7 @@ class BuyerProfileController extends Controller
 
         $request->validate([
             'current_password' => 'required',
-            'new_password'     => 'required|min:6',
+            'new_password' => 'required|min:6',
         ]);
 
         if (!Hash::check($request->current_password, $user->password)) {

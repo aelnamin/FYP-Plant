@@ -6,7 +6,10 @@ use App\Http\Controllers\RegisterController;
 use App\Http\Controllers\Seller\SellerRegisterController;
 use App\Http\Controllers\Seller\SellerDashboardController;
 use App\Http\Controllers\HomeController;
-use App\Http\Controllers\BuyerDashboardController;
+use App\Http\Controllers\Buyer\BuyerDashboardController;
+use App\Http\Controllers\Admin\AdminDashboardController;
+use App\Http\Controllers\Admin\UserManagementController;
+use App\Http\Controllers\LoginController;
 use App\Http\Controllers\LogoutController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\Buyer\CartController as BuyerCartController;
@@ -30,9 +33,9 @@ Route::get('/product/{id}', [ProductController::class, 'show'])->name('products.
 | Authentication Routes
 |--------------------------------------------------------------------------
 */
-Route::get('/login', [AuthController::class, 'showLoginForm'])->name('auth.login');
-Route::post('/login', [AuthController::class, 'login']);
-Route::post('/logout', [LogoutController::class, 'logout'])->name('logout');
+Route::get('/login', [LoginController::class, 'showLogin'])->name('auth.login');
+Route::post('/login', [LoginController::class, 'processLogin']);
+Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 Route::get('/register', [RegisterController::class, 'showRegisterForm'])->name('register');
 Route::post('/register', [RegisterController::class, 'register']);
 
@@ -69,10 +72,20 @@ Route::middleware('auth')->group(function () {
     | Admin Routes
     |----------------------------------------------------------------------
     */
-   Route::middleware('admin')->prefix('admin')->group(function () {
-      Route::get('/dashboard', [AuthController::class, 'adminDashboard'])->name('admin.dashboard');
-      Route::get('/products/pending', [ProductApprovalController::class, 'index'])->name('admin.products.pending');
-      Route::post('/products/{id}/approve', [ProductApprovalController::class, 'approve'])->name('admin.products.approve');
+   Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->group(function () {
+      Route::get('/dashboard', [AdminDashboardController::class, 'index'])
+         ->name('dashboard');
+
+      Route::resource('users', UserManagementController::class);
+      Route::resource('users', UserManagementController::class);
+      Route::get('users/{user}/reports', [UserManagementController::class, 'reports'])->name('users.reports');
+
+      Route::get('/products/pending', [ProductApprovalController::class, 'index'])
+         ->name('admin.products.pending');
+
+      Route::post('/products/{id}/approve', [ProductApprovalController::class, 'approve'])
+         ->name('admin.products.approve');
+
    });
 
 
@@ -81,7 +94,7 @@ Route::middleware('auth')->group(function () {
    | Seller Dashboard Route
    |--------------------------------------------------------------------------
    */
-   Route::middleware(['auth', 'seller'])
+   Route::middleware(['auth', 'role:seller'])
       ->prefix('seller')
       ->group(function () {
          Route::get('/dashboard', [SellerDashboardController::class, 'index'])
@@ -94,10 +107,11 @@ Route::middleware('auth')->group(function () {
     | Seller Routes
     |----------------------------------------------------------------------
     */
-   Route::middleware('seller')
+   Route::middleware(['auth', 'role:seller'])
       ->prefix('seller/inventory')
       ->name('sellers.inventory.')
       ->group(function () {
+
 
          Route::get('/', [InventoryController::class, 'index'])->name('index');
 
@@ -117,14 +131,18 @@ Route::middleware('auth')->group(function () {
     |----------------------------------------------------------------------
     */
    Route::middleware('role:buyer')->prefix('buyer')->group(function () {
-      Route::get('/dashboard', [AuthController::class, 'buyerDashboard'])->name('buyer.dashboard');
-      Route::get('/checkout', [BuyerCartController::class, 'checkout'])->name('checkout');
-      // Profile
-      Route::get('/profile', [BuyerProfileController::class, 'index'])->name('buyer.profile');
-      Route::put('/profile/update', [BuyerProfileController::class, 'update'])->name('buyer.profile.update');
+      Route::get('/buyer/dashboard', [BuyerDashboardController::class, 'index'])
+         ->name('buyer.dashboard');
 
-      // Password
-      Route::get('/profile/change-password', [BuyerProfileController::class, 'changePasswordForm'])->name('buyer.password.change');
-      Route::post('/profile/change-password', [BuyerProfileController::class, 'updatePassword'])->name('buyer.password.update');
+      Route::get('/checkout', [BuyerCartController::class, 'checkout'])
+         ->name('checkout');
+
+      // Profile
+      Route::get('/profile', [BuyerProfileController::class, 'index'])
+         ->name('buyer.profile');
+
+      Route::put('/profile/update', [BuyerProfileController::class, 'update'])
+         ->name('buyer.profile.update');
+
    });
 });

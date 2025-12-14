@@ -24,6 +24,7 @@ class User extends Authenticatable
         'phone',
         'address',
         'role',
+        'profile_picture',
     ];
 
     /**
@@ -50,6 +51,11 @@ class User extends Authenticatable
     public function seller()
     {
         return $this->hasOne(Seller::class);
+    }
+
+    public function sellerProfile()
+    {
+        return $this->hasOne(Seller::class, 'user_id');
     }
 
     public function orders()

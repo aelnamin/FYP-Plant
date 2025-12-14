@@ -37,6 +37,12 @@ class InventoryController extends Controller
             'description' => 'nullable|string',
             'price' => 'required|numeric|min:0',
             'stock_quantity' => 'required|integer|min:0',
+
+            'sunlight_requirement' => 'nullable|string',
+            'watering_frequency' => 'nullable|string',
+            'difficulty_level' => 'nullable|string',
+            'growth_stage' => 'nullable|string',
+
             'images.*' => 'nullable|image|mimes:jpg,jpeg,png|max:2048'
         ]);
 
@@ -47,6 +53,12 @@ class InventoryController extends Controller
             'description' => $request->description,
             'price' => $request->price,
             'stock_quantity' => $request->stock_quantity,
+
+            'sunlight_requirement' => $request->sunlight_requirement,
+            'watering_frequency' => $request->watering_frequency,
+            'difficulty_level' => $request->difficulty_level,
+            'growth_stage' => $request->growth_stage,
+
             'approval_status' => 'Pending',
         ]);
 
@@ -89,6 +101,12 @@ class InventoryController extends Controller
             'description' => 'nullable|string',
             'price' => 'required|numeric|min:0',
             'stock_quantity' => 'required|integer|min:0',
+
+            'sunlight_requirement' => 'nullable|string',
+            'watering_frequency' => 'nullable|string',
+            'difficulty_level' => 'nullable|string',
+            'growth_stage' => 'nullable|string',
+
             'images.*' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
             'remove_images' => 'nullable|array',
         ]);
@@ -99,6 +117,11 @@ class InventoryController extends Controller
             'description' => $request->description,
             'price' => $request->price,
             'stock_quantity' => $request->stock_quantity,
+
+            'sunlight_requirement' => $request->sunlight_requirement,
+            'watering_frequency' => $request->watering_frequency,
+            'difficulty_level' => $request->difficulty_level,
+            'growth_stage' => $request->growth_stage,
         ]);
 
         // Remove selected old images

@@ -5,75 +5,100 @@ namespace App\Http\Controllers\Buyer;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Product;
+use App\Models\Cart;
+use App\Models\CartItem;
+use Illuminate\Support\Facades\Auth;
 
 class CartController extends Controller
 {
-    // Show cart items
+    // Show cart
     public function index()
     {
-        $cartItems = session()->get('cart', []);
+        $cart = Cart::firstOrCreate(['user_id' => Auth::id()]);
+        $cartItems = $cart->items()->with('product.images')->get();
+
+        // Add full image URL for each cart item
+        $cartItems->transform(function ($item) {
+            $image = optional($item->product->images->first())->image_path;
+            $item->image_url = $image ? asset('images/' . $image) : asset('default.png');
+            return $item;
+        });
+
         return view('buyer.cart', compact('cartItems'));
     }
 
-    // Add item to cart
+    // Add to cart
     public function add(Request $request, $id)
     {
         $product = Product::findOrFail($id);
-        $quantity = $request->input('quantity', 1);
+        $cart = Cart::firstOrCreate(['user_id' => Auth::id()]);
 
-        $cart = session()->get('cart', []);
+        $cartItem = $cart->items()->where('product_id', $id)->first();
 
-        if (isset($cart[$id])) {
-            $cart[$id]['quantity'] += $quantity;
+        if ($cartItem) {
+            $cartItem->increment('quantity');
         } else {
-            $cart[$id] = [
-                "name"     => $product->product_name,
-                "price"    => $product->price,
-                "quantity" => $quantity,
-                "image"    => $product->images->first()->image_path ?? null,
-            ];
+            $cart->items()->create([
+                'product_id' => $id,
+                'quantity' => 1,
+            ]);
         }
 
-        session()->put('cart', $cart);
-
-        return redirect()->route('buyer.cart')->with('success', 'Item added to cart!');
+        return redirect()->route('buyer.cart')
+            ->with('success', 'Item added to cart!');
     }
 
-    // Update cart item quantity
+    // Update quantity
     public function update(Request $request, $id)
     {
-        $cart = session()->get('cart', []);
+        $request->validate([
+            'quantity' => 'required|integer|min:1'
+        ]);
 
-        if (isset($cart[$id])) {
-            $quantity = $request->input('quantity', 1);
-            $cart[$id]['quantity'] = $quantity;
-            session()->put('cart', $cart);
+        $cart = Cart::firstOrCreate(['user_id' => Auth::id()]);
+        $cartItem = $cart->items()->where('id', $id)->first();
+
+        if ($cartItem) {
+            $cartItem->update(['quantity' => $request->quantity]);
         }
 
-        return redirect()->route('buyer.cart')->with('success', 'Cart updated!');
+        return redirect()->route('buyer.cart')
+            ->with('success', 'Cart updated!');
     }
 
-    // Remove item from cart
+    // Remove item
     public function remove($id)
     {
-        $cart = session()->get('cart', []);
+        $cart = Cart::firstOrCreate(['user_id' => Auth::id()]);
+        $cartItem = $cart->items()->where('id', $id)->first();
 
-        if (isset($cart[$id])) {
-            unset($cart[$id]);
-            session()->put('cart', $cart);
+        if ($cartItem) {
+            $cartItem->delete();
         }
 
-        return redirect()->route('buyer.cart')->with('success', 'Item removed from cart!');
+        return redirect()->route('buyer.cart')
+            ->with('success', 'Item removed!');
     }
 
+    // Checkout
     public function checkout()
     {
-        $cart = session()->get('cart', []);
-        if (empty($cart)) {
-            return redirect()->route('buyer.cart')->with('error', 'Your cart is empty.');
+        $cart = Cart::firstOrCreate(['user_id' => Auth::id()]);
+        $cartItems = $cart->items()->with('product.images')->get();
+
+        // Add full image URL for each cart item
+        $cartItems->transform(function ($item) {
+            $image = optional($item->product->images->first())->image_path;
+            $item->image_url = $image ? asset('images/' . $image) : asset('default.png');
+            return $item;
+        });
+
+        if ($cartItems->isEmpty()) {
+            return redirect()->route('buyer.cart')
+                ->with('error', 'Your cart is empty.');
         }
 
-        // Here you could handle checkout logic, e.g., redirect to payment page
-        return view('buyer.checkout', compact('cart'));
+        return view('buyer.checkout', compact('cartItems'));
     }
 }
+
