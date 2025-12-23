@@ -14,8 +14,10 @@ use App\Http\Controllers\LogoutController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\Buyer\CartController as BuyerCartController;
 use App\Http\Controllers\Buyer\BuyerProfileController;
+use App\Http\Controllers\Seller\SellerProfileController;
 use App\Http\Controllers\Admin\ProductApprovalController;
 use App\Http\Controllers\Seller\InventoryController;
+use App\Http\Controllers\CheckoutController;
 
 /*
 |--------------------------------------------------------------------------
@@ -60,89 +62,94 @@ Route::middleware(['auth', 'role:buyer'])->prefix('buyer')->group(function () {
    Route::delete('/cart/remove/{id}', [BuyerCartController::class, 'remove'])->name('cart.remove');
 });
 
+
+
+
+/*
+ |----------------------------------------------------------------------
+ | Admin Routes
+ |----------------------------------------------------------------------
+ */
+Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->group(function () {
+   Route::get('/dashboard', [AdminDashboardController::class, 'index'])
+      ->name('dashboard');
+
+   Route::resource('users', UserManagementController::class);
+   Route::resource('users', UserManagementController::class);
+   Route::get('users/{user}/reports', [UserManagementController::class, 'reports'])->name('users.reports');
+
+   Route::get('/products/pending', [ProductApprovalController::class, 'index'])
+      ->name('admin.products.pending');
+
+   Route::post('/products/{id}/approve', [ProductApprovalController::class, 'approve'])
+      ->name('admin.products.approve');
+
+});
+
+
 /*
 |--------------------------------------------------------------------------
-| Protected Routes
+| Seller Dashboard Route
 |--------------------------------------------------------------------------
 */
-Route::middleware('auth')->group(function () {
-
-   /*
-    |----------------------------------------------------------------------
-    | Admin Routes
-    |----------------------------------------------------------------------
-    */
-   Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->group(function () {
-      Route::get('/dashboard', [AdminDashboardController::class, 'index'])
-         ->name('dashboard');
-
-      Route::resource('users', UserManagementController::class);
-      Route::resource('users', UserManagementController::class);
-      Route::get('users/{user}/reports', [UserManagementController::class, 'reports'])->name('users.reports');
-
-      Route::get('/products/pending', [ProductApprovalController::class, 'index'])
-         ->name('admin.products.pending');
-
-      Route::post('/products/{id}/approve', [ProductApprovalController::class, 'approve'])
-         ->name('admin.products.approve');
-
+Route::middleware(['auth', 'role:seller'])
+   ->prefix('seller')
+   ->group(function () {
+      Route::get('/dashboard', [SellerDashboardController::class, 'index'])
+         ->name('sellers.dashboard');
    });
 
 
-   /*
-   |--------------------------------------------------------------------------
-   | Seller Dashboard Route
-   |--------------------------------------------------------------------------
-   */
-   Route::middleware(['auth', 'role:seller'])
-      ->prefix('seller')
-      ->group(function () {
-         Route::get('/dashboard', [SellerDashboardController::class, 'index'])
-            ->name('sellers.dashboard');
-      });
+/*
+ |----------------------------------------------------------------------
+ | Seller Routes
+ |----------------------------------------------------------------------
+ */
+Route::middleware(['auth', 'role:seller'])
+   ->prefix('seller/inventory')
+   ->name('sellers.inventory.')
+   ->group(function () {
 
 
-   /*
-    |----------------------------------------------------------------------
-    | Seller Routes
-    |----------------------------------------------------------------------
-    */
-   Route::middleware(['auth', 'role:seller'])
-      ->prefix('seller/inventory')
-      ->name('sellers.inventory.')
-      ->group(function () {
+      Route::get('/', [InventoryController::class, 'index'])->name('index');
 
+      Route::get('/create', [InventoryController::class, 'create'])->name('create');
+      Route::post('/', [InventoryController::class, 'store'])->name('store');
 
-         Route::get('/', [InventoryController::class, 'index'])->name('index');
+      Route::get('/{id}', [InventoryController::class, 'show'])->name('show');
+      Route::get('/{id}/edit', [InventoryController::class, 'edit'])->name('edit');
 
-         Route::get('/create', [InventoryController::class, 'create'])->name('create');
-         Route::post('/', [InventoryController::class, 'store'])->name('store');
-
-         Route::get('/{id}', [InventoryController::class, 'show'])->name('show');
-         Route::get('/{id}/edit', [InventoryController::class, 'edit'])->name('edit');
-
-         Route::put('/{id}', [InventoryController::class, 'update'])->name('update');
-         Route::delete('/{id}', [InventoryController::class, 'destroy'])->name('destroy');
-      });
-
-   /*
-    |----------------------------------------------------------------------
-    | Buyer Routes
-    |----------------------------------------------------------------------
-    */
-   Route::middleware('role:buyer')->prefix('buyer')->group(function () {
-      Route::get('/buyer/dashboard', [BuyerDashboardController::class, 'index'])
-         ->name('buyer.dashboard');
-
-      Route::get('/checkout', [BuyerCartController::class, 'checkout'])
-         ->name('checkout');
-
-      // Profile
-      Route::get('/profile', [BuyerProfileController::class, 'index'])
-         ->name('buyer.profile');
-
-      Route::put('/profile/update', [BuyerProfileController::class, 'update'])
-         ->name('buyer.profile.update');
+      Route::put('/{id}', [InventoryController::class, 'update'])->name('update');
+      Route::delete('/{id}', [InventoryController::class, 'destroy'])->name('destroy');
 
    });
+
+Route::middleware(['auth', 'role:seller'])
+   ->prefix('seller')
+   ->name('sellers.')
+   ->group(function () {
+      Route::get('/profile', [SellerProfileController::class, 'index'])->name('profile');
+      Route::put('/profile', [SellerProfileController::class, 'update'])->name('profile.update');
+   });
+
+
+//Buyer
+Route::middleware(['auth', 'role:buyer'])->group(function () {
+
+   Route::get('buyer/checkout', [CheckoutController::class, 'checkout'])
+      ->name('buyer.checkout');
+
+   Route::post('/checkout/place-order', [CheckoutController::class, 'placeOrder'])
+      ->name('checkout.placeOrder');
+
+   Route::get('/buyer/dashboard', [BuyerDashboardController::class, 'index'])
+      ->name('buyer.dashboard');
+
+   // Profile
+   Route::get('/profile', [BuyerProfileController::class, 'index'])
+      ->name('buyer.profile');
+
+   Route::put('/profile/update', [BuyerProfileController::class, 'update'])
+      ->name('buyer.profile.update');
+
 });

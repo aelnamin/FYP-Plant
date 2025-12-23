@@ -7,6 +7,8 @@ use App\Models\Category;
 use App\Models\Seller;
 use App\Models\ProductImage;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+
 
 class ProductController extends Controller
 {
@@ -31,25 +33,66 @@ class ProductController extends Controller
 
     public function show($id)
     {
-        $product = Product::with(['images', 'seller'])->findOrFail($id);
-        return view('products.show', compact('product'));
+        /** @var \App\Models\User|null $user */
+        $user = Auth::user();
+
+        $product = Product::with([
+            'images',
+            'seller',
+            'reviews.user'
+        ])->findOrFail($id);
+
+        $averageRating = round($product->reviews->avg('rating'), 1);
+        $totalReviews = $product->reviews->count();
+
+        $hasPurchased = false;
+        $hasReviewed = false;
+
+        if ($user) {
+            $hasPurchased = $user->orders()
+                ->where('status', 'completed')
+                ->whereHas('items', function ($q) use ($product) {
+                    $q->where('product_id', $product->id);
+                })
+                ->exists();
+
+            $hasReviewed = $product->reviews()
+                ->where('user_id', $user->id)
+                ->exists();
+        }
+
+        return view('products.show', compact(
+            'product',
+            'averageRating',
+            'totalReviews',
+            'hasPurchased',
+            'hasReviewed'
+        ));
     }
 
 
     public function browse(Request $request)
     {
         $query = Product::with(['images', 'seller'])
-            ->where('approved_by', true); // ONLY APPROVED
+            ->where('approved_by', true);
 
-        if ($request->search) {
+        // Filter by category
+        if ($request->filled('category')) {
+            $query->where('category_id', $request->category);
+        }
+
+        // Search
+        if ($request->filled('search')) {
             $query->where('product_name', 'like', '%' . $request->search . '%');
         }
 
         $products = $query->paginate(12);
+        $products->appends($request->only('search', 'category')); // preserve filters
 
-        return view('products.browse', compact('products'));
+        $categories = Category::all();
+
+        return view('products.browse', compact('products', 'categories'));
     }
-
 
 
     /* -------------------------------------------------------

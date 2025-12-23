@@ -12,8 +12,7 @@ class BuyerProfileController extends Controller
 {
     public function index()
     {
-        $user = Auth::user(); // ✔ correct
-
+        $user = Auth::user();
         return view('buyer.profile', compact('user'));
     }
 
@@ -25,33 +24,41 @@ class BuyerProfileController extends Controller
             'name' => 'required|string|max:255',
             'phone' => 'nullable|string|max:20',
             'address' => 'nullable|string|max:500',
+            'profile_picture' => 'nullable|image|mimes:jpg,jpeg,png,gif,webp|max:2048',
         ]);
 
+        // =========================
+        // HANDLE PROFILE PICTURE
+        // =========================
+        if ($request->hasFile('profile_picture')) {
+
+            // Delete old photo (optional but recommended)
+            if ($user->profile_picture && file_exists(public_path($user->profile_picture))) {
+                unlink(public_path($user->profile_picture));
+            }
+
+            $imageName = 'profile_' . $user->id . '.' . $request->profile_picture->extension();
+            $request->profile_picture->move(
+                public_path('uploads/profile'),
+                $imageName
+            );
+
+            $profilePath = 'uploads/profile/' . $imageName;
+        } else {
+            $profilePath = $user->profile_picture;
+        }
+
+        // =========================
+        // UPDATE USER DATA
+        // =========================
         DB::table('users')->where('id', $user->id)->update([
             'name' => $request->name,
             'phone' => $request->phone,
             'address' => $request->address,
+            'profile_picture' => $profilePath,
         ]);
 
         return back()->with('success', 'Profile updated successfully.');
-    }
-
-    public function updatePhoto(Request $request)
-    {
-        $user = Auth::user();
-
-        $request->validate([
-            'profile_picture' => 'required|image|max:2048'
-        ]);
-
-        $imageName = time() . '.' . $request->profile_picture->extension();
-        $request->profile_picture->move(public_path('uploads/profile'), $imageName);
-
-        DB::table('users')->where('id', $user->id)->update([
-            'profile_picture' => 'uploads/profile/' . $imageName
-        ]);
-
-        return back()->with('success', 'Profile picture updated.');
     }
 
     public function updatePassword(Request $request)
@@ -60,7 +67,7 @@ class BuyerProfileController extends Controller
 
         $request->validate([
             'current_password' => 'required',
-            'new_password' => 'required|min:6',
+            'new_password' => 'required|min:6|confirmed',
         ]);
 
         if (!Hash::check($request->current_password, $user->password)) {

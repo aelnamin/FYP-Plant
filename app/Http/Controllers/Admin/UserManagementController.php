@@ -80,11 +80,15 @@ class UserManagementController extends Controller
             'email' => 'required|email|unique:users,email,' . $user->id,
             'role' => 'required|in:admin,buyer,seller',
             'password' => 'nullable|string|min:6|confirmed',
+            'phone' => 'nullable|string|max:20',
+            'address' => 'nullable|string|max:255',
         ]);
 
         $user->name = $request->name;
         $user->email = $request->email;
         $user->role = $request->role;
+        $user->phone = $request->phone;
+        $user->address = $request->address;
 
         if ($request->filled('password')) {
             $user->password = Hash::make($request->password);

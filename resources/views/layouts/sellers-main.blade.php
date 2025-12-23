@@ -8,6 +8,15 @@
 
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
 </head>
+<style>
+    .profile-avatar {
+        width: 160px;
+        height: 160px;
+        object-fit: cover;
+        object-position: center;
+        border: 4px solid #A5B682;
+    }
+</style>
 
 <body style="background-color:#F8F9F5;">
 
@@ -18,10 +27,10 @@
             <div class="col-md-2 bg-white shadow-sm min-vh-100 p-3">
 
                 {{-- Profile Picture --}}
-                <div class="text-center mb-4">
-                    <img src="{{ Auth::user()->profile_picture ?? '/default.png' }}" class="rounded-circle" width="140"
-                        height="140" style="object-fit: cover; border: 4px solid #A5B682;">
-                </div>
+                <img src="{{ Auth::user()->profile_picture
+    ? asset(Auth::user()->profile_picture)
+    : asset('images/default.png') }}" class="rounded-circle me-4 profile-avatar" alt="Profile Picture">
+
                 <h4 class="mt-3 fw-bold" style="color:#5C7F51;">
                     {{ Auth::user()->sellerProfile->business_name ?? Auth::user()->name }}
                 </h4>
@@ -41,7 +50,7 @@
                     </li>
 
                     <li class="nav-item mb-2">
-                        <a href="{{ route('sellers.inventory.index') }}" class="nav-link text-dark">Profile</a>
+                        <a href="{{ route('sellers.profile') }}" class="nav-link text-dark">Profile</a>
                     </li>
 
                     <li class="nav-item mt-3">

@@ -39,9 +39,21 @@
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarNav"> @php $user = Auth::guard('web')->user(); @endphp <ul class="navbar-nav ms-auto d-flex align-items-center"> <!-- CART ICON -->
-                    <li class="nav-item me-3"> <a class="nav-link" href="{{ $user && $user->role === 'buyer' ? route('buyer.cart') : route('auth.login') }}"> <i class="bi bi-cart3" style="font-size: 1.3rem;"></i> </a> </li> <!-- PROFILE ICON -->
-                    <li class="nav-item"> @if($user) @switch($user->role) @case('buyer') <a class="nav-link" href="{{ route('buyer.profile') }}"> <i class="bi bi-person-circle" style="font-size: 1.4rem;"></i> </a> @break @case('seller') <a class="nav-link" href="{{ route('sellers.dashboard') }}"> <i class="bi bi-person-circle" style="font-size: 1.4rem;"></i> </a> @break @case('admin') <a class="nav-link" href="{{ route('admin.dashboard') }}"> <i class="bi bi-person-circle" style="font-size: 1.4rem;"></i> </a> @break @endswitch @else <a class="nav-link" href="{{ route('auth.login') }}"> <i class="bi bi-person" style="font-size: 1.4rem;"></i> </a> @endif </li>
+                    <li class="nav-item me-3"> 
+                        <a class="nav-link" href="{{ $user && $user->role === 'buyer' ? route('buyer.cart') : route('auth.login') }}"> 
+                            <i class="bi bi-cart4"style="font-size: 1.3rem;"></i> </a> </li> <!-- PROFILE ICON -->
 
+                    <li class="nav-item"> @if($user) @switch($user->role) @case('buyer') <a class="nav-link" href="{{ route('buyer.profile') }}">
+                         <i class="bi bi-person-circle" style="font-size: 1.4rem;"></i> 
+
+                        </a> @break @case('seller') <a class="nav-link" href="{{ route('sellers.dashboard') }}"> 
+                            <i class="bi bi-person-circle" style="font-size: 1.4rem;"></i> 
+
+                        </a> @break @case('admin') <a class="nav-link" href="{{ route('admin.dashboard') }}"> 
+                            <i class="bi bi-person-circle" style="font-size: 1.4rem;"></i>
+
+                        </a> @break @endswitch @else <a class="nav-link" href="{{ route('auth.login') }}">
+                             <i class="bi bi-person" style="font-size: 1.4rem;"></i> </a> @endif </li>
                 </ul>
             </div>
         </div>

@@ -2,11 +2,16 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
+
+use App\Models\Order;
+use App\Models\Seller;
+use App\Models\Message;
+use App\Models\Complaint;
+use App\Models\Review;
 
 class User extends Authenticatable
 {
@@ -25,6 +30,7 @@ class User extends Authenticatable
         'address',
         'role',
         'profile_picture',
+        'business_name',
     ];
 
     /**

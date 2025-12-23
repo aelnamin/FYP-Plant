@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Buyer;
 
 use App\Http\Controllers\Controller;
+use App\Models\Category;
 use App\Models\Product;
 use App\Models\Seller;
 use Illuminate\Support\Facades\Auth;
@@ -44,8 +45,12 @@ class BuyerDashboardController extends Controller
             ->take(4)
             ->get();
 
+        $categories = Category::all();
+
+
         return view('buyer.dashboard', compact(
             'user',
+            'categories',
             'bestSellers',
             'latestProducts',
             'topSellers'

@@ -3,81 +3,114 @@
 @section('title', 'Seller Profile')
 
 @section('content')
-    <div class="container py-5">
 
-        <h2 class="fw-bold mb-4">My Profile</h2>
+    <style>
+        .profile-avatar {
+            width: 120px;
+            height: 120px;
+            object-fit: cover;
+            object-position: center;
+            border: 4px solid #A5B682;
+        }
+    </style>
 
-        <div class="row">
-            <!-- Left: Profile Summary -->
-            <div class="col-md-4">
-                <div class="card shadow-sm p-3 text-center">
+    <div class="container mt-5">
+        <div class="card shadow p-4 rounded-4 border-0">
 
-                    <img src="{{ $seller->profile_picture ?? asset('images/default-user.png') }}"
-                        class="rounded-circle mb-3" width="140" height="140">
+            <h3 class="fw-bold mb-2" style="color:#5C7F51;">
+                My Profile
+            </h3>
+            <p class="text-muted mb-4" style="font-size:14px;">
+                Manage your shop information and account details.
+            </p>
 
-                    <h4 class="fw-bold">{{ $seller->name }}</h4>
-                    <p class="text-muted">{{ $seller->email }}</p>
-                    <p class="text-muted small">Seller Type: {{ $seller->seller_type }}</p>
+            {{-- Profile Header --}}
+            <div class="d-flex align-items-center mb-4">
 
-                    <hr>
+                {{-- Profile Picture --}}
+                <img src="{{ Auth::user()->profile_picture
+        ? asset(Auth::user()->profile_picture)
+        : asset('images/default.png') }}" class="rounded-circle me-4 profile-avatar" alt="Profile Picture">
 
-                    <form action="{{ route('seller.profile.updatePhoto') }}" method="POST" enctype="multipart/form-data">
-                        @csrf
-                        <input type="file" name="profile_picture" class="form-control mb-2">
-                        <button class="btn btn-success w-100">Update Photo</button>
-                    </form>
 
+                {{-- Seller Info --}}
+                <div>
+                    <h4 class="fw-bold mb-1" style="color:#5C7F51;">
+                        {{ Auth::user()->name }}
+                    </h4>
+                    <p class="text-muted mb-0">
+                        {{ Auth::user()->business_name ?? 'Nursery Owner' }}
+                    </p>
                 </div>
             </div>
 
-            <!-- Right: Editable Fields -->
-            <div class="col-md-8">
-                <div class="card shadow-sm p-4">
+            {{-- UPDATE PROFILE FORM --}}
+            <form action="{{ route('sellers.profile.update') }}" method="POST" enctype="multipart/form-data">
+                @csrf
+                @method('PUT')
 
-                    <h5 class="fw-bold mb-3">Business Information</h5>
+                <div class="row">
 
-                    <form action="{{ route('seller.profile.update') }}" method="POST">
-                        @csrf
+                    {{-- Full Name --}}
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label fw-semibold">Full Name</label>
+                        <input type="text" name="name" class="form-control" value="{{ Auth::user()->name }}" required>
+                    </div>
 
-                        <div class="mb-3">
-                            <label class="form-label fw-semibold">Store Name</label>
-                            <input type="text" name="store_name" value="{{ $seller->store_name }}" class="form-control">
-                        </div>
+                    {{-- Business Name --}}
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label fw-semibold">Shop Name</label>
+                        <input type="text" name="business_name" class="form-control"
+                            value="{{ Auth::user()->sellerProfile->business_name }}">
+                    </div>
 
-                        <div class="mb-3">
-                            <label class="form-label fw-semibold">Contact Number</label>
-                            <input type="text" name="phone" value="{{ $seller->phone }}" class="form-control">
-                        </div>
+                    {{-- Email --}}
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label fw-semibold">Email</label>
+                        <input type="email" class="form-control bg-light" value="{{ Auth::user()->email }}" readonly>
+                    </div>
 
-                        <div class="mb-3">
-                            <label class="form-label fw-semibold">Business Address</label>
-                            <textarea name="address" rows="3" class="form-control">{{ $seller->address }}</textarea>
-                        </div>
+                    {{-- Phone --}}
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label fw-semibold">Phone Number</label>
+                        <input type="text" name="phone" class="form-control" value="{{ Auth::user()->phone }}">
+                    </div>
 
-                        <button class="btn btn-primary px-4">Save Changes</button>
-                    </form>
+                    {{-- Profile Picture --}}
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label fw-semibold">Profile Picture</label>
+                        <input type="file" name="profile_picture" class="form-control">
+                    </div>
 
-                    <hr class="my-4">
-
-                    <h5 class="fw-bold mb-3">Change Password</h5>
-
-                    <form action="{{ route('seller.profile.updatePassword') }}" method="POST">
-                        @csrf
-                        <div class="mb-3">
-                            <label class="form-label">Current Password</label>
-                            <input type="password" name="current_password" class="form-control">
-                        </div>
-
-                        <div class="mb-3">
-                            <label class="form-label">New Password</label>
-                            <input type="password" name="new_password" class="form-control">
-                        </div>
-
-                        <button class="btn btn-warning px-4">Update Password</button>
-                    </form>
+                    {{-- Business Address --}}
+                    <div class="col-12 mb-3">
+                        <label class="form-label fw-semibold">Shop Address</label>
+                        <textarea name="business_address"
+                            class="form-control">{{ Auth::user()->sellerProfile->business_address ?? '' }}</textarea>
+                    </div>
 
                 </div>
+
+                {{-- Buttons --}}
+                <div class="d-flex justify-content-end mt-3">
+                    <button type="submit" class="btn btn-success px-4">
+                        Save Changes
+                    </button>
+                </div>
+
+            </form>
+
+            {{-- LOGOUT --}}
+            <div class="d-flex justify-content-end mt-3">
+                <form action="{{ route('logout') }}" method="POST">
+                    @csrf
+                    <button class="btn btn-outline-danger">
+                        Logout
+                    </button>
+                </form>
             </div>
+
         </div>
     </div>
+
 @endsection
