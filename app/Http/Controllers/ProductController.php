@@ -42,6 +42,14 @@ class ProductController extends Controller
             'reviews.user'
         ])->findOrFail($id);
 
+
+        $sameSellerProducts = Product::with('images')
+            ->where('seller_id', $product->seller_id)
+            ->where('id', '!=', $product->id) // exclude current product
+            ->where('approved_by', true)
+            ->take(4)
+            ->get();
+
         $averageRating = round($product->reviews->avg('rating'), 1);
         $totalReviews = $product->reviews->count();
 
@@ -61,12 +69,17 @@ class ProductController extends Controller
                 ->exists();
         }
 
+        $variants = ['White Lily', 'Pink Lily', 'Yellow Lily'];
+
+
         return view('products.show', compact(
             'product',
             'averageRating',
             'totalReviews',
             'hasPurchased',
-            'hasReviewed'
+            'hasReviewed',
+            'sameSellerProducts',
+            'variants'
         ));
     }
 

@@ -57,12 +57,11 @@ Route::post('/seller/register', [SellerRegisterController::class, 'register'])
 */
 Route::middleware(['auth', 'role:buyer'])->prefix('buyer')->group(function () {
    Route::get('/cart', [BuyerCartController::class, 'index'])->name('buyer.cart');
+   Route::get('/buyer/cart/sidebar', [BuyerCartController::class, 'sidebar'])->name('buyer.cart.sidebar');
    Route::post('/cart/add/{id}', [BuyerCartController::class, 'add'])->name('cart.add');
    Route::put('/cart/update/{id}', [BuyerCartController::class, 'update'])->name('cart.update');
    Route::delete('/cart/remove/{id}', [BuyerCartController::class, 'remove'])->name('cart.remove');
 });
-
-
 
 
 /*

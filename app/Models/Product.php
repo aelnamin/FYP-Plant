@@ -14,6 +14,7 @@ class Product extends Model
         'category_id',
         'product_name',
         'description',
+        'variants',
         'price',
         'stock_quantity',
         'approval_status',
@@ -23,6 +24,10 @@ class Product extends Model
         'growth_stage',
         'approved_by',
 
+    ];
+
+    protected $casts = [
+        'variants' => 'array', // Laravel automatically decodes JSON to array
     ];
 
     public function seller()

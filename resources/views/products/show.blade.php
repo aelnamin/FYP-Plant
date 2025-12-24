@@ -77,14 +77,11 @@
             text-decoration: none;
         }
 
-
-        /* Seller Info */
         .seller-card {
-            background: #f8f9fa;
+            background: linear-gradient(135deg, #f9f9f9 0%, rgb(200, 208, 184) 100%);
             border-radius: 10px;
             padding: 15px;
             margin-bottom: 20px;
-            border-left: 4px solid #4BAE7F;
         }
 
         .seller-profile-img {
@@ -120,13 +117,23 @@
             align-items: center;
             gap: 5px;
         }
+
+        .product-card {
+            transition: all 0.3s ease;
+            border: 1px solid rgba(0, 0, 0, 0.08);
+        }
+
+        .product-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 15px 30px rgba(92, 127, 81, 0.15);
+        }
     </style>
 
     <div class="container mt-4">
 
         {{-- Breadcrumb --}}
         <nav class="breadcrumb mb-4">
-            <a href="{{ route('home') }}">Home</a>
+            <a href="{{ route('buyer.dashboard') }}">Home</a>
             <span class="mx-2">/</span>
             <a href="#">{{ $product->category->category_name }}</a>
             <span class="mx-2">/</span>
@@ -151,7 +158,6 @@
 
             {{-- RIGHT: Product Details --}}
             <div class="col-md-6">
-
                 <h2 class="fw-bold">{{ $product->product_name }}</h2>
 
                 {{-- Seller Information Card --}}
@@ -169,7 +175,7 @@
                         </div>
                     </div>
 
-                    {{-- Location and Address --}}
+                    {{-- Location --}}
                     <div class="seller-info-item">
                         <i class="bi bi-geo-alt"></i>
                         <span><strong>Location:</strong> {{ $product->seller->business_address ?? 'N/A' }}</span>
@@ -188,38 +194,32 @@
                                 <i class="bi bi-star"></i>
                             @endif
                         @endfor
-
-                        <span class="text-muted ms-2">
-                            {{ $averageRating }} ({{ $totalReviews }} reviews)
-                        </span>
+                        <span class="text-muted ms-2">{{ $averageRating }} ({{ $totalReviews }} reviews)</span>
                     </div>
                 @else
                     <span class="text-muted">No reviews yet</span>
                 @endif
 
-
-
                 {{-- Price --}}
                 <div class="my-3">
-                    <span class="price-old">
-                        RM {{ number_format($product->price + 30, 2) }}
-                    </span>
-                    <span class="fs-4 fw-bold text-success">
-                        RM {{ number_format($product->price, 2) }}
-                    </span>
+                    <span class="price-old">RM {{ number_format($product->price + 30, 2) }}</span>
+                    <span class="fs-4 fw-bold text-success">RM {{ number_format($product->price, 2) }}</span>
                 </div>
 
                 <hr>
 
-                {{-- Select Product --}}
-                <h6 class="fw-semibold mt-4">Select product</h6>
-                <div class="d-flex gap-2">
-                    <div class="option-box">example</div>
-                    <div class="option-box">example</div>
-                    <div class="option-box">example</div>
+                {{-- Select Variant --}}
+                <h6 class="fw-semibold mt-4">Select Variant</h6>
+                <div class="d-flex gap-2 flex-wrap" id="variantOptions">
+                    @foreach($variants as $variant)
+                        <div class="option-box" data-variant="{{ $variant }}">{{ $variant }}</div>
+                    @endforeach
                 </div>
 
-                <!-- Stock indicator -->
+                <input type="hidden" name="variant" id="selectedVariant">
+                <small class="text-danger d-none" id="variantError">Please select a variant</small>
+
+                {{-- Stock indicator --}}
                 <div class="mt-3">
                     @if ($product->stock_quantity > 0)
                         <div class="d-flex align-items-center">
@@ -237,25 +237,23 @@
                         </div>
                     @endif
                 </div>
-                <!-- Quantity Selector + Add to cart -->
-                <form action="{{ route('cart.add', $product->id) }}" method="POST" class="d-flex align-items-center mt-4">
+
+                {{-- Quantity Selector + Add to Cart --}}
+                <form action="{{ route('cart.add', $product->id) }}" method="POST" class="d-flex align-items-center mt-4"
+                    id="addToCartForm">
                     @csrf
                     <div class="quantity-selector me-3 d-flex align-items-center">
                         <button type="button" class="btn btn-outline-secondary btn-sm me-1" id="decrement"
                             style="width: 30px; height: 30px; border-radius: 50%;">-</button>
-
                         <input type="number" name="quantity" id="quantity" value="1" min="1"
                             class="form-control text-center" style="width: 55px; height: 34px; font-size: 15px;">
-
                         <button type="button" class="btn btn-outline-secondary btn-sm ms-1" id="increment"
                             style="width: 30px; height: 30px; border-radius: 50%;">+</button>
-
-                        <button type="submit" class="btn btn-matcha ms-2">Add to Cart</button>
+                        <button type="button" class="btn btn-matcha ms-2" id="addToCartBtn">Add to Cart</button>
                     </div>
                 </form>
             </div>
         </div>
-
     </div>
 
     <hr>
@@ -263,44 +261,24 @@
     <!-- Product Description -->
     <div class="mt-4">
         <h4 class="fw-bold">Product Description</h4>
-        <p style="line-height: 1.6;">
-            {!! nl2br(e($product->description)) !!}
-        </p>
+        <p style="line-height: 1.6;">{!! nl2br(e($product->description)) !!}</p>
 
-        <!-- Plant Information Section -->
+        <!-- Plant Information -->
         <div class="mt-4">
-
             <h4 class="fw-bold">Plant Information</h4>
-
-            <p class="text-muted mb-1">
-                <strong>Sunlight Requirement:</strong>
-                {{ $product->sunlight_requirement ?? 'Not specified' }}
-            </p>
-
-            <p class="text-muted mb-1">
-                <strong>Watering Frequency:</strong>
-                {{ $product->watering_frequency ?? 'Not specified' }}
-            </p>
-
-            <p class="text-muted mb-1">
-                <strong>Difficulty Level:</strong>
-                {{ $product->difficulty_level ?? 'Not specified' }}
-            </p>
-
-            <p class="text-muted mb-1">
-                <strong>Growth Stage:</strong>
-                {{ $product->growth_stage ?? 'Not specified' }}
-            </p>
-
+            <p class="text-muted mb-1"><strong>Sunlight Requirement:</strong>
+                {{ $product->sunlight_requirement ?? 'Not specified' }}</p>
+            <p class="text-muted mb-1"><strong>Watering Frequency:</strong>
+                {{ $product->watering_frequency ?? 'Not specified' }}</p>
+            <p class="text-muted mb-1"><strong>Difficulty Level:</strong>
+                {{ $product->difficulty_level ?? 'Not specified' }}</p>
+            <p class="text-muted mb-1"><strong>Growth Stage:</strong> {{ $product->growth_stage ?? 'Not specified' }}</p>
         </div>
 
-        {{-- Reviews Section --}}
+        {{-- Reviews --}}
         <div class="mt-5">
             <h4 class="fw-bold mb-3">Customer Reviews</h4>
-
             @if ($totalReviews > 0)
-
-                {{-- Average Rating Summary --}}
                 <div class="mb-4">
                     <div class="text-success fs-5">
                         @for ($i = 1; $i <= 5; $i++)
@@ -313,75 +291,114 @@
                             @endif
                         @endfor
                     </div>
-
-                    <span class="text-muted">
-                        {{ $averageRating }} out of 5 · {{ $totalReviews }} reviews
-                    </span>
+                    <span class="text-muted">{{ $averageRating }} out of 5 · {{ $totalReviews }} reviews</span>
                 </div>
 
-                {{-- Individual Reviews --}}
                 @foreach ($product->reviews as $review)
                     <div class="border rounded p-3 mb-3 bg-light">
-
                         <div class="d-flex justify-content-between align-items-center mb-1">
                             <strong>{{ $review->user->name }}</strong>
-                            <small class="text-muted">
-                                {{ $review->created_at->diffForHumans() }}
-                            </small>
+                            <small class="text-muted">{{ $review->created_at->diffForHumans() }}</small>
                         </div>
-
-                        {{-- Rating --}}
                         <div class="text-warning mb-1">
                             @for ($i = 1; $i <= 5; $i++)
-                                @if ($i <= $review->rating)
-                                    ★
-                                @else
-                                    ☆
-                                @endif
+                                @if ($i <= $review->rating) ★ @else ☆ @endif
                             @endfor
                         </div>
-
-                        {{-- Comment --}}
-                        <p class="mb-0 text-muted">
-                            {{ $review->comment }}
-                        </p>
+                        <p class="mb-0 text-muted">{{ $review->comment }}</p>
                     </div>
                 @endforeach
-
             @else
                 <p class="text-muted">This product has no reviews yet.</p>
             @endif
         </div>
 
+        {{-- Same Seller Products --}}
+        @if($sameSellerProducts->count())
+            <div class="container mt-5">
+                <div class="col-md-8">
+                    <h4 class="fw-bold">More from {{ $product->seller->business_name }}</h4>
+                    <div class="row g-4">
+                        @foreach ($sameSellerProducts as $p)
+                            <div class="col-6 col-md-3">
+                                <div class="card border-0 product-card shadow-sm h-100 rounded-4">
+                                    <img src="{{ $p->images->first() ? asset('images/' . $p->images->first()->image_path) : asset('images/default.jpg') }}"
+                                        class="card-img-top" style="height:220px; object-fit:cover;">
+                                    <div class="card-body">
+                                        <h6 class="fw-bold">{{ $p->product_name }}</h6>
+                                        <div class="text-success fw-bold">RM {{ number_format($p->price, 2) }}</div>
+                                    </div>
+                                    <div class="card-footer bg-white border-0">
+                                        <a href="{{ route('products.show', $p->id) }}"
+                                            class="btn btn-outline-success w-100 rounded-pill">View Product</a>
+                                    </div>
+                                </div>
+                            </div>
+                        @endforeach
+                    </div>
+                </div>
+            </div>
+        @endif
+    </div>
 
-    </div>
-    </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Quantity selector
+            const decrementBtn = document.getElementById('decrement');
+            const incrementBtn = document.getElementById('increment');
+            const quantityInput = document.getElementById('quantity');
+
+            decrementBtn.addEventListener('click', function () {
+                let value = parseInt(quantityInput.value);
+                if (value > 1) quantityInput.value = value - 1;
+            });
+
+            incrementBtn.addEventListener('click', function () {
+                quantityInput.value = parseInt(quantityInput.value) + 1;
+            });
+
+            // Variant selection
+            const variantBoxes = document.querySelectorAll('.option-box');
+            const selectedVariantInput = document.getElementById('selectedVariant');
+            const variantError = document.getElementById('variantError');
+            const addToCartBtn = document.getElementById('addToCartBtn');
+            const form = document.getElementById('addToCartForm');
+            const cartSidebarEl = document.getElementById('cartSidebar');
+            const cartSidebar = cartSidebarEl ? new bootstrap.Offcanvas(cartSidebarEl) : null;
+
+            variantBoxes.forEach(box => {
+                box.addEventListener('click', function () {
+                    variantBoxes.forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+                    selectedVariantInput.value = this.dataset.variant;
+                    variantError.classList.add('d-none');
+                });
+            });
+
+            // Add to cart
+            addToCartBtn.addEventListener('click', function (e) {
+                if (!selectedVariantInput.value) {
+                    e.preventDefault();
+                    variantError.classList.remove('d-none');
+                    return false;
+                }
+
+                fetch(form.action, {
+                    method: 'POST',
+                    body: new FormData(form),
+                    headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}' }
+                })
+                    .then(res => res.json())
+                    .then(data => {
+                        if (data.success) {
+                            if (cartSidebar) cartSidebar.show();
+                        } else {
+                            alert(data.message || 'Error adding to cart');
+                        }
+                    })
+                    .catch(err => console.error('Add to cart error:', err));
+            });
+        });
+    </script>
 
 @endsection
-
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
-        const decrementBtn = document.getElementById('decrement');
-        const incrementBtn = document.getElementById('increment');
-        const quantityInput = document.getElementById('quantity');
-        const cartQuantityHidden = document.getElementById('cartQuantity');
-
-        function sync() {
-            cartQuantityHidden.value = quantityInput.value;
-        }
-
-        decrementBtn.addEventListener('click', function () {
-            let value = parseInt(quantityInput.value);
-            if (value > 1) quantityInput.value = value - 1;
-            sync();
-        });
-
-        incrementBtn.addEventListener('click', function () {
-            let value = parseInt(quantityInput.value);
-            quantityInput.value = value + 1;
-            sync();
-        });
-
-        quantityInput.addEventListener('input', sync);
-    });
-</script>

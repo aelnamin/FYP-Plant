@@ -4,6 +4,11 @@
 
 @section('content')
 
+    <head>
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+
+    </head>
+
     <style>
         .search-container {
             position: relative;
@@ -79,6 +84,10 @@
             margin-bottom: 0.5rem;
         }
 
+        .feature-section {
+            background: linear-gradient(135deg, #f9f9f9 0%, rgb(241, 239, 218) 100%);
+        }
+
         .feature-icon {
             width: 60px;
             height: 60px;
@@ -87,8 +96,12 @@
             align-items: center;
             justify-content: center;
             font-size: 28px;
-            color: rgb(0, 0, 0);
+            color: rgb(87, 125, 85);
             flex-shrink: 0;
+        }
+
+        .about-section {
+            background: linear-gradient(135deg, #f9f9f9 0%, rgb(207, 201, 131) 100%);
         }
 
         .icon-circle {
@@ -103,8 +116,14 @@
             font-size: 24px;
         }
 
-        .about-section {
-            background: linear-gradient(135deg, #f9f9f9 0%, rgb(207, 201, 131) 100%);
+        .product-card {
+            transition: all 0.3s ease;
+            border: 1px solid rgba(0, 0, 0, 0.08);
+        }
+
+        .product-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 15px 30px rgba(92, 127, 81, 0.15);
         }
     </style>
 
@@ -169,7 +188,7 @@
             <div class="row g-4">
                 @foreach ($bestSellers as $p)
                     <div class="col-6 col-md-3">
-                        <div class="card shadow-sm border-0 rounded-4 h-100">
+                        <div class="card shadow-sm product-card border-0 rounded-4 h-100">
 
                             <img src="{{ $p->images->first() ? asset('images/' . $p->images->first()->image_path) : asset('images/default.jpg') }}"
                                 class="card-img-top rounded-top-4" style="height:280px; object-fit:cover;">
@@ -200,7 +219,7 @@
             <div class="row g-4">
                 @foreach ($latestProducts as $p)
                     <div class="col-6 col-md-3">
-                        <div class="card shadow-sm border-0 rounded-4 h-100">
+                        <div class="card shadow-sm product-card border-0 rounded-4 h-100">
 
                             <img src="{{ $p->images->first() ? asset('images/' . $p->images->first()->image_path) : asset('images/default.jpg') }}"
                                 class="card-img-top rounded-top-4" style="height:280px; object-fit:cover;">
@@ -226,22 +245,25 @@
 
         <!-- Top Sellers -->
         <div class="container mt-5">
-            <h2 class="fw-bold mb-3">Top Sellers</h2>
+            <h2 class="cart-header text-dark fw-bold mb-3">Top Sellers</h2>
 
             <div class="row g-4">
                 @foreach ($topSellers as $seller)
-                    <div class="col-6 col-md-3">
-                        <div class="text-center p-4 bg-white card product-card border-0 rounded-4 h-100 overflow hidden">
+                        <div class="col-6 col-md-3">
+                            <div class="text-center p-4 bg-white card product-card border-0 rounded-4 h-100 overflow hidden">
 
-                            {{-- Profile Picture --}}
-                            <img src="{{ $seller->user->profile_picture ?? asset('images/default.png') }}"
-                                class="rounded-circle mx-auto mb-3" style="width:90px; height:90px; object-fit:cover;">
+                                {{-- Profile Picture --}}
+                                <img src="{{ $seller->user && $seller->user->profile_picture
+                    ? asset($seller->user->profile_picture)
+                    : asset('images/default.png') }}" class="rounded-circle mx-auto mb-3"
+                                    style="width:90px; height:90px; object-fit:cover;" alt="{{ $seller->business_name }}">
 
-                            {{-- Seller Name --}}
-                            <h6 class="fw-bold">{{ $seller->business_name }}</h6>
-                            <p class="text-muted small"><i class="bi bi-patch-check"></i> Trusted Seller</p>
+
+                                {{-- Seller Name --}}
+                                <h6 class="fw-bold">{{ $seller->business_name }}</h6>
+                                <p class="text-muted small"><i class="bi bi-patch-check"></i> Trusted Seller</p>
+                            </div>
                         </div>
-                    </div>
                 @endforeach
             </div>
         </div>
@@ -254,7 +276,7 @@
                 <div class="container py-5">
                     <div class="row g-4">
                         <div class="col-lg-6">
-                            <div class="p-4 shadow-sm rounded-4 mb-4 d-flex align-items-start">
+                            <div class="p-4 shadow-sm product-card feature-section rounded-4 mb-4 d-flex align-items-start">
                                 <div class="feature-icon me-4">
                                     <i class="bi bi-leaf"></i>
                                 </div>
@@ -268,7 +290,7 @@
                                 </div>
                             </div>
 
-                            <div class="p-4 shadow-sm rounded-4 mb-4 d-flex align-items-start">
+                            <div class="p-4 shadow-sm product-card feature-section rounded-4 mb-4 d-flex align-items-start">
                                 <div class="feature-icon me-4">
                                     <i class="bi bi-box-seam"></i>
                                 </div>
@@ -282,7 +304,7 @@
                                 </div>
                             </div>
 
-                            <div class="p-4 shadow-sm rounded-4 d-flex align-items-start">
+                            <div class="p-4 shadow-sm product-card feature-section rounded-4 d-flex align-items-start">
                                 <div class="feature-icon me-4">
                                     <i class="bi bi-truck"></i>
                                 </div>
@@ -303,8 +325,7 @@
                                     Aether & Leaf Co. is where nature meets minimalism. We curate a collection of indoor
                                     plants,
                                     premium pots, and gardening essentials designed to bring calm, beauty, and freshness
-                                    into
-                                    every
+                                    into every
                                     space.
                                 </p>
                                 <p class="text-muted mb-0">

@@ -11,44 +11,68 @@ use Illuminate\Support\Facades\Auth;
 
 class CartController extends Controller
 {
-    // Show cart
+    // Show cart page
     public function index()
     {
         $cart = Cart::firstOrCreate(['user_id' => Auth::id()]);
         $cartItems = $cart->items()->with('product.images')->get();
 
-        // Add full image URL for each cart item
         $cartItems->transform(function ($item) {
             $image = optional($item->product->images->first())->image_path;
-            $item->image_url = $image ? asset('images/' . $image) : asset('default.png');
+            $item->image_url = $image ? asset('images/' . $image) : asset('images/default.png');
             return $item;
         });
 
         return view('buyer.cart', compact('cartItems'));
     }
 
-    // Add to cart
+    // Add item to cart (AJAX)
     public function add(Request $request, $id)
     {
-        $product = Product::findOrFail($id);
+        $request->validate([
+            'variant' => 'required|string',
+            'quantity' => 'nullable|integer|min:1',
+        ]);
+
         $cart = Cart::firstOrCreate(['user_id' => Auth::id()]);
 
-        $cartItem = $cart->items()->where('product_id', $id)->first();
+        // Check if the same product + variant already exists
+        $item = $cart->items()
+            ->where('product_id', $id)
+            ->where('variant', $request->variant)
+            ->first();
 
-        if ($cartItem) {
-            $cartItem->increment('quantity');
+        if ($item) {
+            // Increment quantity
+            $item->increment('quantity', $request->quantity ?? 1);
         } else {
+            // Create new cart item
             $cart->items()->create([
                 'product_id' => $id,
-                'quantity' => 1,
+                'variant' => $request->variant,
+                'quantity' => $request->quantity ?? 1,
             ]);
         }
 
-        return redirect()->route('buyer.cart')
-            ->with('success', 'Item added to cart!');
+        return response()->json(['success' => true]);
     }
 
-    // Update quantity
+    // Sidebar AJAX
+    public function sidebar()
+    {
+        $cart = Cart::firstOrCreate(['user_id' => Auth::id()]);
+        $cartItems = $cart->items()->with('product.images')->get();
+
+        $cartItems->transform(function ($item) {
+            $image = optional($item->product->images->first())->image_path;
+            $item->image_url = $image ? asset('images/' . $image) : asset('images/default.png');
+            return $item;
+        });
+
+        return view('buyer.cart-sidebar', compact('cartItems'));
+    }
+
+    // Update quantity for a cart item
     public function update(Request $request, $id)
     {
         $request->validate([
@@ -62,11 +86,10 @@ class CartController extends Controller
             $cartItem->update(['quantity' => $request->quantity]);
         }
 
-        return redirect()->route('buyer.cart')
-            ->with('success', 'Cart updated!');
+        return redirect()->back()->with('success', 'Cart updated!');
     }
 
-    // Remove item
+    // Remove item from cart
     public function remove($id)
     {
         $cart = Cart::firstOrCreate(['user_id' => Auth::id()]);
@@ -76,20 +99,18 @@ class CartController extends Controller
             $cartItem->delete();
         }
 
-        return redirect()->route('buyer.cart')
-            ->with('success', 'Item removed!');
+        return redirect()->back()->with('success', 'Item removed!');
     }
 
-    // Checkout
+    // Checkout page
     public function checkout()
     {
         $cart = Cart::firstOrCreate(['user_id' => Auth::id()]);
         $cartItems = $cart->items()->with('product.images')->get();
 
-        // Add full image URL for each cart item
         $cartItems->transform(function ($item) {
             $image = optional($item->product->images->first())->image_path;
-            $item->image_url = $image ? asset('images/' . $image) : asset('default.png');
+            $item->image_url = $image ? asset('images/' . $image) : asset('images/default.png');
             return $item;
         });
 

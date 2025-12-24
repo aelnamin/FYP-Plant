@@ -60,6 +60,10 @@
                 transform: scale(1.05);
             }
 
+            .feature-section {
+                background: linear-gradient(135deg, #f9f9f9 0%, rgb(241, 239, 218) 100%);
+            }
+
             .feature-icon {
                 width: 60px;
                 height: 60px;
@@ -68,7 +72,7 @@
                 align-items: center;
                 justify-content: center;
                 font-size: 28px;
-                color: rgb(0, 0, 0);
+                color: rgb(87, 125, 85);
                 flex-shrink: 0;
             }
 
@@ -97,8 +101,8 @@
             <!-- SEARCH BAR OVERLAY -->
             <div
                 style="position: absolute; top: 50%; left: 50%;
-                                                                                                                                                                                                                                                transform: translate(-50%, -50%); z-index: 10; width: 100%; max-width: 700px;
-                                                                                                                                                                                                                                                text-align: center; color: white;">
+                                                                                                                                                                                                                                                                                                                                                                transform: translate(-50%, -50%); z-index: 10; width: 100%; max-width: 700px;
+                                                                                                                                                                                                                                                                                                                                                                text-align: center; color: white;">
 
                 <h1 class="fw-bold text-shadow">Welcome to Aether & Leaf Co.</h1>
                 <p class="text-shadow">Your trusted place for plants & gardening essentials</p>
@@ -213,8 +217,11 @@
                     <div class="text-center p-4 bg-white card product-card border-0 rounded-4 h-100 overflow hidden">
 
                         {{-- Profile Picture --}}
-                        <img src="{{ $seller->user->profile_picture ?? asset('images/default.png') }}"
-                            class="rounded-circle mx-auto mb-3" style="width:90px; height:90px; object-fit:cover;">
+                        <img src="{{ $seller->user && $seller->user->profile_picture
+                ? asset($seller->user->profile_picture)
+                : asset('images/default.png') }}" class="rounded-circle mx-auto mb-3"
+                            style="width:90px; height:90px; object-fit:cover;" alt="{{ $seller->business_name }}">
+
 
                         {{-- Seller Name --}}
                         <h6 class="fw-bold">{{ $seller->business_name }}</h6>
@@ -230,7 +237,7 @@
     <div class="container py-5">
         <div class="row g-4">
             <div class="col-lg-6">
-                <div class="p-4 shadow-sm rounded-4 mb-4 d-flex align-items-start">
+                <div class="p-4 shadow-sm feature-section rounded-4 mb-4 d-flex align-items-start">
                     <div class="feature-icon me-4">
                         <i class="bi bi-leaf"></i>
                     </div>
@@ -243,7 +250,7 @@
                     </div>
                 </div>
 
-                <div class="p-4 shadow-sm rounded-4 mb-4 d-flex align-items-start">
+                <div class="p-4 shadow-sm feature-section rounded-4 mb-4 d-flex align-items-start">
                     <div class="feature-icon me-4">
                         <i class="bi bi-box-seam"></i>
                     </div>
@@ -256,7 +263,7 @@
                     </div>
                 </div>
 
-                <div class="p-4 shadow-sm rounded-4 d-flex align-items-start">
+                <div class="p-4 shadow-sm feature-section rounded-4 d-flex align-items-start">
                     <div class="feature-icon me-4">
                         <i class="bi bi-truck"></i>
                     </div>
