@@ -205,18 +205,18 @@
                     <span class="price-old">RM {{ number_format($product->price + 30, 2) }}</span>
                     <span class="fs-4 fw-bold text-success">RM {{ number_format($product->price, 2) }}</span>
                 </div>
-
                 <hr>
 
-                {{-- Select Variant --}}
-                <h6 class="fw-semibold mt-4">Select Variant</h6>
-                <div class="d-flex gap-2 flex-wrap" id="variantOptions">
-                    @foreach($variants as $variant)
-                        <div class="option-box" data-variant="{{ $variant }}">{{ $variant }}</div>
-                    @endforeach
-                </div>
-
-                <input type="hidden" name="variant" id="selectedVariant">
+                {{-- Variant Selection (only if variants exist) --}}
+                @if(count($variants) > 0)
+                    <h6 class="fw-semibold mt-4">Select Variant</h6>
+                    <div class="d-flex gap-2 flex-wrap" id="variantOptions">
+                        @foreach($variants as $variant)
+                            <div class="option-box" data-variant="{{ $variant }}">{{ $variant }}</div>
+                        @endforeach
+                    </div>
+                @endif
+                <input type="hidden" name="variant" id="selectedVariant" value="">
                 <small class="text-danger d-none" id="variantError">Please select a variant</small>
 
                 {{-- Stock indicator --}}
@@ -343,21 +343,9 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function () {
-            // Quantity selector
             const decrementBtn = document.getElementById('decrement');
             const incrementBtn = document.getElementById('increment');
             const quantityInput = document.getElementById('quantity');
-
-            decrementBtn.addEventListener('click', function () {
-                let value = parseInt(quantityInput.value);
-                if (value > 1) quantityInput.value = value - 1;
-            });
-
-            incrementBtn.addEventListener('click', function () {
-                quantityInput.value = parseInt(quantityInput.value) + 1;
-            });
-
-            // Variant selection
             const variantBoxes = document.querySelectorAll('.option-box');
             const selectedVariantInput = document.getElementById('selectedVariant');
             const variantError = document.getElementById('variantError');
@@ -366,6 +354,16 @@
             const cartSidebarEl = document.getElementById('cartSidebar');
             const cartSidebar = cartSidebarEl ? new bootstrap.Offcanvas(cartSidebarEl) : null;
 
+            // Quantity buttons
+            decrementBtn?.addEventListener('click', () => {
+                let value = parseInt(quantityInput.value);
+                if (value > 1) quantityInput.value = value - 1;
+            });
+            incrementBtn?.addEventListener('click', () => {
+                quantityInput.value = parseInt(quantityInput.value) + 1;
+            });
+
+            // Variant selection (if exists)
             variantBoxes.forEach(box => {
                 box.addEventListener('click', function () {
                     variantBoxes.forEach(b => b.classList.remove('active'));
@@ -375,18 +373,17 @@
                 });
             });
 
-            // Add to cart
-            addToCartBtn.addEventListener('click', function (e) {
-                if (!selectedVariantInput.value) {
-                    e.preventDefault();
+            // Add to Cart
+            addToCartBtn?.addEventListener('click', function () {
+                // If variants exist, make sure one is selected
+                if (variantBoxes.length > 0 && !selectedVariantInput.value) {
                     variantError.classList.remove('d-none');
-                    return false;
+                    return;
                 }
 
                 fetch(form.action, {
                     method: 'POST',
-                    body: new FormData(form),
-                    headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}' }
+                    body: new FormData(form)
                 })
                     .then(res => res.json())
                     .then(data => {
@@ -400,5 +397,4 @@
             });
         });
     </script>
-
 @endsection

@@ -100,7 +100,7 @@
     @if($user && $user->role === 'buyer')
 <div class="offcanvas offcanvas-end" tabindex="-1" id="cartSidebar">
     <div class="offcanvas-header">
-        <h5 class="fw-bold">Your Cart</h5>
+        <h5 class="fw-bold">Basket</h5>
         <button type="button" class="btn-close" data-bs-dismiss="offcanvas"></button>
     </div>
     <div class="offcanvas-body">

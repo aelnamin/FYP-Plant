@@ -29,35 +29,44 @@ class CartController extends Controller
     // Add item to cart (AJAX)
     public function add(Request $request, $id)
     {
+        if (!Auth::check()) {
+            return response()->json(['error' => 'Unauthenticated'], 401);
+        }
+
+        // Make variant optional
         $request->validate([
-            'variant' => 'required|string',
+            'variant' => 'nullable|string',
             'quantity' => 'nullable|integer|min:1',
         ]);
 
         $cart = Cart::firstOrCreate(['user_id' => Auth::id()]);
 
-        // Check if the same product + variant already exists
+        // Use null if variant not selected
+        $variant = $request->variant ?? null;
+
+        // Find existing item with same product + variant
         $item = $cart->items()
             ->where('product_id', $id)
-            ->where('variant', $request->variant)
+            ->where('variant', $variant)
             ->first();
 
         if ($item) {
-            // Increment quantity
             $item->increment('quantity', $request->quantity ?? 1);
         } else {
-            // Create new cart item
             $cart->items()->create([
                 'product_id' => $id,
-                'variant' => $request->variant,
+                'variant' => $variant,
                 'quantity' => $request->quantity ?? 1,
             ]);
         }
 
-        return response()->json(['success' => true]);
+        return response()->json([
+            'success' => true,
+            'count' => $cart->items()->sum('quantity')
+        ]);
     }
 
-    // Sidebar AJAX
+    // Get cart sidebar for AJAX
     public function sidebar()
     {
         $cart = Cart::firstOrCreate(['user_id' => Auth::id()]);
@@ -122,4 +131,5 @@ class CartController extends Controller
         return view('buyer.checkout', compact('cartItems'));
     }
 }
+
 

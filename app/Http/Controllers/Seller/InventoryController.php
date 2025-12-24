@@ -9,7 +9,6 @@ use App\Models\Category;
 use App\Models\Seller;
 use App\Models\ProductImage;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Storage;
 
 class InventoryController extends Controller
 {
@@ -43,8 +42,17 @@ class InventoryController extends Controller
             'difficulty_level' => 'nullable|string',
             'growth_stage' => 'nullable|string',
 
-            'images.*' => 'nullable|image|mimes:jpg,jpeg,png|max:2048'
+            'variants_input' => 'nullable|string', // ✅ VARIANTS
+            'images.*' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
         ]);
+
+        // ✅ Convert variants to JSON
+        $variants = null;
+        if ($request->filled('variants_input')) {
+            $variants = json_encode(
+                array_map('trim', explode(',', $request->variants_input))
+            );
+        }
 
         $product = Product::create([
             'seller_id' => $seller->id,
@@ -59,13 +67,13 @@ class InventoryController extends Controller
             'difficulty_level' => $request->difficulty_level,
             'growth_stage' => $request->growth_stage,
 
+            'variants' => $variants, // ✅ SAVE VARIANTS
             'approval_status' => 'Pending',
         ]);
 
-        // Save images into PUBLIC/images
+        // Save images
         if ($request->hasFile('images')) {
             foreach ($request->file('images') as $image) {
-
                 $filename = time() . '_' . $image->getClientOriginalName();
                 $image->move(public_path('images'), $filename);
 
@@ -107,9 +115,18 @@ class InventoryController extends Controller
             'difficulty_level' => 'nullable|string',
             'growth_stage' => 'nullable|string',
 
+            'variants_input' => 'nullable|string', // ✅ VARIANTS
             'images.*' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
             'remove_images' => 'nullable|array',
         ]);
+
+        // ✅ Convert variants to JSON
+        $variants = null;
+        if ($request->filled('variants_input')) {
+            $variants = json_encode(
+                array_map('trim', explode(',', $request->variants_input))
+            );
+        }
 
         $product->update([
             'category_id' => $request->category_id,
@@ -122,17 +139,18 @@ class InventoryController extends Controller
             'watering_frequency' => $request->watering_frequency,
             'difficulty_level' => $request->difficulty_level,
             'growth_stage' => $request->growth_stage,
+
+            'variants' => $variants, // ✅ UPDATE VARIANTS
         ]);
 
-        // Remove selected old images
+        // Remove images
         if ($request->remove_images) {
             foreach ($request->remove_images as $imgId) {
                 $img = ProductImage::find($imgId);
                 if ($img) {
-                    // Delete from public/images
-                    if (file_exists(public_path($img->image_path))) {
-                        unlink(public_path($img->image_path));
-                    }
+                    $file = public_path('images/' . $img->image_path);
+                    if (file_exists($file))
+                        unlink($file);
                     $img->delete();
                 }
             }
@@ -141,7 +159,6 @@ class InventoryController extends Controller
         // Add new images
         if ($request->hasFile('images')) {
             foreach ($request->file('images') as $image) {
-
                 $filename = time() . '_' . $image->getClientOriginalName();
                 $image->move(public_path('images'), $filename);
 
@@ -170,11 +187,10 @@ class InventoryController extends Controller
         $seller = Seller::where('user_id', Auth::id())->first();
         $product = $seller->products()->findOrFail($id);
 
-        // Delete images from public/images
         foreach ($product->images as $img) {
-            if (file_exists(public_path($img->image_path))) {
-                unlink(public_path($img->image_path));
-            }
+            $file = public_path('images/' . $img->image_path);
+            if (file_exists($file))
+                unlink($file);
             $img->delete();
         }
 

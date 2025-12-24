@@ -41,6 +41,17 @@
                 <textarea class="form-control" name="description" rows="4">{{ $product->description }}</textarea>
             </div>
 
+            <div class="mb-3">
+                <label>Variants (comma separated)</label>
+                <input type="text" name="variants_input" class="form-control"
+                    placeholder="White Lily, Pink Lily, Yellow Lily"
+                    value="{{ old('variants_input', isset($product) && $product->variants ? implode(', ', json_decode($product->variants, true)) : '') }}">
+                <small class="text-muted">
+                    Example: Small, Medium, Large OR Red, Blue, Green
+                </small>
+            </div>
+
+
             {{-- PRICE --}}
             <div class="mb-3">
                 <label>Price (RM)</label>
