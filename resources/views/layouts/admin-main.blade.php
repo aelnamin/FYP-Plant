@@ -33,6 +33,9 @@
                         <a href="{{ route('admin.users.index') }}" class="nav-link text-dark"> Products</a>
                     </li>
 
+                    <li class="nav-item mb-2">
+                        <a href="{{ route('admin.orders.index') }}" class="nav-link text-dark"> Orders</a>
+                    </li>
 
                     <li class="nav-item mt-3">
                         <form action="{{ route('logout') }}" method="POST">

@@ -184,10 +184,6 @@
                 @endforeach
 
             </div>
-
-            <div class="mt-4">
-                {{ $products->links() }}
-            </div>
         @else
             <p>No products found.</p>
         @endif

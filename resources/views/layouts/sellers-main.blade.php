@@ -46,7 +46,7 @@
                     </li>
 
                     <li class="nav-item mb-2">
-                        <a href="{{ route('sellers.inventory.index') }}" class="nav-link text-dark">Orders</a>
+                        <a href="{{ route('sellers.orders.index') }}" class="nav-link text-dark">Orders</a>
                     </li>
 
                     <li class="nav-item mb-2">

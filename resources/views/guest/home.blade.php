@@ -101,8 +101,8 @@
             <!-- SEARCH BAR OVERLAY -->
             <div
                 style="position: absolute; top: 50%; left: 50%;
-                                                                                                                                                                                                                                                                                                                                                                transform: translate(-50%, -50%); z-index: 10; width: 100%; max-width: 700px;
-                                                                                                                                                                                                                                                                                                                                                                text-align: center; color: white;">
+                                                                                                                                                                                                                                                                                                                                                                        transform: translate(-50%, -50%); z-index: 10; width: 100%; max-width: 700px;
+                                                                                                                                                                                                                                                                                                                                                                        text-align: center; color: white;">
 
                 <h1 class="fw-bold text-shadow">Welcome to Aether & Leaf Co.</h1>
                 <p class="text-shadow">Your trusted place for plants & gardening essentials</p>

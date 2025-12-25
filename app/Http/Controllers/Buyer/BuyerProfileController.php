@@ -12,9 +12,17 @@ class BuyerProfileController extends Controller
 {
     public function index()
     {
+        /** @var \App\Models\User $user */
         $user = Auth::user();
-        return view('buyer.profile', compact('user'));
+
+        $orders = $user->orders()
+            ->with('items.product.seller')
+            ->latest()
+            ->get();
+
+        return view('buyer.profile', compact('user', 'orders'));
     }
+
 
     public function update(Request $request)
     {

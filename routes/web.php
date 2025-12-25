@@ -11,7 +11,11 @@ use App\Http\Controllers\Admin\AdminDashboardController;
 use App\Http\Controllers\Admin\UserManagementController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\LogoutController;
+use App\Http\Controllers\Buyer\TransactionController;
+use App\Http\Controllers\Seller\OrderManagementController;
+use App\Http\Controllers\Seller\SellerOrderController;
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\Buyer\CartController as BuyerCartController;
 use App\Http\Controllers\Buyer\BuyerProfileController;
 use App\Http\Controllers\Seller\SellerProfileController;
@@ -83,6 +87,15 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
    Route::post('/products/{id}/approve', [ProductApprovalController::class, 'approve'])
       ->name('admin.products.approve');
 
+   // Payment simulation: mark order as Paid
+   Route::post('orders/{order}/mark-paid', [PaymentController::class, 'markAsPaid'])
+      ->name('orders.markPaid');
+
+   // Optional: view all orders
+   Route::get('orders', [PaymentController::class, 'index'])
+      ->name('orders.index');
+   Route::get('orders/{order}', [PaymentController::class, 'show'])
+      ->name('orders.show');
 });
 
 
@@ -129,6 +142,15 @@ Route::middleware(['auth', 'role:seller'])
    ->group(function () {
       Route::get('/profile', [SellerProfileController::class, 'index'])->name('profile');
       Route::put('/profile', [SellerProfileController::class, 'update'])->name('profile.update');
+
+      // Seller orders list
+      Route::get('/orders', [SellerOrderController::class, 'index'])->name('orders.index');
+
+      // Show single order details
+      Route::get('/orders/{order}', [SellerOrderController::class, 'show'])->name('orders.show');
+
+      // Mark order as shipped
+      Route::post('/orders/{order}/ship', [SellerOrderController::class, 'markAsShipped'])->name('orders.ship');
    });
 
 
@@ -150,5 +172,20 @@ Route::middleware(['auth', 'role:buyer'])->group(function () {
 
    Route::put('/profile/update', [BuyerProfileController::class, 'update'])
       ->name('buyer.profile.update');
+
+   Route::post(
+      '/place-order',
+      [TransactionController::class, 'store']
+   )->name('buyer.place.order');
+
+   Route::get(
+      '/transactions',
+      [TransactionController::class, 'index']
+   )->name('buyer.transactions.index');
+
+   Route::get(
+      '/transactions/{order}',
+      [TransactionController::class, 'show']
+   )->name('buyer.transactions.show');
 
 });

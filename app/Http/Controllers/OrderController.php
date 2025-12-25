@@ -16,8 +16,8 @@ class OrderController extends Controller
     {
         $validated = $request->validate([
             'buyer_id' => 'required|exists:users,id',
-            'status'   => 'required|string',
-            'total'    => 'required|numeric'
+            'status' => 'required|string',
+            'total' => 'required|numeric'
         ]);
 
         return Order::create($validated);
@@ -34,8 +34,8 @@ class OrderController extends Controller
 
         $validated = $request->validate([
             'buyer_id' => 'sometimes|exists:users,id',
-            'status'   => 'sometimes|string',
-            'total'    => 'sometimes|numeric'
+            'status' => 'sometimes|string',
+            'total' => 'sometimes|numeric'
         ]);
 
         $order->update($validated);

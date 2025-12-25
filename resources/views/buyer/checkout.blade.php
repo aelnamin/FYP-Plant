@@ -263,7 +263,7 @@
         <p class="text-muted">Review items and confirm details</p>
     </div>
 
-    <form action="{{ route('checkout.placeOrder') }}" method="POST" id="checkoutForm">
+    <form action="{{ route('buyer.place.order') }}" method="POST" id="checkoutForm">
         @csrf
 
         <div class="row g-4">
@@ -378,32 +378,26 @@
                     </div>
 
                     <!-- Button -->
-                    <button type="submit" class="btn btn-outline-success w-100 py-3 product-price rounded-pill"
-                        id="placeOrderBtn">
+                    <button type="submit" id="placeOrderBtn"
+                        class="btn btn-outline-success w-100 py-3 product-price rounded-pill">
                         Place Order
                     </button>
-                </div>
-            </div>
-        </div>
     </form>
 </div>
 
 <script>
     function selectPayment(method) {
-        // Update radio
         document.getElementById(method).checked = true;
 
-        // Update UI
         document.querySelectorAll('.payment-card').forEach(card => {
             card.classList.remove('active');
         });
         event.currentTarget.classList.add('active');
     }
 
-    // Form submit
-    document.getElementById('checkoutForm').addEventListener('submit', function (e) {
+    document.getElementById('checkoutForm').addEventListener('submit', function () {
         const btn = document.getElementById('placeOrderBtn');
-        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
+        btn.innerHTML = 'Processing...';
         btn.disabled = true;
     });
 </script>

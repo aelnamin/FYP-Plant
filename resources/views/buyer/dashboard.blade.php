@@ -195,7 +195,8 @@
 
                             <div class="card-body">
                                 <h6 class="fw-bold">{{ $p->product_name }}</h6>
-                                <div class="text-muted small">{{ $p->seller->business_name ?? 'Unknown Seller' }}</div>
+                                <div class="text-muted small"><i
+                                        class="bi bi-shop me-2"></i>{{ $p->seller->business_name ?? 'Unknown Seller' }}</div>
                                 <div class="fw-bold text-success mt-2">RM {{ number_format($p->price, 2) }}</div>
                             </div>
 
