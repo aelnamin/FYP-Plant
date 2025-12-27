@@ -85,8 +85,15 @@
             }
 
             .product-card {
+                border-radius: 16px;
+                overflow: hidden;
                 transition: all 0.3s ease;
                 border: 1px solid rgba(0, 0, 0, 0.08);
+                box-shadow: 0 15px 30px rgba(92, 127, 81, 0.15);
+            }
+
+            .product-card .card-footer {
+                background: #fff;
             }
 
             .product-card:hover {
@@ -101,8 +108,8 @@
             <!-- SEARCH BAR OVERLAY -->
             <div
                 style="position: absolute; top: 50%; left: 50%;
-                                                                                                                                                                                                                                                                                                                                                                        transform: translate(-50%, -50%); z-index: 10; width: 100%; max-width: 700px;
-                                                                                                                                                                                                                                                                                                                                                                        text-align: center; color: white;">
+                                                                                                                                                                                                                                                                                                                                                                                                                                                transform: translate(-50%, -50%); z-index: 10; width: 100%; max-width: 700px;
+                                                                                                                                                                                                                                                                                                                                                                                                                                                text-align: center; color: white;">
 
                 <h1 class="fw-bold text-shadow">Welcome to Aether & Leaf Co.</h1>
                 <p class="text-shadow">Your trusted place for plants & gardening essentials</p>
@@ -164,9 +171,9 @@
                             <div class="fw-bold text-success mt-2">RM {{ number_format($p->price, 2) }}</div>
                         </div>
 
-                        <div class="card-footer bg-white">
+                        <div class="card-footer bg-white rounder-bottom-4">
                             <a href="{{ route('products.show', $p->id) }}" class="btn btn-outline-success w-100 rounded-pill">
-                                View Details
+                                View Details <i class="bi bi-arrow-right ms-1"></i>
                             </a>
                         </div>
                     </div>
@@ -194,7 +201,7 @@
                             <div class="fw-bold text-success mt-2">RM {{ number_format($p->price, 2) }}</div>
                         </div>
 
-                        <div class="card-footer bg-white">
+                        <div class="card-footer bg-white rounder-bottom-4">
                             <a href="{{ route('products.show', $p->id) }}" class="btn btn-outline-success w-100 rounded-pill">
                                 View Details
                             </a>

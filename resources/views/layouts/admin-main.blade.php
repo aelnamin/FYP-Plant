@@ -26,15 +26,19 @@
                     </li>
 
                     <li class="nav-item mb-2">
-                        <a href="{{ route('admin.users.index') }}" class="nav-link text-dark"> Users</a>
+                        <a href="{{ route('admin.users.index') }}" class="nav-link text-dark"> Manage Users</a>
                     </li>
 
                     <li class="nav-item mb-2">
-                        <a href="{{ route('admin.users.index') }}" class="nav-link text-dark"> Products</a>
+                        <a href="{{ route('admin.products.index') }}" class="nav-link text-dark"> Manage Products</a>
                     </li>
 
                     <li class="nav-item mb-2">
-                        <a href="{{ route('admin.orders.index') }}" class="nav-link text-dark"> Orders</a>
+                        <a href="{{ route('admin.orders.index') }}" class="nav-link text-dark"> Manage Orders</a>
+                    </li>
+
+                    <li class="nav-item mb-2">
+                        <a href="{{ route('admin.sellers.index') }}" class="nav-link text-dark"> Manage Sellers</a>
                     </li>
 
                     <li class="nav-item mt-3">

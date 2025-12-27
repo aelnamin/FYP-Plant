@@ -19,6 +19,8 @@ use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\Buyer\CartController as BuyerCartController;
 use App\Http\Controllers\Buyer\BuyerProfileController;
 use App\Http\Controllers\Seller\SellerProfileController;
+use App\Http\Controllers\Admin\AdminProductController;
+use App\Http\Controllers\Admin\SellerManagementController;
 use App\Http\Controllers\Admin\ProductApprovalController;
 use App\Http\Controllers\Seller\InventoryController;
 use App\Http\Controllers\CheckoutController;
@@ -78,20 +80,30 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
       ->name('dashboard');
 
    Route::resource('users', UserManagementController::class);
-   Route::resource('users', UserManagementController::class);
+
    Route::get('users/{user}/reports', [UserManagementController::class, 'reports'])->name('users.reports');
 
-   Route::get('/products/pending', [ProductApprovalController::class, 'index'])
-      ->name('admin.products.pending');
+   Route::get('/products', [AdminProductController::class, 'index'])->name('products.index');
+   Route::delete('/products/{product}', [AdminProductController::class, 'destroy'])->name('products.destroy');
+   Route::put('/products/{product}', [AdminProductController::class, 'update'])->name('products.update');
+   Route::get('/products/{product}', [AdminProductController::class, 'show'])->name('products.show');
 
-   Route::post('/products/{id}/approve', [ProductApprovalController::class, 'approve'])
-      ->name('admin.products.approve');
+   Route::get('/products/pending', [ProductApprovalController::class, 'index'])
+      ->name('products.pending');
+
+   Route::post('/products/{id}/approve', [ProductApprovalController::class, 'approve'])->name('products.approve');
+   Route::post('/products/{id}/reject', [ProductApprovalController::class, 'reject'])->name('products.reject');
+
+   Route::get('/sellers', [SellerManagementController::class, 'index'])->name('sellers.index');
+   Route::get('/sellers/{seller}', [SellerManagementController::class, 'show'])->name('sellers.show');
+   Route::post('/sellers/{seller}/approve', [SellerManagementController::class, 'approve'])->name('sellers.approve');
+   Route::post('/sellers/{seller}/reject', [SellerManagementController::class, 'reject'])->name('sellers.reject');
 
    // Payment simulation: mark order as Paid
    Route::post('orders/{order}/mark-paid', [PaymentController::class, 'markAsPaid'])
       ->name('orders.markPaid');
 
-   // Optional: view all orders
+   // view all orders
    Route::get('orders', [PaymentController::class, 'index'])
       ->name('orders.index');
    Route::get('orders/{order}', [PaymentController::class, 'show'])

@@ -20,13 +20,28 @@ class UserManagementController extends Controller
     /**
      * Display a listing of users
      */
-    public function index()
+    public function index(Request $request)
     {
-        $users = User::where('role', '!=', 'admin')
-            ->orderBy('created_at', 'desc')
-            ->get();
+        // Base query: exclude admins
+        $query = User::where('role', '!=', 'admin');
 
-        return view('admin.users.index', compact('users'));
+        // Search by name or email
+        if ($search = $request->input('search')) {
+            $query->where(function ($q) use ($search) {
+                $q->where('name', 'like', "%$search%")
+                    ->orWhere('email', 'like', "%$search%");
+            });
+        }
+
+        // Filter by role
+        if ($role = $request->input('role')) {
+            $query->where('role', $role);
+        }
+
+        // Order by newest and paginate
+        $users = $query->orderBy('created_at', 'desc')->paginate(10);
+
+        return view('admin.users.index', compact('users', 'search', 'role'));
     }
 
 

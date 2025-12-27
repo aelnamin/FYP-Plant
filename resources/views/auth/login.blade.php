@@ -308,10 +308,6 @@
                         style="border-color: #ddd; padding: 8px 20px; font-size: 14px;">
                         <i class="bi bi-google me-1"></i> Google
                     </button>
-                    <button type="button" class="btn btn-outline-secondary rounded-pill"
-                        style="border-color: #ddd; padding: 8px 20px; font-size: 14px;">
-                        <i class="bi bi-facebook me-1"></i> Facebook
-                    </button>
                 </div>
             </div>
         </div>

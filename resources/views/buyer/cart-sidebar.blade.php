@@ -12,7 +12,6 @@
         align-items: center;
         justify-content: space-between;
         flex-wrap: wrap;
-        /* ensures content wraps on smaller screens */
     }
 
     .seller-info {
@@ -22,7 +21,6 @@
         font-size: 0.9rem;
         font-weight: 600;
         word-break: break-word;
-        /* prevent long seller names from overflowing */
     }
 
     .seller-item-count {
@@ -43,7 +41,6 @@
         border: 1px solid #f0f7ff;
         display: flex;
         flex-wrap: wrap;
-        /* allow wrapping on small screens */
         gap: 0.75rem;
     }
 
@@ -54,28 +51,31 @@
         object-fit: cover;
         box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
         flex-shrink: 0;
-        /* prevent shrinking */
     }
 
     .flex-grow-1 {
         min-width: 0;
-        /* allow text to wrap inside flex container */
     }
 
     .product-name {
         font-weight: 600;
         font-size: 0.95rem;
-        margin-bottom: 0.4rem;
+        margin-bottom: 0.1rem;
         word-break: break-word;
+    }
+
+    .product-variant {
+        font-size: 0.8rem;
+        color: #6c757d;
+        margin-bottom: 0.4rem;
     }
 
     .quantity-control {
         display: flex;
         align-items: center;
         flex-wrap: wrap;
-        /* wrap on smaller widths */
         gap: 0.5rem;
-        margin-top: 0.5rem;
+        margin-top: 0.3rem;
     }
 
     .qty-btn {
@@ -113,9 +113,7 @@
 @if($cartItems->count() > 0)
     @php
         $subtotal = 0;
-        $groupedItems = $cartItems->groupBy(function ($item) {
-            return $item->product->seller->id ?? 'unknown';
-        });
+        $groupedItems = $cartItems->groupBy(fn($item) => $item->product->seller->id ?? 'unknown');
     @endphp
 
     @foreach($groupedItems as $sellerId => $sellerItems)
@@ -141,21 +139,46 @@
                     @endphp
 
                     <div class="product-card">
-                        <img src="{{ $item->product->images->first() ? asset('images/' . $item->product->images->first()->image_path) : asset('images/default.jpg') }}"
-                            class="product-img" alt="{{ $item->product->product_name }}">
+                        <img
+                            src="{{ $item->product->images->first()
+                                ? asset('images/' . $item->product->images->first()->image_path)
+                                : asset('images/default.jpg') }}"
+                            class="product-img"
+                            alt="{{ $item->product->product_name }}">
 
                         <div class="flex-grow-1">
-                            <div class="product-name">{{ $item->product->product_name }}</div>
+                            <div class="product-name">
+                                {{ $item->product->product_name }}
+                            </div>
+
+                            @if($item->variant)
+                                <div class="product-variant">
+                                    Variant: {{ $item->variant }}
+                                </div>
+                            @endif
 
                             <div class="quantity-control">
                                 <form action="{{ route('cart.update', $item->id) }}" method="POST"
                                     class="d-flex align-items-center flex-wrap gap-1">
                                     @csrf
                                     @method('PUT')
-                                    <button type="submit" name="quantity" value="{{ $item->quantity - 1 }}" class="qty-btn" {{ $item->quantity <= 1 ? 'disabled' : '' }}>-</button>
+
+                                    <button type="submit" name="quantity"
+                                        value="{{ $item->quantity - 1 }}"
+                                        class="qty-btn"
+                                        {{ $item->quantity <= 1 ? 'disabled' : '' }}>
+                                        -
+                                    </button>
+
                                     <span class="mx-2">{{ $item->quantity }}</span>
-                                    <button type="submit" name="quantity" value="{{ $item->quantity + 1 }}" class="qty-btn">+</button>
+
+                                    <button type="submit" name="quantity"
+                                        value="{{ $item->quantity + 1 }}"
+                                        class="qty-btn">
+                                        +
+                                    </button>
                                 </form>
+
                                 <small class="text-muted ms-2 flex-shrink-0">
                                     x RM{{ number_format($item->product->price, 2) }}
                                 </small>
@@ -164,6 +187,7 @@
 
                         <div class="product-price">
                             RM {{ number_format($item->product->price * $item->quantity, 2) }}
+
                             <form action="{{ route('cart.remove', $item->id) }}" method="POST" class="mt-1">
                                 @csrf
                                 @method('DELETE')

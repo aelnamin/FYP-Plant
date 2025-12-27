@@ -144,10 +144,7 @@
         </div>
 
 
-        <!-- Header -->
-        <div class="cart-header text-dark">
-            <h1>All Products</h1>
-        </div>
+
 
         <!-- PRODUCTS -->
         @if ($products->count() > 0)
@@ -183,6 +180,12 @@
                     </div>
                 @endforeach
 
+            </div>
+
+
+            <!-- PAGINATION -->
+            <div class="d-flex justify-content-center mt-5">
+                {{ $products->links() }}
             </div>
         @else
             <p>No products found.</p>

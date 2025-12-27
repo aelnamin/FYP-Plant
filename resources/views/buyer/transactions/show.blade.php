@@ -15,12 +15,12 @@
                 <p class="mb-1">
                     <strong>Status:</strong>
                     <span class="badge
-                        @if($order->status === 'Pending') bg-warning
-                        @elseif($order->status === 'Paid') bg-primary
-                        @elseif($order->status === 'Shipped') bg-success
-                        @else bg-secondary
-                        @endif
-                    ">
+                            @if($order->status === 'Pending') bg-warning
+                            @elseif($order->status === 'Paid') bg-primary
+                            @elseif($order->status === 'Shipped') bg-success
+                            @else bg-secondary
+                            @endif
+                        ">
                         {{ $order->status }}
                     </span>
                 </p>

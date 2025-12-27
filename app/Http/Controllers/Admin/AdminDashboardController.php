@@ -20,21 +20,39 @@ class AdminDashboardController extends Controller
         // basic metrics
         $totalUsers = User::count();
         $totalSellers = Seller::count();
-        $totalProducts = Product::count();
+
+        // Only products where product is approved AND seller is approved
+        $totalProducts = Product::where('approval_status', 'Approved')
+            ->whereHas('seller', function ($q) {
+                $q->where('verification_status', 'Approved');
+            })
+            ->count();
+
         $totalOrders = Order::count();
         $totalTransactions = Transaction::count();
 
+        // TOTAL REVENUE (paid orders only)
+        $totalRevenue = Order::where('status', 'paid')
+            ->sum('total_amount');
 
         // pending items
         $pendingSellers = Seller::where('verification_status', 'Pending')->count();
         $pendingProducts = Product::where('approval_status', 'Pending')->count();
         $openComplaints = Complaint::where('status', 'Pending')->count();
+        $pendingOrders = Order::where('status', 'pending')->count();
+        $paidOrders = Order::where('status', 'paid')->count();
+        $cancelledOrders = Order::where('status', 'cancelled')->count();
 
-
-        // recent lists (limit for preview)
-        $recentUsers = User::orderBy('created_at', 'desc')->limit(6)->get();
-        $recentProducts = Product::with('seller')->orderBy('created_at', 'desc')->limit(6)->get();
-
+        // recent lists (only products from approved sellers)
+        $recentUsers = User::latest()->limit(6)->get();
+        $recentProducts = Product::with('seller')
+            ->where('approval_status', 'Approved')
+            ->whereHas('seller', function ($q) {
+                $q->where('verification_status', 'Approved');
+            })
+            ->latest()
+            ->limit(6)
+            ->get();
 
         return view('admin.dashboard', compact(
             'totalUsers',
@@ -42,11 +60,15 @@ class AdminDashboardController extends Controller
             'totalProducts',
             'totalOrders',
             'totalTransactions',
+            'totalRevenue',
             'pendingSellers',
             'pendingProducts',
             'openComplaints',
             'recentUsers',
-            'recentProducts'
+            'recentProducts',
+            'pendingOrders',
+            'paidOrders',
+            'cancelledOrders'
         ));
     }
 }

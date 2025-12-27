@@ -1,64 +1,119 @@
 @extends('layouts.admin-main')
 
+@section('title', 'Product Management')
+
 @section('content')
-<div class="container mt-4">
-    <h2>Manage Products</h2>
+    <div class="container mt-4">
 
-    <a href="{{ route('admin.products.create') }}" class="btn btn-primary mb-3">Add New Product</a>
+        <!-- Page Header -->
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h5 class="fw-bold text-success">Product Management</h5>
 
-    @if(session('success'))
-    <div class="alert alert-success">{{ session('success') }}</div>
-    @endif
+            <form method="GET" class="d-flex gap-2">
+                <input type="text" name="search" class="form-control form-control-sm" placeholder="Search products..."
+                    value="{{ request('search') }}">
 
-    <table class="table table-bordered">
-        <thead>
-            <tr>
-                <th>ID</th>
-                <th>Image</th> <!-- NEW -->
-                <th>Product</th>
-                <th>Category</th>
-                <th>Seller</th>
-                <th>Price (RM)</th>
-                <th>Stock</th>
-                <th>Status</th>
-                <th>Actions</th>
-            </tr>
-        </thead>
+                <select name="status" class="form-select form-select-sm">
+                    <option value="">All Status</option>
+                    <option value="Pending" {{ request('status') == 'Pending' ? 'selected' : '' }}>Pending</option>
+                    <option value="Approved" {{ request('status') == 'Approved' ? 'selected' : '' }}>Approved</option>
+                    <option value="Rejected" {{ request('status') == 'Rejected' ? 'selected' : '' }}>Rejected</option>
+                </select>
 
-        <tbody>
-            @foreach($products as $p)
-            <tr>
-                <td>{{ $p->id }}</td>
+                <button class="btn btn-sm btn-success">Filter</button>
+            </form>
+        </div>
 
-                <!-- SHOW FIRST IMAGE -->
-                <td>
-                    @if ($p->images->first())
-                    <img src="{{ asset('images/' . $p->images->first()->image_path) }}"
-                        width="60" height="60" style="object-fit:cover; border-radius:4px;">
-                    @else
-                    <span class="text-muted">No Image</span>
-                    @endif
+        <!-- Product Table -->
+        <div class="card shadow-sm rounded-4">
+            <div class="table-responsive">
+                <table class="table align-middle mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Product</th>
+                            <th>Seller</th>
+                            <th>Category</th>
+                            <th>Price</th>
+                            <th>Status</th>
+                            <th class="text-end">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @forelse($products as $product)
+                                        <tr>
+                                            <!-- Product Info -->
+                                            <td>
+                                                <div class="d-flex align-items-center">
+                                                    <img src="{{ $product->images->first()
+                            ? asset('images/' . $product->images->first()->image_path)
+                            : asset('images/default.jpg') }}" class="rounded me-2"
+                                                        style="width:60px;height:60px;object-fit:cover;">
 
-                </td>
+                                                    <div>
+                                                        <div class="fw-semibold">{{ $product->product_name }}</div>
+                                                        <small class="text-muted">ID: {{ $product->id }}</small>
+                                                    </div>
+                                                </div>
+                                            </td>
 
-                <td>{{ $p->product_name }}</td>
-                <td>{{ $p->category->category_name }}</td>
-                <td>{{ $p->seller->business_name ?? 'Unknown' }}</td>
-                <td>{{ number_format($p->price, 2) }}</td>
-                <td>{{ $p->stock_quantity }}</td>
-                <td>{{ $p->approval_status ?? 'Pending' }}</td>
-                <td>
-                    <a href="{{ route('admin.products.show', $p->id) }}" class="btn btn-info btn-sm">View</a>
-                    <a href="{{ route('admin.products.edit', $p->id) }}" class="btn btn-warning btn-sm">Edit</a>
-                    <form action="{{ route('admin.products.destroy', $p->id) }}" method="POST" class="d-inline">
-                        @csrf @method('DELETE')
-                        <button class="btn btn-danger btn-sm">Delete</button>
-                    </form>
-                </td>
-            </tr>
-            @endforeach
-        </tbody>
-    </table>
+                                            <td>{{ $product->seller->business_name ?? 'Unknown' }}</td>
+                                            <td>{{ $product->category->category_name ?? '-' }}</td>
+                                            <td class="text-success fw-semibold">
+                                                RM {{ number_format($product->price, 2) }}
+                                            </td>
 
-</div>
+                                            <!-- Status Badge -->
+                                            <td>
+                                                @if($product->approval_status == 'Pending')
+                                                    <span class="badge bg-warning text-dark">Pending</span>
+                                                @elseif($product->approval_status == 'Approved')
+                                                    <span class="badge bg-success">Approved</span>
+                                                @elseif($product->approval_status == 'Rejected')
+                                                    <span class="badge bg-danger">Rejected</span>
+                                                @else
+                                                    <span class="badge bg-success">Approved</span> <!-- optional fallback -->
+                                                @endif
+                                            </td>
+
+
+                                            <!-- Actions -->
+                                            <td class="text-end">
+                                                <a href="{{ route('admin.products.show', $product->id) }}"
+                                                    class="btn btn-sm btn-outline-secondary">
+                                                    View
+                                                </a>
+
+                                                @if($product->approval_status == 'Pending')
+                                                    <form action="{{ route('admin.products.approve', $product->id) }}" method="POST"
+                                                        class="d-inline">
+                                                        @csrf
+                                                        <button type="submit" class="btn btn-sm btn-outline-success">Approve</button>
+                                                    </form>
+
+                                                    <form action="{{ route('admin.products.reject', $product->id) }}" method="POST"
+                                                        class="d-inline">
+                                                        @csrf
+                                                        <button type="submit" class="btn btn-sm btn-outline-danger">Reject</button>
+                                                    </form>
+                                                @endif
+                                            </td>
+                                        </tr>
+                        @empty
+                            <tr>
+                                <td colspan="6" class="text-center text-muted py-4">
+                                    No products found.
+                                </td>
+                            </tr>
+                        @endforelse
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Pagination -->
+        <div class="d-flex justify-content-end mt-3">
+            {{ $products->links() }}
+        </div>
+
+    </div>
 @endsection

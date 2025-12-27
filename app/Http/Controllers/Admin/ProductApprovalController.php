@@ -21,48 +21,47 @@ class ProductApprovalController extends Controller
     }
 
     /**
-     * Show single product details.
+     * Approve product
      */
-    public function show(Product $product_approval)
+    public function approve($id)
     {
-        return view('admin.product-approvals.show', [
-            'product' => $product_approval
+        $product = Product::findOrFail($id);
+
+        $product->update([
+            'approval_status' => 'Approved'
         ]);
+
+        return back()->with('success', 'Product approved successfully.');
     }
 
     /**
-     * Approve or reject product.
+     * Reject product
      */
-    public function update(Request $request, Product $product_approval)
+    public function reject($id)
     {
-        $request->validate([
-            'status' => 'required|in:Approved,Rejected'
+        $product = Product::findOrFail($id);
+
+        $product->update([
+            'approval_status' => 'Rejected'
         ]);
 
-        $product_approval->update([
-            'approval_status' => $request->status
-        ]);
-
-        return redirect()->route('product-approvals.index')
-            ->with('success', 'Product status updated successfully.');
+        return back()->with('success', 'Product rejected successfully.');
     }
 
     /**
-     * Delete product (if required by admin).
+     * Delete product
      */
-    public function destroy(Product $product_approval)
+    public function destroy(Product $product)
     {
-        // Delete product images
-        foreach ($product_approval->images as $img) {
+        foreach ($product->images as $img) {
             if (file_exists(public_path($img->image_path))) {
                 unlink(public_path($img->image_path));
             }
             $img->delete();
         }
 
-        $product_approval->delete();
+        $product->delete();
 
-        return redirect()->route('product-approvals.index')
-            ->with('success', 'Product deleted successfully.');
+        return back()->with('success', 'Product deleted successfully.');
     }
 }

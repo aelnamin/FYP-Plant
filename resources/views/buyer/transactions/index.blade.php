@@ -18,11 +18,11 @@
                         </div>
 
                         <span class="badge 
-                                @if($order->status === 'Pending') bg-warning
-                                @elseif($order->status === 'Paid') bg-primary
-                                @elseif($order->status === 'Shipped') bg-success
-                                @endif
-                            ">
+                                        @if($order->status === 'Pending') bg-warning
+                                        @elseif($order->status === 'Paid') bg-primary
+                                        @elseif($order->status === 'Shipped') bg-success
+                                        @endif
+                                    ">
                             {{ $order->status }}
                         </span>
                     </div>

@@ -117,8 +117,15 @@
         }
 
         .product-card {
+            border-radius: 16px;
+            overflow: hidden;
             transition: all 0.3s ease;
             border: 1px solid rgba(0, 0, 0, 0.08);
+            box-shadow: 0 15px 30px rgba(92, 127, 81, 0.15);
+        }
+
+        .product-card .card-footer {
+            background: #fff;
         }
 
         .product-card:hover {
@@ -200,10 +207,10 @@
                                 <div class="fw-bold text-success mt-2">RM {{ number_format($p->price, 2) }}</div>
                             </div>
 
-                            <div class="card-footer bg-white">
+                            <div class="card-footer bg-white rounder-bottom-4">
                                 <a href="{{ route('products.show', $p->id) }}"
                                     class="btn btn-outline-success w-100 rounded-pill">
-                                    View Details
+                                    View Details<i class="bi bi-arrow-right ms-1"></i>
                                 </a>
                             </div>
                         </div>
@@ -227,14 +234,15 @@
 
                             <div class="card-body">
                                 <h6 class="fw-bold">{{ $p->product_name }}</h6>
-                                <div class="text-muted small">{{ $p->seller->business_name ?? 'Unknown Seller' }}</div>
+                                <div class="text-muted small"><i
+                                        class="bi bi-shop me-2"></i>{{ $p->seller->business_name ?? 'Unknown Seller' }}</div>
                                 <div class="fw-bold text-success mt-2">RM {{ number_format($p->price, 2) }}</div>
                             </div>
 
-                            <div class="card-footer bg-white">
+                            <div class="card-footer bg-white rounder-bottom-4">
                                 <a href="{{ route('products.show', $p->id) }}"
                                     class="btn btn-outline-success w-100 rounded-pill">
-                                    View Details
+                                    View Details<i class="bi bi-arrow-right ms-1"></i>
                                 </a>
                             </div>
 

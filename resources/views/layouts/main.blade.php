@@ -23,7 +23,7 @@
     <nav class="navbar navbar-expand-lg navbar-light shadow-sm"
         style="background-color:#A5B682; padding-top:8px; padding-bottom:8px;">
         <div class="container d-flex justify-content-center">
-            <span class="text-white text-center" style="font-size: 12px; margin: 0; padding: 0;">
+            <span class="text-white text-center" style="font-size: 14px; margin: 0; padding: 0;">
                 Ships to all Semenanjung Malaysia, Free Shipping above RM150. Self pickup available. 14 Days Guarantee!
             </span>
         </div>
@@ -32,7 +32,12 @@
     <!-- MAIN NAVBAR -->
     <nav class="navbar navbar-expand-lg navbar-light shadow-sm" style="background-color:#FFFFFF;">
         <div class="container">
-            <a class="navbar-brand" href="/" style="color: #6A8F4E;">Aether & Leaf.Co</a>
+        <a class="navbar-brand d-flex align-items-center gap-2" href="/" style="color: #6A8F4E;">
+    <img src="{{ asset('images/logo3.png') }}" alt="Logo"
+         style="height: 56px; width: auto;">
+    <span>Aether & Leaf.Co</span>
+</a>
+
 
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
                 data-bs-target="#navbarNav">
