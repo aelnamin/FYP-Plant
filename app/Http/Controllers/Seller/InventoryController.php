@@ -12,13 +12,24 @@ use Illuminate\Support\Facades\Auth;
 
 class InventoryController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
         $seller = Seller::where('user_id', Auth::id())->first();
-        $products = $seller->products()->latest()->get();
+
+        // Start query
+        $query = $seller->products()->with(['images', 'category']);
+
+        // Optional: Search by product name
+        if ($search = $request->input('search')) {
+            $query->where('product_name', 'like', "%$search%");
+        }
+
+        // Paginate instead of get()
+        $products = $query->latest()->paginate(10); // ✅ This fixes links()
 
         return view('sellers.inventory.index', compact('products'));
     }
+
 
     public function create()
     {

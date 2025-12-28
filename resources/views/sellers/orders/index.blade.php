@@ -6,11 +6,11 @@
     <div class="container py-5">
         <h2 class="fw-bold mb-4 text-success">My Orders</h2>
 
-        @if($orders->count() > 0)
+        @if(isset($sellerId) && $orders->count() > 0)
             @foreach($orders as $order)
                 @php
-                    // Only include items from this seller
-                    $sellerItems = $order->items->filter(fn($item) => $item->product && $item->product->seller_id == auth()->id());
+                    // Filter only items belonging to this seller
+                    $sellerItems = $order->items->filter(fn($item) => $item->product && $item->product->seller_id == $sellerId);
                     $sellerTotal = $sellerItems->sum(fn($i) => $i->price * $i->quantity);
                 @endphp
 
@@ -20,15 +20,13 @@
                             <div class="d-flex justify-content-between align-items-center mb-3">
                                 <div>
                                     <h5 class="mb-1">Order #{{ str_pad($order->id, 10, '0', STR_PAD_LEFT) }}</h5>
-                                    <small class="text-muted">
-                                        Placed on {{ $order->created_at->format('d M Y, h:i A') }}
-                                    </small>
+                                    <small class="text-muted">Placed on {{ $order->created_at->format('d M Y, h:i A') }}</small>
                                 </div>
                                 <span class="badge 
-                                                @if($order->status === 'Paid') bg-primary
-                                                @elseif($order->status === 'Shipped') bg-success
-                                                @else bg-secondary
-                                                @endif">
+                                                                @if($order->status === 'Paid') bg-primary
+                                                                @elseif($order->status === 'Shipped') bg-success
+                                                                @else bg-secondary
+                                                                @endif">
                                     {{ $order->status }}
                                 </span>
                             </div>
@@ -63,7 +61,7 @@
                             {{-- Action button --}}
                             <div class="mt-3 text-end">
                                 @if($order->status === 'Paid')
-                                    <form action="{{ route('seller.orders.ship', $order->id) }}" method="POST">
+                                    <form action="{{ route('sellers.orders.ship', $order->id) }}" method="POST">
                                         @csrf
                                         <button class="btn btn-success btn-sm rounded-pill">Mark as Shipped</button>
                                     </form>

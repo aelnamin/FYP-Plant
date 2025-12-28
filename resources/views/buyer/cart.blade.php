@@ -253,7 +253,7 @@
                     </div>
 
                     <div class="d-flex justify-content-between mb-2">
-                            <span class="text-muted">Products ({{ $cartItems->count() }})</span>
+                    <span class="text-muted">Products ({{ $cartItems->sum('quantity') }})</span>
                             <span class="fw-bold">
                                 RM {{ number_format($total, 2) }}
                             </span>

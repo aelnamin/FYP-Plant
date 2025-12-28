@@ -1,301 +1,381 @@
-{{-- index.blade.php --}}
 @extends('layouts.admin-main')
 
-@section('title', 'Admin Orders')
+@section('title', 'Orders')
 
 @section('content')
     <style>
-        .admin-orders-page {
-            min-height: 100vh;
-            background: linear-gradient(135deg, #f8f9fa 0%, #e9f5e9 100%);
-            padding: 40px 0;
+        :root {
+            --primary-color: #5C7F51;
+            --primary-light: rgba(92, 127, 81, 0.08);
+            --border-radius: 10px;
+            --transition: all 0.2s ease;
         }
 
         .page-header {
-            background: white;
-            border-radius: 16px;
-            padding: 25px;
-            margin-bottom: 30px;
-            border: 1px solid rgba(92, 127, 81, 0.1);
-            box-shadow: 0 5px 20px rgba(92, 127, 81, 0.08);
+            margin-bottom: 2rem;
         }
 
         .page-title {
+            font-weight: 600;
             color: #2c3e50;
-            font-weight: 700;
-            margin-bottom: 5px;
+            margin-bottom: 0.25rem;
         }
 
         .page-subtitle {
             color: #6c757d;
-            font-size: 14px;
+            font-size: 0.9rem;
+        }
+
+        .filter-card {
+            background: white;
+            border-radius: var(--border-radius);
+            padding: 1.25rem;
+            margin-bottom: 1.5rem;
+            border: 1px solid #e9ecef;
+        }
+
+        .filter-label {
+            font-size: 0.85rem;
+            color: #495057;
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+            display: block;
         }
 
         .order-card {
             background: white;
-            border-radius: 16px;
-            border: 1px solid rgba(92, 127, 81, 0.1);
-            box-shadow: 0 5px 20px rgba(92, 127, 81, 0.08);
-            transition: all 0.3s ease;
-            margin-bottom: 20px;
+            border-radius: var(--border-radius);
+            border: 1px solid #e9ecef;
+            margin-bottom: 1rem;
+            transition: var(--transition);
             overflow: hidden;
         }
 
         .order-card:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 8px 25px rgba(92, 127, 81, 0.12);
+            border-color: var(--primary-color);
+            box-shadow: 0 3px 12px rgba(0, 0, 0, 0.05);
         }
 
         .order-header {
-            background: linear-gradient(135deg, rgba(92, 127, 81, 0.05) 0%, rgba(165, 182, 130, 0.05) 100%);
-            padding: 20px;
-            border-bottom: 1px solid rgba(92, 127, 81, 0.1);
+            padding: 1.25rem;
+            border-bottom: 1px solid #f1f3f4;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 1rem;
+        }
+
+        .order-info {
+            flex: 1;
         }
 
         .order-id {
-            font-size: 18px;
             font-weight: 600;
             color: #2c3e50;
-            margin-bottom: 5px;
+            margin-bottom: 0.25rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
         }
 
         .order-meta {
-            color: #6c757d;
-            font-size: 13px;
             display: flex;
-            align-items: center;
-            gap: 15px;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-top: 0.5rem;
         }
 
         .meta-item {
+            font-size: 0.85rem;
+            color: #6c757d;
             display: flex;
             align-items: center;
-            gap: 5px;
+            gap: 0.375rem;
         }
 
         .status-badge {
-            padding: 6px 16px;
-            border-radius: 20px;
-            font-size: 12px;
-            font-weight: 600;
-            letter-spacing: 0.5px;
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
+            padding: 0.375rem 0.875rem;
+            border-radius: 50px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            border: 1px solid transparent;
+            white-space: nowrap;
         }
 
         .status-pending {
-            background: linear-gradient(135deg, #fff3cd 0%, #ffeaa7 100%);
+            background: rgba(255, 193, 7, 0.1);
             color: #856404;
-            border: 1px solid #ffeaa7;
+            border-color: rgba(255, 193, 7, 0.2);
         }
 
         .status-paid {
-            background: linear-gradient(135deg, #cce5ff 0%, #b8daff 100%);
-            color: #004085;
-            border: 1px solid #b8daff;
+            background: rgba(40, 167, 69, 0.1);
+            color: #155724;
+            border-color: rgba(40, 167, 69, 0.2);
         }
 
         .status-shipped {
-            background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);
-            color: #155724;
-            border: 1px solid #c3e6cb;
+            background: rgba(0, 123, 255, 0.1);
+            color: #004085;
+            border-color: rgba(0, 123, 255, 0.2);
         }
 
         .order-actions {
-            padding: 20px;
+            padding: 1rem 1.25rem;
+            border-top: 1px solid #f1f3f4;
             display: flex;
             justify-content: flex-end;
-            gap: 10px;
+            gap: 0.75rem;
         }
 
         .btn-view {
-            background: transparent;
-            border: 2px solid #5C7F51;
-            color: #5C7F51;
-            padding: 8px 20px;
-            border-radius: 8px;
-            font-weight: 600;
-            transition: all 0.3s ease;
+            color: var(--primary-color);
+            border: 1px solid var(--primary-color);
+            padding: 0.5rem 1.25rem;
+            border-radius: 6px;
+            font-size: 0.875rem;
+            font-weight: 500;
+            transition: var(--transition);
             display: inline-flex;
             align-items: center;
-            gap: 8px;
+            gap: 0.5rem;
         }
 
         .btn-view:hover {
-            background: #5C7F51;
+            background: var(--primary-color);
             color: white;
-            transform: translateX(3px);
         }
 
         .btn-mark-paid {
-            background: linear-gradient(135deg, #5C7F51 0%, #A5B682 100%);
+            background: var(--primary-color);
             color: white;
-            padding: 8px 20px;
-            border-radius: 8px;
-            font-weight: 600;
             border: none;
-            transition: all 0.3s ease;
+            padding: 0.5rem 1.25rem;
+            border-radius: 6px;
+            font-size: 0.875rem;
+            font-weight: 500;
+            transition: var(--transition);
             display: inline-flex;
             align-items: center;
-            gap: 8px;
+            gap: 0.5rem;
         }
 
         .btn-mark-paid:hover {
-            background: linear-gradient(135deg, #4a6b42 0%, #5C7F51 100%);
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(92, 127, 81, 0.2);
+            background: #4a6b40;
+            transform: translateY(-1px);
         }
 
         .empty-state {
+            padding: 3rem 1rem;
             text-align: center;
-            padding: 60px 20px;
             background: white;
-            border-radius: 16px;
-            border: 1px solid rgba(92, 127, 81, 0.1);
+            border-radius: var(--border-radius);
+            border: 1px solid #e9ecef;
         }
 
         .empty-icon {
-            font-size: 64px;
+            font-size: 3rem;
             color: #dee2e6;
-            margin-bottom: 20px;
+            margin-bottom: 1rem;
         }
 
         .alert-success {
-            background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);
-            border: 1px solid #c3e6cb;
+            background: rgba(40, 167, 69, 0.1);
+            border: 1px solid rgba(40, 167, 69, 0.2);
             color: #155724;
-            border-radius: 12px;
-            padding: 15px 20px;
-            margin-bottom: 25px;
+            border-radius: var(--border-radius);
+            padding: 1rem;
+            margin-bottom: 1.5rem;
+            font-size: 0.9rem;
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 0.75rem;
         }
 
-        .filter-section {
+        .pagination-wrapper {
+            margin-top: 2rem;
+            display: flex;
+            justify-content: center;
+        }
+
+        .stats-summary {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+            overflow-x: auto;
+            padding-bottom: 0.5rem;
+        }
+
+        .stat-item {
             background: white;
-            border-radius: 16px;
-            padding: 20px;
-            margin-bottom: 25px;
-            border: 1px solid rgba(92, 127, 81, 0.1);
+            border-radius: var(--border-radius);
+            padding: 0.75rem 1rem;
+            border: 1px solid #e9ecef;
+            min-width: 120px;
+            flex-shrink: 0;
         }
 
-        .filter-label {
+        .stat-label {
+            font-size: 0.75rem;
+            color: #6c757d;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 0.25rem;
+        }
+
+        .stat-value {
+            font-size: 1.25rem;
             font-weight: 600;
-            color: #495057;
-            margin-bottom: 8px;
-            font-size: 14px;
+            color: #2c3e50;
+        }
+
+        @media (max-width: 768px) {
+            .order-header {
+                flex-direction: column;
+                gap: 0.75rem;
+            }
+
+            .order-actions {
+                flex-wrap: wrap;
+            }
+
+            .stats-summary {
+                gap: 0.5rem;
+            }
         }
     </style>
 
-    <div class="admin-orders-page">
-        <div class="container">
-            <!-- Page Header -->
-            <div class="page-header">
-                <h1 class="page-title">
-                    <i class="bi bi-receipt me-2"></i>Order Management
-                </h1>
-                <p class="page-subtitle">View and manage all customer orders</p>
+    <div class="container py-4">
+        <!-- Page Header -->
+        <div class="page-header">
+        <h1 class="page-title">Orders</h1>
+            <p class="page-subtitle">Manage customer orders and payments</p>
+        </div>
+
+        <!-- Success Message -->
+        @if(session('success'))
+            <div class="alert-success">
+                <i class="bi bi-check-circle-fill"></i>
+                {{ session('success') }}
             </div>
+        @endif
 
-            <!-- Success Message -->
-            @if(session('success'))
-                <div class="alert-success">
-                    <i class="bi bi-check-circle-fill"></i>
-                    {{ session('success') }}
+        <!-- Filters -->
+        <div class="filter-card">
+            <form method="GET" action="{{ route('admin.orders.index') }}" class="row g-3">
+                <div class="col-md-4">
+                    <label class="filter-label">Status</label>
+                    <select name="status" class="form-select form-select-sm" onchange="this.form.submit()">
+                        <option value="">All Status</option>
+                        <option value="Pending" {{ request('status') == 'Pending' ? 'selected' : '' }}>Pending</option>
+                        <option value="Paid" {{ request('status') == 'Paid' ? 'selected' : '' }}>Paid</option>
+                        <option value="Shipped" {{ request('status') == 'Shipped' ? 'selected' : '' }}>Shipped</option>
+                    </select>
                 </div>
-            @endif
-
-            <!-- Filter Section -->
-            <div class="filter-section">
-                <div class="row">
-                    <div class="col-md-4">
-                        <label class="filter-label">Status Filter</label>
-                        <select class="form-select" onchange="filterOrders(this.value)">
-                            <option value="">All Orders</option>
-                            <option value="Pending">Pending</option>
-                            <option value="Paid">Paid</option>
-                            <option value="Shipped">Shipped</option>
-                        </select>
-                    </div>
-                    <div class="col-md-4">
-                        <label class="filter-label">Sort By</label>
-                        <select class="form-select">
-                            <option>Newest First</option>
-                            <option>Oldest First</option>
-                            <option>Total Amount (High to Low)</option>
-                        </select>
-                    </div>
-                    <div class="col-md-4">
-                        <label class="filter-label">Search</label>
-                        <input type="text" class="form-control" placeholder="Search order ID or buyer...">
+                <div class="col-md-4">
+                    <label class="filter-label">Sort By</label>
+                    <select name="sort" class="form-select form-select-sm" onchange="this.form.submit()">
+                        <option value="newest" {{ request('sort') == 'newest' ? 'selected' : '' }}>Newest First</option>
+                        <option value="oldest" {{ request('sort') == 'oldest' ? 'selected' : '' }}>Oldest First</option>
+                        <option value="amount_high" {{ request('sort') == 'amount_high' ? 'selected' : '' }}>Amount (High to Low)</option>
+                    </select>
+                </div>
+                <div class="col-md-4">
+                    <label class="filter-label">Search</label>
+                    <div class="input-group input-group-sm">
+                        <span class="input-group-text bg-transparent">
+                            <i class="bi bi-search"></i>
+                        </span>
+                        <input type="text" name="search" class="form-control" placeholder="Order ID or buyer..." value="{{ request('search') }}">
                     </div>
                 </div>
-            </div>
+            </form>
+        </div>
 
-            <!-- Orders List -->
-            @forelse($orders as $order)
-                <div class="order-card" data-status="{{ strtolower($order->status) }}">
-                    <!-- Order Header -->
-                    <div class="order-header d-flex justify-content-between align-items-center">
-                        <div>
-                            <div class="order-id">Order ID #{{ str_pad($order->id, 8, '0', STR_PAD_LEFT) }}</div>
-                            <div class="order-meta">
-                                <span class="meta-item">
-                                    <i class="bi bi-person"></i>
-                                    Buyer ID: {{ $order->buyer_id }}
-                                </span>
-                                <span class="meta-item">
-                                    <i class="bi bi-calendar"></i>
-                                    {{ $order->created_at->format('d M Y, H:i') }}
-                                </span>
-                            </div>
+        <!-- Orders List -->
+        @forelse($orders as $order)
+            <div class="order-card" data-status="{{ strtolower($order->status) }}">
+                <!-- Order Header -->
+                <div class="order-header">
+                    <div class="order-info">
+                        <div class="order-id">
+                            <i class="bi bi-receipt"></i>
+                            #{{ str_pad($order->id, 6, '0', STR_PAD_LEFT) }}
                         </div>
+                        
+                        <div class="order-meta">
+                            <span class="meta-item">
+                                <i class="bi bi-person"></i>
+                                Buyer: {{ $order->buyer->name ?? 'User #' . $order->buyer_id }}
+                            </span>
+                            <span class="meta-item">
+                                <i class="bi bi-calendar"></i>
+                                {{ $order->created_at->format('M d, Y') }}
+                            </span>
+                            <span class="meta-item">
+                                <i class="bi bi-currency-dollar"></i>
+                                RM {{ number_format($order->total_amount, 2) }}
+                            </span>
+                        </div>
+                    </div>
 
-                        <span class="status-badge 
-                                                        @if($order->status === 'Pending') status-pending
-                                                        @elseif($order->status === 'Paid') status-paid
-                                                        @elseif($order->status === 'Shipped') status-shipped
-                                                        @endif">
-                            <i class="bi 
-                                                            @if($order->status === 'Pending') bi-clock
-                                                            @elseif($order->status === 'Paid') bi-credit-card
-                                                            @elseif($order->status === 'Shipped') bi-truck
-                                                            @endif"></i>
+                    <div>
+                        <span class="status-badge status-{{ strtolower($order->status) }}">
+                            @switch($order->status)
+                                @case('Pending')
+                                    <i class="bi bi-clock me-1"></i>
+                                    @break
+                                @case('Paid')
+                                    <i class="bi bi-credit-card me-1"></i>
+                                    @break
+                                @case('Shipped')
+                                    <i class="bi bi-truck me-1"></i>
+                                    @break
+                            @endswitch
                             {{ $order->status }}
                         </span>
                     </div>
-
-                    <!-- Order Actions -->
-                    <div class="order-actions">
-                        <a href="{{ route('admin.orders.show', $order) }}" class="btn-view">
-                            <i class="bi bi-eye"></i>
-                            View Details
-                        </a>
-
-                        @if($order->status === 'Pending')
-                            <form action="{{ route('admin.orders.markPaid', $order) }}" method="POST" class="d-inline">
-                                @csrf
-                                <button type="submit" class="btn-mark-paid">
-                                    <i class="bi bi-check-circle"></i>
-                                    Mark as Paid
-                                </button>
-                            </form>
-                        @endif
-                    </div>
                 </div>
-            @empty
-                <!-- Empty State -->
-                <div class="empty-state">
-                    <div class="empty-icon">
-                        <i class="bi bi-receipt"></i>
-                    </div>
-                    <h5 class="text-muted mb-2">No orders found</h5>
-                    <p class="text-muted">There are no orders to display at the moment.</p>
+
+                <!-- Order Actions -->
+                <div class="order-actions">
+                    <a href="{{ route('admin.orders.show', $order) }}" class="btn-view">
+                        <i class="bi bi-eye"></i>
+                        View Details
+                    </a>
+
+                    @if($order->status === 'Pending')
+                        <form action="{{ route('admin.orders.markPaid', $order) }}" method="POST" class="d-inline">
+                            @csrf
+                            <button type="submit" class="btn-mark-paid" onclick="return confirm('Mark this order as paid?')">
+                                <i class="bi bi-check-circle"></i>
+                                Mark Paid
+                            </button>
+                        </form>
+                    @endif
                 </div>
-            @endforelse
-        </div>
+            </div>
+        @empty
+            <!-- Empty State -->
+            <div class="empty-state">
+                <div class="empty-icon">
+                    <i class="bi bi-receipt"></i>
+                </div>
+                <h5 class="text-muted mb-2">No orders found</h5>
+                <p class="text-muted mb-3">There are no orders matching your criteria.</p>
+                <a href="{{ route('admin.orders.index') }}" class="btn btn-outline-primary btn-sm">
+                    Clear filters
+                </a>
+            </div>
+        @endforelse
+
+        <!-- Pagination -->
+@if($orders instanceof \Illuminate\Pagination\LengthAwarePaginator && $orders->hasPages())
+    <div class="pagination-wrapper">
+        {{ $orders->links() }}
+    </div>
+@endif
+
     </div>
 
     <script>
@@ -304,10 +384,33 @@
             cards.forEach(card => {
                 if (!status || card.getAttribute('data-status') === status.toLowerCase()) {
                     card.style.display = 'block';
+                    setTimeout(() => {
+                        card.style.opacity = '1';
+                        card.style.transform = 'translateY(0)';
+                    }, 10);
                 } else {
-                    card.style.display = 'none';
+                    card.style.opacity = '0';
+                    card.style.transform = 'translateY(-10px)';
+                    setTimeout(() => {
+                        card.style.display = 'none';
+                    }, 200);
                 }
             });
         }
+
+        // Initialize cards with animation
+        document.addEventListener('DOMContentLoaded', function() {
+            const cards = document.querySelectorAll('.order-card');
+            cards.forEach((card, index) => {
+                card.style.opacity = '0';
+                card.style.transform = 'translateY(20px)';
+                card.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
+                
+                setTimeout(() => {
+                    card.style.opacity = '1';
+                    card.style.transform = 'translateY(0)';
+                }, index * 50);
+            });
+        });
     </script>
 @endsection

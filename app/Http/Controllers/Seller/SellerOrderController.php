@@ -3,84 +3,70 @@
 namespace App\Http\Controllers\Seller;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
-use App\Models\Order;
 use Illuminate\Support\Facades\Auth;
+use App\Models\Order;
+use App\Models\Seller;
 
 class SellerOrderController extends Controller
 {
-    /**
-     * Ensure only authenticated sellers can access
-     */
     public function __construct()
     {
         $this->middleware(['auth', 'role:seller']);
     }
 
     /**
-     * Show all Paid or Shipped orders that contain this seller's products
+     * Show all Paid or Shipped orders containing this seller's products
      */
     public function index()
     {
-        $sellerId = Auth::id();
+        // Get the seller record for the logged-in user
+        $seller = Seller::where('user_id', Auth::id())->first();
 
-        $orders = Order::whereHas('items', function ($query) use ($sellerId) {
-            // Only orders that have at least one product from this seller
-            $query->whereHas('product', function ($q) use ($sellerId) {
+        if (!$seller) {
+            // No seller record found for this user
+            return view('sellers.orders.index', ['orders' => collect(), 'sellerId' => null]);
+        }
+
+        $sellerId = $seller->id; // This is the seller_id used in products table
+
+        // Fetch orders that contain at least one product from this seller
+        $orders = Order::whereIn('status', ['Paid', 'Shipped'])
+            ->whereHas('items.product', function ($q) use ($sellerId) {
                 $q->where('seller_id', $sellerId);
-            });
-        })
-            ->whereIn('status', ['Paid', 'Shipped'])
-            ->with([
-                'items.product',       // eager load products
-                'items.product.seller',// eager load seller info
-                'buyer'                // load buyer info
-            ])
-            ->orderBy('created_at', 'desc')
+            })
+            ->with(['items.product.images', 'buyer'])
+            ->latest()
             ->get();
 
-        return view('sellers.orders.index', compact('orders'));
+        return view('sellers.orders.index', compact('orders', 'sellerId'));
     }
 
     /**
-     * Show details of a single order for this seller
+     * Show single order details for this seller
      */
     public function show($orderId)
     {
-        $sellerId = Auth::id();
+        $seller = Seller::where('user_id', Auth::id())->first();
+        if (!$seller) {
+            abort(403, "You don't have a seller account.");
+        }
 
-        $order = Order::whereHas('items', function ($query) use ($sellerId) {
-            $query->whereHas('product', function ($q) use ($sellerId) {
-                $q->where('seller_id', $sellerId);
-            });
-        })
-            ->with(['items.product', 'items.product.seller', 'buyer'])
+        $sellerId = $seller->id;
+
+        $order = Order::with(['items.product.images', 'buyer'])
             ->findOrFail($orderId);
 
-        return view('sellers.orders.show', compact('order'));
+        return view('sellers.orders.show', compact('order', 'sellerId'));
     }
 
     /**
-     * Mark an order as Shipped (only Paid orders)
+     * Mark order as Shipped
      */
     public function markAsShipped($orderId)
     {
-        $sellerId = Auth::id();
+        $order = Order::where('status', 'Paid')->findOrFail($orderId);
+        $order->update(['status' => 'Shipped']);
 
-        $order = Order::whereHas('items', function ($query) use ($sellerId) {
-            $query->whereHas('product', function ($q) use ($sellerId) {
-                $q->where('seller_id', $sellerId);
-            });
-        })->findOrFail($orderId);
-
-        if ($order->status !== 'Paid') {
-            return back()->with('error', 'Only Paid orders can be marked as Shipped.');
-        }
-
-        $order->update([
-            'status' => 'Shipped'
-        ]);
-
-        return back()->with('success', 'Order marked as Shipped successfully.');
+        return back()->with('success', 'Order marked as shipped.');
     }
 }

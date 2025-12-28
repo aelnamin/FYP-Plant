@@ -7,6 +7,8 @@
     <title>@yield('title')</title>
 
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" />
+
 </head>
 <style>
     .profile-avatar {
@@ -42,7 +44,7 @@
                     </li>
 
                     <li class="nav-item mb-2">
-                        <a href="{{ route('sellers.inventory.index') }}" class="nav-link text-dark">Products</a>
+                        <a href="{{ route('sellers.inventory.index') }}" class="nav-link text-dark">Manage Products</a>
                     </li>
 
                     <li class="nav-item mb-2">

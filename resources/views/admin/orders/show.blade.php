@@ -226,10 +226,10 @@
 
                     <span class="order-status-large">
                         <i class="bi 
-                                    @if($order->status === 'Pending') bi-clock
-                                    @elseif($order->status === 'Paid') bi-credit-card
-                                    @elseif($order->status === 'Shipped') bi-truck
-                                    @endif"></i>
+                                                            @if($order->status === 'Pending') bi-clock
+                                                            @elseif($order->status === 'Paid') bi-credit-card
+                                                            @elseif($order->status === 'Shipped') bi-truck
+                                                            @endif"></i>
                         {{ $order->status }}
                     </span>
                 </div>
@@ -251,10 +251,10 @@
                         <div class="info-label">Order Status</div>
                         <div class="info-value">
                             <span class="status-badge 
-                                        @if($order->status === 'Pending') status-pending
-                                        @elseif($order->status === 'Paid') status-paid
-                                        @elseif($order->status === 'Shipped') status-shipped
-                                        @endif">
+                                                                @if($order->status === 'Pending') status-pending
+                                                                @elseif($order->status === 'Paid') status-paid
+                                                                @elseif($order->status === 'Shipped') status-shipped
+                                                                @endif">
                                 {{ $order->status }}
                             </span>
                         </div>
@@ -314,7 +314,7 @@
                                 RM {{ number_format($item->price * $item->quantity, 2) }}
                             </div>
                             <div class="item-subtotal">
-                                RM {{ number_format($item->price, 2) }} × {{ $item->quantity }}
+                                RM {{ number_format($item->price, 2) }} x {{ $item->quantity }}
                             </div>
                         </div>
                     </div>

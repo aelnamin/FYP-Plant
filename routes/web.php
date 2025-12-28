@@ -80,7 +80,6 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
       ->name('dashboard');
 
    Route::resource('users', UserManagementController::class);
-
    Route::get('users/{user}/reports', [UserManagementController::class, 'reports'])->name('users.reports');
 
    Route::get('/products', [AdminProductController::class, 'index'])->name('products.index');
@@ -155,13 +154,8 @@ Route::middleware(['auth', 'role:seller'])
       Route::get('/profile', [SellerProfileController::class, 'index'])->name('profile');
       Route::put('/profile', [SellerProfileController::class, 'update'])->name('profile.update');
 
-      // Seller orders list
       Route::get('/orders', [SellerOrderController::class, 'index'])->name('orders.index');
-
-      // Show single order details
       Route::get('/orders/{order}', [SellerOrderController::class, 'show'])->name('orders.show');
-
-      // Mark order as shipped
       Route::post('/orders/{order}/ship', [SellerOrderController::class, 'markAsShipped'])->name('orders.ship');
    });
 

@@ -128,8 +128,10 @@
                     {{ $seller->business_name ?? 'Unknown Seller' }}
                 </div>
                 <div class="seller-item-count">
-                    {{ $sellerItems->count() }} item{{ $sellerItems->count() > 1 ? 's' : '' }}
+                  {{ $sellerItems->sum('quantity') }} item{{ $sellerItems->sum('quantity') > 1 ? 's' : '' }}
                 </div>
+
+                
             </div>
 
             @foreach($sellerItems as $item)

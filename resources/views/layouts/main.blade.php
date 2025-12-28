@@ -13,6 +13,32 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
 </head>
 
+<style> 
+.cart-link {
+    position: relative; /* Makes the badge position relative to this link */
+    display: inline-block;
+}
+
+.cart-badge {
+    position: absolute;
+    top: -1px;       /* Move closer vertically */
+    right: -4px;     /* Move closer horizontally */
+    background-color: #198754; /* Bootstrap green */
+    color: white;
+    font-size: 0.65rem;       /* Smaller font for snug fit */
+    font-weight: 700;
+    padding: 0.15rem 0.4rem;  /* Smaller padding to hug icon */
+    border-radius: 50%;
+    min-width: 16px;
+    height: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
+}
+
+</style>
+
 <body style="background-color: #ffffff;">
 
     @php
@@ -50,11 +76,14 @@
                     <!-- CART ICON -->
                     <li class="nav-item me-3">
     @if($user && $user->role === 'buyer')
-        <a class="nav-link" href="#" data-bs-toggle="offcanvas" data-bs-target="#cartSidebar">
-            <i class="bi bi-cart4" style="font-size: 1.3rem;"></i>
-            <span id="cart-count" class="badge bg-success">
-                {{ $user->cart?->items()->count() ?? 0 }}
-            </span>
+    <a class="nav-link cart-link" href="#" data-bs-toggle="offcanvas" data-bs-target="#cartSidebar">
+    <i class="bi bi-cart4" style="font-size: 1.3rem;"></i>
+    <span id="cart-count" class="cart-badge">
+        {{ $user->cart?->items()->sum('quantity') ?? 0 }}
+    </span>
+</a>
+
+
         </a>
     @else
         <a class="nav-link" href="{{ route('auth.login') }}">
