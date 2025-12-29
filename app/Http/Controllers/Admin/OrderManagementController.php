@@ -10,29 +10,34 @@ class OrderManagementController extends Controller
 {
     public function index(Request $request)
     {
-        $query = Order::with('items.product');
+        $query = Order::with(['buyer', 'items.product']);
 
-        // Optional: filter by status
-        if ($request->status) {
+        // Filter by status
+        if ($request->filled('status')) {
             $query->where('status', $request->status);
         }
 
-        // Optional: search by order ID or buyer name
-        if ($request->search) {
+        // Search by order ID or buyer name
+        if ($request->filled('search')) {
             $search = $request->search;
-            $query->whereHas('buyer', function ($q) use ($search) {
-                $q->where('name', 'like', "%$search%");
-            })->orWhere('id', $search);
+
+            $query->where(function ($q) use ($search) {
+                $q->whereHas('buyer', function ($qb) use ($search) {
+                    $qb->where('name', 'like', "%{$search}%");
+                })->orWhere('id', $search);
+            });
         }
 
-        // Optional: sort orders
-        if ($request->sort == 'oldest') {
+        // Sorting
+        if ($request->sort === 'oldest') {
             $query->orderBy('created_at', 'asc');
-        } elseif ($request->sort == 'amount_high') {
+        } elseif ($request->sort === 'amount_high') {
             $query->orderBy('total_amount', 'desc');
-        } else { // newest by default
+        } else {
             $query->orderBy('created_at', 'desc');
         }
+
+        $orders = $query->get();
 
         return view('sellers.orders.index', compact('orders'));
     }
@@ -40,11 +45,11 @@ class OrderManagementController extends Controller
     public function updateStatus(Request $request, Order $order)
     {
         $request->validate([
-            'status' => 'required|in:Pending,Paid,Shipped'
+            'status' => 'required|in:Pending,Paid,Shipped',
         ]);
 
         $order->update([
-            'status' => $request->status
+            'status' => $request->status,
         ]);
 
         return back()->with('success', 'Order status updated');

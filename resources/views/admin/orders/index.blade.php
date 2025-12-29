@@ -343,16 +343,6 @@
                         <i class="bi bi-eye"></i>
                         View Details
                     </a>
-
-                    @if($order->status === 'Pending')
-                        <form action="{{ route('admin.orders.markPaid', $order) }}" method="POST" class="d-inline">
-                            @csrf
-                            <button type="submit" class="btn-mark-paid" onclick="return confirm('Mark this order as paid?')">
-                                <i class="bi bi-check-circle"></i>
-                                Mark Paid
-                            </button>
-                        </form>
-                    @endif
                 </div>
             </div>
         @empty

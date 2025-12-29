@@ -5,7 +5,7 @@
 @section('content')
 
     <style>
-        .profile-avatar {
+        .profile-avatar-form {
             width: 120px;
             height: 120px;
             object-fit: cover;
@@ -30,7 +30,7 @@
                 {{-- Profile Picture --}}
                 <img src="{{ Auth::user()->profile_picture
         ? asset(Auth::user()->profile_picture)
-        : asset('images/default.png') }}" class="rounded-circle me-4 profile-avatar" alt="Profile Picture">
+        : asset('images/default.png') }}" class="rounded-circle me-4 profile-avatar-form" alt="Profile Picture">
 
 
                 {{-- Seller Info --}}

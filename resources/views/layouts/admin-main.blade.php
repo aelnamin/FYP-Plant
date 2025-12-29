@@ -34,7 +34,7 @@
                     </li>
 
                     <li class="nav-item mb-2">
-                        <a href="{{ route('admin.orders.index') }}" class="nav-link text-dark"> Manage Orders</a>
+                        <a href="{{ route('admin.orders.index') }}" class="nav-link text-dark"> Orders</a>
                     </li>
 
                     <li class="nav-item mb-2">

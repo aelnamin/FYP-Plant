@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Seller;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB; // Make sure this is imported
+use Illuminate\Support\Facades\DB;
 use App\Models\Seller;
 use App\Models\Order;
 use App\Models\OrderItem;
@@ -23,81 +23,80 @@ class SellerDashboardController extends Controller
         $seller = Seller::where('user_id', Auth::id())->firstOrFail();
 
         /* ======================
-           PRODUCT IDS
+           SELLER PRODUCTS
         ====================== */
         $sellerProductIds = Product::where('seller_id', $seller->id)->pluck('id');
-
-        /* ======================
-           PRODUCTS
-        ====================== */
         $total_products = $sellerProductIds->count();
 
-        // Low stock count
         $low_stock_count = Product::where('seller_id', $seller->id)
             ->where('stock_quantity', '<=', 10)
             ->count();
 
-        // Inventory products (if you want to show stock in Blade)
         $inventoryProducts = Product::where('seller_id', $seller->id)
             ->latest()
             ->take(5)
             ->get();
 
-
         /* ======================
-           ORDERS (FILTER BY SELLER PRODUCTS)
+           ORDERS FILTERED BY SELLER PRODUCTS
         ====================== */
         $ordersQuery = Order::whereHas('items', function ($q) use ($sellerProductIds) {
             $q->whereIn('product_id', $sellerProductIds);
         });
 
         $total_orders = (clone $ordersQuery)->distinct()->count();
-
-        $paid_orders = (clone $ordersQuery)
-            ->where('status', 'paid')
-            ->distinct()
-            ->count();
-
-        $pending_orders = (clone $ordersQuery)
-            ->where('status', 'pending')
-            ->distinct()
-            ->count();
+        $paid_orders = (clone $ordersQuery)->where('status', 'paid')->distinct()->count();
+        $pending_orders = (clone $ordersQuery)->where('status', 'pending')->distinct()->count();
 
         /* ======================
-           REVENUE
+           TOTAL REVENUE (SELLER ONLY)
         ====================== */
         $total_revenue = OrderItem::whereIn('product_id', $sellerProductIds)
             ->whereHas('order', function ($q) {
-                $q->where('status', 'paid');
+                $q->whereIn('status', ['paid', 'shipped', 'delivered']);
             })
-            ->sum(DB::raw('quantity * price')); // use imported DB
+            ->sum(DB::raw('quantity * price'));
 
+
+        /* ======================
+    MONTH REVENUE
+ ====================== */
         $month_revenue = OrderItem::whereIn('product_id', $sellerProductIds)
             ->whereHas('order', function ($q) {
-                $q->where('status', 'paid')
+                $q->whereIn('status', ['paid', 'shipped', 'delivered'])
                     ->whereMonth('created_at', Carbon::now()->month)
                     ->whereYear('created_at', Carbon::now()->year);
             })
             ->sum(DB::raw('quantity * price'));
 
+
+
         /* ======================
-           RECENT ORDERS
+           RECENT ORDERS WITH SELLER ITEMS
         ====================== */
         $recentOrders = (clone $ordersQuery)
-            ->with('user')
+            ->with(['user', 'items.product'])
             ->latest()
             ->take(5)
             ->get();
 
+        // Add seller-specific total for recent orders
+        $recentOrders->transform(function ($order) use ($sellerProductIds) {
+            $order->seller_total = $order->items
+                ->whereIn('product_id', $sellerProductIds)
+                ->sum(fn($item) => $item->quantity * $item->price);
+            return $order;
+        });
+
         /* ======================
-           ANALYTICS (BASIC)
+           BASIC ANALYTICS
         ====================== */
         $avg_order_value = $paid_orders > 0
             ? $total_revenue / $paid_orders
             : 0;
 
-        $conversion_rate = 0; // placeholder
-        $avg_rating = 0; // placeholder
+        $conversion_rate = 0; // placeholder (you can calculate: paid_orders / total_visitors * 100)
+        $avg_rating = 0;       // placeholder (if you have product reviews)
 
         $best_selling_product = Product::where('seller_id', $seller->id)
             ->withCount('orderItems')
@@ -122,3 +121,4 @@ class SellerDashboardController extends Controller
         ));
     }
 }
+

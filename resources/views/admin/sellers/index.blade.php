@@ -61,7 +61,8 @@
                     @forelse($sellers as $seller)
                         <tr>
                             <td>{{ $seller->business_name ?? 'Unknown' }}</td>
-                            <td>{{ $seller->email ?? 'Unknown' }}</td>
+                            <td>{{ $seller->user->email ?? 'Unknown' }}</td>
+
 
                             <!-- Status Badge -->
                             <td>
