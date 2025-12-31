@@ -11,12 +11,15 @@ use App\Http\Controllers\Admin\AdminDashboardController;
 use App\Http\Controllers\Admin\UserManagementController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\LogoutController;
+use App\Http\Controllers\Buyer\ReviewController;
 use App\Http\Controllers\Buyer\TransactionController;
 use App\Http\Controllers\Seller\OrderManagementController;
+use App\Http\Controllers\Admin\ComplaintController;
 use App\Http\Controllers\Seller\SellerOrderController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\Buyer\CartController as BuyerCartController;
+use App\Http\Controllers\Seller\PlantMonitoringController;
 use App\Http\Controllers\Buyer\BuyerProfileController;
 use App\Http\Controllers\Seller\SellerProfileController;
 use App\Http\Controllers\Admin\AdminProductController;
@@ -107,6 +110,9 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
       ->name('orders.index');
    Route::get('orders/{order}', [PaymentController::class, 'show'])
       ->name('orders.show');
+
+   Route::resource('complaints', ComplaintController::class);
+
 });
 
 
@@ -157,6 +163,31 @@ Route::middleware(['auth', 'role:seller'])
       Route::get('/orders', [SellerOrderController::class, 'index'])->name('orders.index');
       Route::get('/orders/{order}', [SellerOrderController::class, 'show'])->name('orders.show');
       Route::post('/orders/{order}/ship', [SellerOrderController::class, 'markAsShipped'])->name('orders.ship');
+
+      Route::get('/plants/monitor', [PlantMonitoringController::class, 'index'])
+         ->name('plants.monitor');
+
+      Route::post('/plants/{product}/growth', [PlantMonitoringController::class, 'storeGrowth'])
+         ->name('plants.growth.store');
+
+      Route::post('/plants/{product}/care', [PlantMonitoringController::class, 'storeCare'])
+         ->name('plants.care.store');
+
+      Route::get('/seller/plants', [PlantMonitoringController::class, 'index'])
+         ->name('seller.plants.monitor');
+
+      Route::get('/seller/plants', [PlantMonitoringController::class, 'index'])
+         ->name('seller.plants.monitor');
+
+      Route::post(
+         '/seller/plants/{product}/growth',
+         [PlantMonitoringController::class, 'storeGrowth']
+      )->name('seller.plants.growth.store');
+
+      Route::post(
+         '/seller/plants/{product}/care',
+         [PlantMonitoringController::class, 'storeCare']
+      )->name('seller.plants.care.store');
    });
 
 
@@ -193,5 +224,11 @@ Route::middleware(['auth', 'role:buyer'])->group(function () {
       '/transactions/{order}',
       [TransactionController::class, 'show']
    )->name('buyer.transactions.show');
+
+   // Review routes (per product)
+   Route::get('reviews', [ReviewController::class, 'index'])->name('buyer.reviews.index'); // My Reviews page
+   Route::get('reviews/{product}', [ReviewController::class, 'create'])->name('buyer.reviews.create'); // Leave review
+   Route::post('reviews/{product}', [ReviewController::class, 'store'])->name('buyer.reviews.store'); // Submit review
+
 
 });

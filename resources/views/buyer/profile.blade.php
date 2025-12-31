@@ -188,7 +188,7 @@
 
                                                     @php
                                                         $status = $group['status'];
-                                                        $statusClass = match($status) {
+                                                        $statusClass = match ($status) {
                                                             'Pending' => 'status-pending',
                                                             'Paid' => 'status-processing',
                                                             'Shipped' => 'status-completed',
@@ -204,41 +204,46 @@
                                             <!-- Combined Products Display -->
                                             <div class="combined-products">
                                                 @foreach($group['items'] as $productData)
-                                                    @php
-                                                        $p = $productData['product'];
-                                                        $item = $productData['item'];
-                                                    @endphp
-                                                    <div class="d-flex align-items-center mb-3 {{ !$loop->last ? 'border-bottom pb-3' : '' }}">
-                                                        <!-- Product Image - Keeping original 130px size -->
-                                                        <div class="product-image me-3">
-                                                            <div class="product-image-wrapper me-3">
-                                                                <img src="{{ $p && $p->images->first()
-                                                                    ? asset('images/' . $p->images->first()->image_path)
-                                                                    : asset('images/default.png') }}" alt="{{ $p->product_name ?? 'Product' }}" class="order-product-image">
-                                                            </div>
-                                                        </div>
+                                                                        @php
+                                                                            $p = $productData['product'];
+                                                                            $item = $productData['item'];
+                                                                        @endphp
+                                                                        <div
+                                                                            class="d-flex align-items-center mb-3 {{ !$loop->last ? 'border-bottom pb-3' : '' }}">
+                                                                            <!-- Product Image - Keeping original 130px size -->
+                                                                            <div class="product-image me-3">
+                                                                                <div class="product-image-wrapper me-3">
+                                                                                    <img src="{{ $p && $p->images->first()
+                                                    ? asset('images/' . $p->images->first()->image_path)
+                                                    : asset('images/default.png') }}"
+                                                                                        alt="{{ $p->product_name ?? 'Product' }}"
+                                                                                        class="order-product-image">
+                                                                                </div>
+                                                                            </div>
 
-                                                        <!-- Product Info -->
-                                                        <div class="product-details flex-grow-1">
-                                                            <div class="product-name mb-1">{{ $p->product_name ?? 'Unknown Product' }}</div>
-                                                            <div class="d-flex justify-content-between align-items-center">
-                                                                <div class="product-meta">
-                                                                    <span class="quantity me-3">
-                                                                        <i class="bi bi-x-square me-1"></i>Qty: {{ $item->quantity }}
-                                                                    </span>
-                                                                    <span class="product-price text-success fw-semibold">
-                                                                        RM {{ number_format($item->price, 2) }}
-                                                                    </span>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
+                                                                            <!-- Product Info -->
+                                                                            <div class="product-details flex-grow-1">
+                                                                                <div class="product-name mb-1">{{ $p->product_name ?? 'Unknown Product' }}
+                                                                                </div>
+                                                                                <div class="d-flex justify-content-between align-items-center">
+                                                                                    <div class="product-meta">
+                                                                                        <span class="quantity me-3">
+                                                                                            <i class="bi bi-x-square me-1"></i>Qty: {{ $item->quantity }}
+                                                                                        </span>
+                                                                                        <span class="product-price text-success fw-semibold">
+                                                                                            RM {{ number_format($item->price, 2) }}
+                                                                                        </span>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
                                                 @endforeach
                                             </div>
                                         </div>
 
                                         <!-- Group Footer with Total -->
-                                        <div class="group-footer d-flex justify-content-between align-items-center pt-3 mt-3 border-top">
+                                        <div
+                                            class="group-footer d-flex justify-content-between align-items-center pt-3 mt-3 border-top">
                                             <div class="text-muted small">
                                                 {{ count($group['items']) }} item(s) in this order
                                             </div>
@@ -250,14 +255,27 @@
                                             </div>
                                         </div>
 
-                                        <!-- View Order Details Button -->
-                                        <div class="text-end mt-3">
+                                        <!-- Action Buttons -->
+                                        <div class="text-end mt-3 d-flex justify-content-end gap-2">
                                             <button class="btn btn-outline-primary btn-sm view-order-btn"
                                                 data-seller-id="{{ $group['seller_id'] }}" data-order-id="{{ $group['order_id'] }}">
                                                 View Order
                                             </button>
+                                            @if(strtoupper($group['status']) === 'SHIPPED')
+                                                @foreach($group['items'] as $productData)
+                                                    @php
+                                                        $p = $productData['product'];
+                                                    @endphp
+                                                    <a href="{{ route('buyer.reviews.create', $p->id) }}"
+                                                        class="btn btn-primary btn-sm mb-1">
+                                                        Leave Review for {{ $p->product_name }}
+                                                    </a>
+                                                @endforeach
+                                            @endif
+
                                         </div>
                                     </div>
+
                                 @endforeach
                             @else
                                 <div class="no-purchases">
@@ -272,10 +290,11 @@
             </div>
         </div>
     </div>
-
     <form id="logoutForm" action="{{ route('logout') }}" method="POST" class="d-none">
         @csrf
     </form>
+
+
 
     <script>
         document.addEventListener('DOMContentLoaded', function () {

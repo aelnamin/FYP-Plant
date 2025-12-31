@@ -1,6 +1,5 @@
 <?php
 
-
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
@@ -10,18 +9,18 @@ use App\Models\Product;
 use App\Models\Order;
 use App\Models\Transaction;
 use App\Models\Complaint;
-use Illuminate\Http\Request;
-
 
 class AdminDashboardController extends Controller
 {
     public function index()
     {
-        // basic metrics
+        /* ======================
+         | BASIC METRICS
+         ====================== */
         $totalUsers = User::count();
         $totalSellers = Seller::count();
 
-        // Only products where product is approved AND seller is approved
+        // Only approved products from approved sellers
         $totalProducts = Product::where('approval_status', 'Approved')
             ->whereHas('seller', function ($q) {
                 $q->where('verification_status', 'Approved');
@@ -31,21 +30,37 @@ class AdminDashboardController extends Controller
         $totalOrders = Order::count();
         $totalTransactions = Transaction::count();
 
-        // TOTAL REVENUE (paid orders only)
+        /* ======================
+         | REVENUE
+         ====================== */
         $totalRevenue = Order::where('status', 'paid')
             ->sum('total_amount');
 
-        // pending items
-        $pendingSellers = Seller::where('verification_status', 'Pending')->count();
-        $pendingProducts = Product::where('approval_status', 'Pending')->count();
-        $openComplaints = Complaint::where('status', 'Pending')->count();
+        /* ======================
+         | ORDER STATUS COUNTS
+         ====================== */
         $pendingOrders = Order::where('status', 'pending')->count();
         $paidOrders = Order::where('status', 'paid')->count();
         $cancelledOrders = Order::where('status', 'cancelled')->count();
 
-        // recent lists (only products from approved sellers)
-        $recentUsers = User::latest()->limit(6)->get();
-        $recentProducts = Product::with('seller')
+        /* ======================
+         | PENDING ITEMS
+         ====================== */
+        $pendingSellers = Seller::where('verification_status', 'Pending')->count();
+        $pendingProducts = Product::where('approval_status', 'Pending')->count();
+        $openComplaints = Complaint::where('status', 'Pending')->count();
+
+        /* ======================
+         | RECENT DATA
+         ====================== */
+
+        // Recent users
+        $recentUsers = User::latest()
+            ->limit(6)
+            ->get();
+
+        // Recent products (approved only)
+        $recentProducts = Product::with('seller', 'images')
             ->where('approval_status', 'Approved')
             ->whereHas('seller', function ($q) {
                 $q->where('verification_status', 'Approved');
@@ -54,6 +69,15 @@ class AdminDashboardController extends Controller
             ->limit(6)
             ->get();
 
+        // ✅ Recent orders (FIX for undefined variable)
+        $recentOrders = Order::with('user')
+            ->latest()
+            ->limit(5)
+            ->get();
+
+        /* ======================
+         | RETURN VIEW
+         ====================== */
         return view('admin.dashboard', compact(
             'totalUsers',
             'totalSellers',
@@ -61,14 +85,16 @@ class AdminDashboardController extends Controller
             'totalOrders',
             'totalTransactions',
             'totalRevenue',
+            'pendingOrders',
+            'paidOrders',
+            'cancelledOrders',
             'pendingSellers',
             'pendingProducts',
             'openComplaints',
             'recentUsers',
             'recentProducts',
-            'pendingOrders',
-            'paidOrders',
-            'cancelledOrders'
+            'recentOrders'
         ));
     }
 }
+

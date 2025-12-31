@@ -199,6 +199,14 @@
                     </li>
 
                     <li class="nav-item">
+                        <a href="{{ route('sellers.plants.monitor') }}"
+                            class="nav-link {{ request()->routeIs('sellers.plants.*') ? 'active' : '' }}">
+                            <i class="nav-icon fas fa-box-open"></i>
+                            <span>Plant Monitoring</span>
+                        </a>
+                    </li>
+
+                    <li class="nav-item">
                         <a href="{{ route('sellers.orders.index') }}"
                             class="nav-link {{ request()->routeIs('sellers.orders.*') ? 'active' : '' }}">
                             <i class="nav-icon fas fa-shopping-bag"></i>

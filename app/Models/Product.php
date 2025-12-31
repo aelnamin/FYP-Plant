@@ -4,6 +4,9 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\ProductGrowthLog;
+use App\Models\ProductCareLog;
+
 
 class Product extends Model
 {
@@ -53,4 +56,14 @@ class Product extends Model
     {
         return $this->hasMany(OrderItem::class);
     }
+    public function growthLogs()
+    {
+        return $this->hasMany(ProductGrowthLog::class);
+    }
+
+    public function careLogs()
+    {
+        return $this->hasMany(ProductCareLog::class);
+    }
+
 }
