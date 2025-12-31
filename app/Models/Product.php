@@ -30,7 +30,7 @@ class Product extends Model
     ];
 
     protected $casts = [
-        'variants' => 'array', // Laravel automatically decodes JSON to array
+        'variants' => 'array',
     ];
 
     public function seller()

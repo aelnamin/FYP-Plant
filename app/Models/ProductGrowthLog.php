@@ -10,7 +10,6 @@ class ProductGrowthLog extends Model
         'product_id',
         'seller_id',
         'height_cm',
-        'leaf_count',
         'growth_stage',
         'notes',
     ];

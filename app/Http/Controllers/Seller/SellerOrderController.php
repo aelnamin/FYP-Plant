@@ -30,7 +30,7 @@ class SellerOrderController extends Controller
         $sellerId = $seller->id; // This is the seller_id used in products table
 
         // Fetch orders that contain at least one product from this seller
-        $orders = Order::whereIn('status', ['Paid', 'Shipped'])
+        $orders = Order::whereIn('status', ['Pending', 'Paid', 'Shipped'])
             ->whereHas('items.product', function ($q) use ($sellerId) {
                 $q->where('seller_id', $sellerId);
             })
@@ -59,11 +59,19 @@ class SellerOrderController extends Controller
         return view('sellers.orders.show', compact('order', 'sellerId'));
     }
 
+    public function markAsPaid($orderId)
+    {
+        $order = Order::where('status', 'Pending')->findOrFail($orderId);
+        $order->update(['status' => 'Paid']);
+        return back()->with('success', 'Order marked as Paid.');
+    }
+
     /**
      * Mark order as Shipped
      */
     public function markAsShipped($orderId)
     {
+
         $order = Order::where('status', 'Paid')->findOrFail($orderId);
         $order->update(['status' => 'Shipped']);
 

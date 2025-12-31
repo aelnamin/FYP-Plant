@@ -160,12 +160,15 @@ Route::middleware(['auth', 'role:seller'])
       Route::get('/profile', [SellerProfileController::class, 'index'])->name('profile');
       Route::put('/profile', [SellerProfileController::class, 'update'])->name('profile.update');
 
+      Route::get('products/create', [ProductController::class, 'create'])->name('products.create');
+
       Route::get('/orders', [SellerOrderController::class, 'index'])->name('orders.index');
       Route::get('/orders/{order}', [SellerOrderController::class, 'show'])->name('orders.show');
       Route::post('/orders/{order}/ship', [SellerOrderController::class, 'markAsShipped'])->name('orders.ship');
 
-      Route::get('/plants/monitor', [PlantMonitoringController::class, 'index'])
-         ->name('plants.monitor');
+      // Plant Monitoring
+      Route::get('/plants', [PlantMonitoringController::class, 'index'])
+         ->name('plants.index');
 
       Route::post('/plants/{product}/growth', [PlantMonitoringController::class, 'storeGrowth'])
          ->name('plants.growth.store');
@@ -173,21 +176,17 @@ Route::middleware(['auth', 'role:seller'])
       Route::post('/plants/{product}/care', [PlantMonitoringController::class, 'storeCare'])
          ->name('plants.care.store');
 
-      Route::get('/seller/plants', [PlantMonitoringController::class, 'index'])
-         ->name('seller.plants.monitor');
+      // API routes for JS fetch
+      Route::get('/plants/{product}/growth-data', [PlantMonitoringController::class, 'getGrowthData'])
+         ->name('plants.growth.data');
 
-      Route::get('/seller/plants', [PlantMonitoringController::class, 'index'])
-         ->name('seller.plants.monitor');
+      Route::get('/plants/{product}/care-data', [PlantMonitoringController::class, 'getCareData'])
+         ->name('plants.care.data');
 
-      Route::post(
-         '/seller/plants/{product}/growth',
-         [PlantMonitoringController::class, 'storeGrowth']
-      )->name('seller.plants.growth.store');
 
-      Route::post(
-         '/seller/plants/{product}/care',
-         [PlantMonitoringController::class, 'storeCare']
-      )->name('seller.plants.care.store');
+      Route::post('seller/orders/{order}/paid', [SellerOrderController::class, 'markAsPaid'])
+         ->name('orders.paid');
+
    });
 
 

@@ -11,91 +11,101 @@ use Illuminate\Http\Request;
 
 class PlantMonitoringController extends Controller
 {
-    public function index(Request $request)
+    public function index()
     {
-        $products = Product::where('seller_id', Auth::id())
-            ->with(['growthLogs', 'careLogs'])
-            ->get();
+        $plantCategoryIds = [2, 4, 5]; // flowers, vegetables, herbs
+        $products = Product::whereIn('category_id', $plantCategoryIds)->get();
 
-        $selectedProduct = null;
-
-        if ($request->product_id) {
-            // Use find() instead of firstWhere() for better performance
-            $selectedProduct = Product::where('seller_id', Auth::id())
-                ->with(['growthLogs', 'careLogs'])
-                ->find($request->product_id);
-
-            // If not found in DB, try to get from already loaded collection
-            if (!$selectedProduct) {
-                $selectedProduct = $products->firstWhere('id', $request->product_id);
-            }
-        }
-
-        return view('sellers.plants.monitor', compact(
-            'products',
-            'selectedProduct'
-        ));
+        return view('sellers.plants.index', compact('products'));
     }
 
-    public function storeGrowth(Request $request, $productId)
+    public function storeGrowth(Request $request, Product $product)
     {
-        // Optional: Verify product belongs to seller before creating log
-        $product = Product::where('id', $productId)
-            ->where('seller_id', Auth::id())
-            ->firstOrFail();
+        $seller = Auth::user()->seller;
 
-        $request->validate([
+        if (!$seller || $product->seller_id !== $seller->id) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Unauthorized. You do not own this product.'
+            ], 403);
+        }
+
+
+        $validated = $request->validate([
+            'growth_stage' => 'required|string',
             'height_cm' => 'nullable|numeric|min:0',
-            'leaf_count' => 'nullable|integer|min:0',
-            'growth_stage' => 'required|string|in:seedling,vegetative,flowering,fruiting,mature',
             'notes' => 'nullable|string|max:500',
         ]);
 
         ProductGrowthLog::create([
-            'product_id' => $productId,
-            'seller_id' => Auth::id(),
-            'height_cm' => $request->height_cm,
-            'leaf_count' => $request->leaf_count,
-            'growth_stage' => $request->growth_stage,
-            'notes' => $request->notes,
+            'product_id' => $product->id,
+            'seller_id' => $seller->id,
+            'growth_stage' => $validated['growth_stage'],
+            'height_cm' => $validated['height_cm'] ?? null,
+            'notes' => $validated['notes'] ?? null,
         ]);
 
-        return back()->with('success', 'Growth log added successfully!');
+        return response()->json([
+            'success' => true,
+            'message' => 'Growth log saved successfully'
+        ]);
     }
 
-    public function storeCare(Request $request, $productId)
+    public function storeCare(Request $request, Product $product)
     {
-        // Optional: Verify product belongs to seller
-        $product = Product::where('id', $productId)
-            ->where('seller_id', Auth::id())
-            ->firstOrFail();
+        $seller = Auth::user()->seller;
 
-        $request->validate([
+        if (!$seller || $product->seller_id !== $seller->id) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Unauthorized. You do not own this product.'
+            ], 403);
+        }
+
+        $validated = $request->validate([
             'care_type' => 'required|string|in:watering,fertilizing,pruning,repotting,pest_control,disease_treatment,other',
-            'notes' => 'nullable|string|max:500',
-            'care_date' => 'required|date|before_or_equal:today',
+            'description' => 'nullable|string|max:500',
+            'care_date' => 'required|date|before_or_equal:today', // ADD THIS LINE
         ]);
 
         ProductCareLog::create([
-            'product_id' => $productId,
-            'seller_id' => Auth::id(),
-            'care_type' => $request->care_type,
-            'notes' => $request->notes,
-            'care_date' => $request->care_date,
+            'product_id' => $product->id,
+            'seller_id' => $seller->id,
+            'care_type' => $validated['care_type'],
+            'description' => $validated['description'] ?? null,
+            'care_date' => $validated['care_date'], // ADD THIS LINE
         ]);
 
-        return back()->with('success', 'Care log added successfully!');
+        return response()->json([
+            'success' => true,
+            'message' => 'Care log saved successfully'
+        ]);
     }
 
-    // API endpoints - These are optional but good to have
-    public function getGrowthData($productId)
-    {
-        $product = Product::where('id', $productId)
-            ->where('seller_id', Auth::id())
-            ->firstOrFail();
 
-        $growthLogs = ProductGrowthLog::where('product_id', $productId)
-            ->orderBy('created_at', 'desc')
+    public function getGrowthData(Product $product)
+    {
+        $user = Auth::user();
+
+        // 1️⃣ Make sure user is logged in and is a seller
+        if (!$user || $user->role !== 'seller') {
+            return response()->json([
+                'success' => false,
+                'message' => 'Unauthorized. Only sellers can view growth data.'
+            ], 403);
+        }
+
+        // 2️⃣ Check product ownership
+        if ($product->seller_id !== $user->id) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Unauthorized. You do not own this product.'
+            ], 403);
+        }
+
+        // 3️⃣ Fetch growth logs
+        $growthLogs = ProductGrowthLog::where('product_id', $product->id)
+            ->orderByDesc('created_at')
             ->get();
 
         return response()->json([
@@ -108,15 +118,30 @@ class PlantMonitoringController extends Controller
         ]);
     }
 
-    public function getCareData($productId)
+    public function getCareData(Product $product)
     {
-        $product = Product::where('id', $productId)
-            ->where('seller_id', Auth::id())
-            ->firstOrFail();
+        $user = Auth::user();
 
-        $careLogs = ProductCareLog::where('product_id', $productId)
-            ->orderBy('care_date', 'desc')
-            ->orderBy('created_at', 'desc')
+        // 1️⃣ Make sure user is logged in and is a seller
+        if (!$user || $user->role !== 'seller') {
+            return response()->json([
+                'success' => false,
+                'message' => 'Unauthorized. Only sellers can view care data.'
+            ], 403);
+        }
+
+        // 2️⃣ Check product ownership
+        if ($product->seller_id !== $user->id) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Unauthorized. You do not own this product.'
+            ], 403);
+        }
+
+        // 3️⃣ Fetch care logs
+        $careLogs = ProductCareLog::where('product_id', $product->id)
+            ->orderByDesc('care_date')
+            ->orderByDesc('created_at')
             ->get();
 
         return response()->json([
@@ -129,4 +154,5 @@ class PlantMonitoringController extends Controller
             ]
         ]);
     }
+
 }

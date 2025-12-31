@@ -6,6 +6,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@yield('title')</title>
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
@@ -199,12 +200,14 @@
                     </li>
 
                     <li class="nav-item">
-                        <a href="{{ route('sellers.plants.monitor') }}"
-                            class="nav-link {{ request()->routeIs('sellers.plants.*') ? 'active' : '' }}">
+                        <a href="{{ route('sellers.plants.index') }}"
+                            class="nav-link {{ request()->routeIs('plants.*') ? 'active' : '' }}">
                             <i class="nav-icon fas fa-box-open"></i>
                             <span>Plant Monitoring</span>
                         </a>
                     </li>
+
+
 
                     <li class="nav-item">
                         <a href="{{ route('sellers.orders.index') }}"

@@ -45,10 +45,10 @@
                                 </div>
 
                                 <span class="badge
-                                                                    @if($order->status === 'Paid') bg-primary
-                                                                    @elseif($order->status === 'Shipped') bg-success
-                                                                    @else bg-secondary
-                                                                    @endif">
+                                                                                    @if($order->status === 'Paid') bg-primary
+                                                                                    @elseif($order->status === 'Shipped') bg-success
+                                                                                    @else bg-secondary
+                                                                                    @endif">
                                     {{ $order->status }}
                                 </span>
                             </div>
@@ -88,22 +88,31 @@
                                     Total: RM {{ number_format($sellerTotal, 2) }}
                                 </strong>
                             </div>
-
                             {{-- Action --}}
-                            <div class="mt-3 text-end">
-                                @if($order->status === 'Paid')
-                                    <form action="{{ route('sellers.orders.ship', $order->id) }}" method="POST">
-                                        @csrf
-                                        <button class="btn btn-success btn-sm rounded-pill">
-                                            Mark as Shipped
-                                        </button>
-                                    </form>
-                                @elseif($order->status === 'Shipped')
-                                    <span class="text-success fw-semibold">
-                                        Already Shipped
-                                    </span>
-                                @endif
-                            </div>
+<div class="mt-3 text-end">
+    @if($order->status === 'Pending')
+        <form action="{{ route('sellers.orders.paid', $order->id) }}" method="POST" class="d-inline">
+            @csrf
+            <button class="btn btn-primary btn-sm rounded-pill">
+                Mark as Paid
+            </button>
+        </form>
+    @elseif($order->status === 'Paid')
+        <form action="{{ route('sellers.orders.ship', $order->id) }}" method="POST" class="d-inline">
+            @csrf
+            <button class="btn btn-success btn-sm rounded-pill">
+                Mark as Shipped
+            </button>
+        </form>
+    @elseif($order->status === 'Shipped')
+        <span class="text-success fw-semibold">
+            Already Shipped
+        </span>
+    @endif
+</div>
+
+
+                            
 
                         </div>
                     </div>

@@ -68,7 +68,7 @@ class CheckoutController extends Controller
 
             $order = Order::create([
                 'buyer_id' => $user->id,
-                'status' => 'paid',
+                'status' => 'Paid',
                 'total_amount' => $cartItems->sum(function ($item) {
                     return $item->product->price * $item->quantity;
                 }),

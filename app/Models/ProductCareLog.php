@@ -10,7 +10,7 @@ class ProductCareLog extends Model
         'product_id',
         'seller_id',
         'care_type',
-        'notes',
+        'description',
         'care_date',
     ];
 
