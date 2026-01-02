@@ -5,13 +5,6 @@
 @section('content')
     <div class="container py-5">
 
-        {{-- Back Navigation --}}
-        <div class="mb-4">
-            <a href="{{ route('buyer.transactions.index') }}" class="text-decoration-none text-success">
-                <i class="bi bi-arrow-left me-2"></i> Back to Orders
-            </a>
-        </div>
-
         {{-- Order Header --}}
         <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap">
             <div>
@@ -54,7 +47,7 @@
                             <div class="d-flex flex-column align-items-center">
                                 <div class="mb-2">
                                     <div class="rounded-circle d-inline-flex align-items-center justify-content-center 
-                                            {{ $active ? 'bg-success text-white' : 'bg-light text-dark border' }}"
+                                                    {{ $active ? 'bg-success text-white' : 'bg-light text-dark border' }}"
                                         style="width:50px;height:50px;">
                                         <i class="bi bi-{{ $icon }} fs-5"></i>
                                     </div>
@@ -63,7 +56,8 @@
                                 <small class="text-muted">
                                     @if($stage === 'Placed') {{ $order->created_at->format('d M, h:i A') }}
                                     @elseif($stage === 'Paid') {{ $active ? 'Completed' : 'Pending' }}
-                                    @elseif($stage === 'Shipped') {{ $active ? 'Shipped' : 'Processing' }} @endif
+                                    @elseif($stage === 'Shipped') {{ $active ? 'Shipped' : 'Processing' }}
+                                    @endif
                                 </small>
                             </div>
                         </div>
@@ -111,7 +105,11 @@
                                                         <i class="bi bi-tag me-1"></i> Variant: {{ $item->variant }}
                                                     </small>
                                                 @endif
-                                                <small class="text-muted">Unit Price: RM {{ number_format($item->price, 2) }}</small>
+                                                <small class="text-muted">Unit Price: RM
+                                                    {{ number_format($item->price, 2) }}</small>
+                                                <small class="text-muted d-block">
+                                                    Seller: {{ $item->product->seller->business_name ?? 'Unknown' }}
+                                                </small>
                                             </div>
 
                                             {{-- Price --}}
@@ -156,19 +154,25 @@
                         </div>
 
                         {{-- Summary --}}
+                        @php
+                            $subtotal = $order->items->sum(fn($item) => $item->price * $item->quantity);
+                            $shipping = 10.60;
+                            $total = $subtotal + $shipping;
+                        @endphp
+
                         <div class="mb-4">
                             <div class="d-flex justify-content-between mb-2">
                                 <span class="text-muted">Subtotal</span>
-                                <span>RM {{ number_format($order->total_amount, 2) }}</span>
+                                <span>RM {{ number_format($subtotal, 2) }}</span>
                             </div>
                             <div class="d-flex justify-content-between mb-2">
                                 <span class="text-muted">Shipping</span>
-                                <span class="text-success">Free</span>
+                                <span class="text-success">RM {{ number_format($shipping, 2) }}</span>
                             </div>
                             <hr>
                             <div class="d-flex justify-content-between">
                                 <strong>Total Amount</strong>
-                                <strong class="text-success fs-4">RM {{ number_format($order->total_amount, 2) }}</strong>
+                                <strong class="text-success fs-4">RM {{ number_format($total, 2) }}</strong>
                             </div>
                         </div>
 
@@ -208,7 +212,6 @@
         <style>
             .text-gradient-success {
                 background: linear-gradient(45deg, #28a745, #20c997);
-                
                 background-clip: text;
             }
 

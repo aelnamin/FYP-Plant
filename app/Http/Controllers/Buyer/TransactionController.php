@@ -95,8 +95,18 @@ class TransactionController extends Controller
     {
         abort_if($order->buyer_id !== Auth::id(), 403);
 
-        $order->load('items.product');
+        // Load items + product + seller via product
+        $order->load('items.product.seller');
 
-        return view('buyer.transactions.show', compact('order'));
+        // Calculate subtotal
+        $subtotal = $order->items->sum(fn($item) => $item->price * $item->quantity);
+
+        // Shipping
+        $shipping = 10.60;
+
+        // Total
+        $total = $subtotal + $shipping;
+
+        return view('buyer.transactions.show', compact('order', 'subtotal', 'shipping', 'total'));
     }
 }

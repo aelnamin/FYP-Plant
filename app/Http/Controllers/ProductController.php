@@ -71,12 +71,12 @@ class ProductController extends Controller
                 ->exists();
         }
 
-        // ✅ SAFE variants handling
-        $variants = [];
-        if (!empty($product->variants)) {
-            $decoded = json_decode($product->variants, true);
-            $variants = is_array($decoded) ? $decoded : [];
-        }
+        $variants = is_array($product->variants)
+            ? $product->variants
+            : json_decode($product->variants, true);
+
+        $variants = $variants ?? [];
+
 
         return view('products.show', compact(
             'product',

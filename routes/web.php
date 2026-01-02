@@ -74,6 +74,7 @@ Route::middleware(['auth', 'role:buyer'])->prefix('buyer')->group(function () {
    Route::post('/cart/add/{id}', [BuyerCartController::class, 'add'])->name('cart.add');
    Route::put('/cart/update/{id}', [BuyerCartController::class, 'update'])->name('cart.update');
    Route::delete('/cart/remove/{id}', [BuyerCartController::class, 'remove'])->name('cart.remove');
+
 });
 
 
@@ -288,5 +289,8 @@ Route::middleware(['auth', 'role:buyer'])->group(function () {
    // NEW: start chat (redirect to show page)
    Route::get('/chats/start/{seller}', [\App\Http\Controllers\Buyer\ChatController::class, 'startChat'])->name('buyer.chats.start');
 
+   //transaction
+   Route::get('buyer/transactions/{order}', [TransactionController::class, 'show'])
+      ->name('buyer.transactions.show');
 
 });

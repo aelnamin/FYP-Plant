@@ -208,6 +208,21 @@
                             <p class="fw-semibold text-success">RM {{ number_format($subtotal, 2) }}</p>
                         </div>
 
+                        <div class="product-variant">
+    Variant: 
+    @if($item->variant && $item->variant !== '')
+        <strong>{{ $item->variant }}</strong>
+        @if(!empty($variants) && count($variants) > 1)
+            <br><small class="text-muted">
+                
+            </small>
+        @endif
+    @else
+        <span class="text-muted">Standard</span>
+    @endif
+</div>
+                        
+
                         {{-- Quantity --}}
                         <div class="col-6 col-md-3 mt-2">
                             <form action="{{ route('cart.update', $item->id) }}" method="POST" class="d-flex align-items-center">

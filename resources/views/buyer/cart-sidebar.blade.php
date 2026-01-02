@@ -112,14 +112,13 @@
 
 @if($cartItems->count() > 0)
     @php
-        $subtotal = 0;
+        // Group by seller first
         $groupedItems = $cartItems->groupBy(fn($item) => $item->product->seller->id ?? 'unknown');
+        $subtotal = 0;
     @endphp
 
     @foreach($groupedItems as $sellerId => $sellerItems)
-        @php
-            $seller = $sellerItems->first()->product->seller ?? null;
-        @endphp
+        @php $seller = $sellerItems->first()->product->seller ?? null; @endphp
 
         <div class="seller-group">
             <div class="seller-header">
@@ -128,78 +127,73 @@
                     {{ $seller->business_name ?? 'Unknown Seller' }}
                 </div>
                 <div class="seller-item-count">
-                  {{ $sellerItems->sum('quantity') }} item{{ $sellerItems->sum('quantity') > 1 ? 's' : '' }}
+                    {{ $sellerItems->sum('quantity') }} item{{ $sellerItems->sum('quantity') > 1 ? 's' : '' }}
                 </div>
-
-                
             </div>
 
-            @foreach($sellerItems as $item)
-                @if($item->product)
-                    @php
-                        $subtotal += $item->product->price * $item->quantity;
-                    @endphp
+            {{-- Group same product + variant --}}
+            @php
+                $itemsGrouped = $sellerItems->groupBy(fn($item) => $item->product_id . '|' . $item->variant);
+            @endphp
 
-                    <div class="product-card">
-                        <img
-                            src="{{ $item->product->images->first()
-                                ? asset('images/' . $item->product->images->first()->image_path)
-                                : asset('images/default.jpg') }}"
-                            class="product-img"
-                            alt="{{ $item->product->product_name }}">
+            @foreach($itemsGrouped as $key => $items)
+                @php
+                    $item = $items->first();
+                    $quantity = $items->sum('quantity');
+                    $subtotal += $item->product->price * $quantity;
+                    $variants = $item->product->variants ?? [];
+                @endphp
 
-                        <div class="flex-grow-1">
-                            <div class="product-name">
-                                {{ $item->product->product_name }}
-                            </div>
+                <div class="product-card">
+                    <img src="{{ $item->image_url }}" class="product-img" alt="{{ $item->product->product_name }}">
 
-                            @if($item->variant)
-                                <div class="product-variant">
-                                    Variant: {{ $item->variant }}
-                                </div>
-                            @endif
+                    <div class="flex-grow-1">
+                        <div class="product-name">{{ $item->product->product_name }}</div>
 
-                            <div class="quantity-control">
-                                <form action="{{ route('cart.update', $item->id) }}" method="POST"
-                                    class="d-flex align-items-center flex-wrap gap-1">
-                                    @csrf
-                                    @method('PUT')
-
-                                    <button type="submit" name="quantity"
-                                        value="{{ $item->quantity - 1 }}"
-                                        class="qty-btn"
-                                        {{ $item->quantity <= 1 ? 'disabled' : '' }}>
-                                        -
-                                    </button>
-
-                                    <span class="mx-2">{{ $item->quantity }}</span>
-
-                                    <button type="submit" name="quantity"
-                                        value="{{ $item->quantity + 1 }}"
-                                        class="qty-btn">
-                                        +
-                                    </button>
-                                </form>
-
-                                <small class="text-muted ms-2 flex-shrink-0">
-                                    x RM{{ number_format($item->product->price, 2) }}
-                                </small>
-                            </div>
-                        </div>
-
-                        <div class="product-price">
-                            RM {{ number_format($item->product->price * $item->quantity, 2) }}
-
-                            <form action="{{ route('cart.remove', $item->id) }}" method="POST" class="mt-1">
+                        <div class="product-variant">
+    Variant: 
+    @if($item->variant && $item->variant !== '')
+        <strong>{{ $item->variant }}</strong>
+        @if(!empty($variants) && count($variants) > 1)
+            <br><small class="text-muted"></small>
+        @endif
+    @else
+        <span class="text-muted">Standard</span>
+    @endif
+</div>
+                        <div class="quantity-control">
+                            <form action="{{ route('cart.update', $item->id) }}" method="POST"
+                                class="d-flex align-items-center gap-1">
                                 @csrf
-                                @method('DELETE')
-                                <button class="btn btn-outline-dark btn-sm w-100">
-                                    <i class="bi bi-trash"></i>
+                                @method('PUT')
+
+                                <button type="submit" name="quantity" value="{{ $quantity - 1 }}" class="qty-btn" {{ $quantity <= 1 ? 'disabled' : '' }}>-
+                                </button>
+
+                                <span class="mx-2">{{ $quantity }}</span>
+
+                                <button type="submit" name="quantity" value="{{ $quantity + 1 }}" class="qty-btn">+
                                 </button>
                             </form>
+
+                            <small class="text-muted ms-2 flex-shrink-0">
+                                x RM{{ number_format($item->product->price, 2) }}
+                            </small>
                         </div>
                     </div>
-                @endif
+
+                    <div class="product-price">
+                        RM {{ number_format($item->product->price * $quantity, 2) }}
+
+                        <form action="{{ route('cart.remove', $item->id) }}" method="POST" class="mt-1">
+                            @csrf
+                            @method('DELETE')
+                            <button class="btn btn-outline-dark btn-sm w-100">
+                                <i class="bi bi-trash"></i>
+                            </button>
+                        </form>
+                    </div>
+                </div>
             @endforeach
         </div>
     @endforeach
