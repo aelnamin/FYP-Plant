@@ -23,10 +23,17 @@ class OrderController extends Controller
         return Order::create($validated);
     }
 
+
     public function show($id)
     {
-        return Order::with(['buyer', 'items'])->findOrFail($id);
+        $order = Order::with(['items.product.images', 'buyer', 'items.product.seller'])
+            ->where('buyer_id', auth()->id()) // Optional: ensure user owns the order
+            ->findOrFail($id);
+
+        return view('buyer.order-details', compact('order'));
     }
+
+
 
     public function update(Request $request, $id)
     {
@@ -46,5 +53,17 @@ class OrderController extends Controller
     public function destroy($id)
     {
         return Order::destroy($id);
+    }
+    public function showReviewPage($id)
+    {
+        $order = Order::with(['items.product.seller', 'items.product.images'])
+            ->findOrFail($id);
+
+        // Check if order is eligible for review
+        if (strtoupper($order->status) !== 'SHIPPED' && strtoupper($order->status) !== 'DELIVERED') {
+            return redirect()->back()->with('error', 'This order is not yet eligible for review.');
+        }
+
+        return view('buyer.orders.review-order', compact('order'));
     }
 }

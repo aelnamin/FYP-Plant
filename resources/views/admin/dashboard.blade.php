@@ -209,14 +209,17 @@
                 <p class="text-muted mb-0">Welcome back, Administrator! Platform overview and insights.</p>
             </div>
             <div class="d-flex align-items-center">
-                <span class="badge bg-light text-dark me-2">
-                    <i class="fas fa-calendar-alt me-1"></i>
-                    {{ now()->format('F j, Y') }}
-                </span>
+            <span class="badge bg-light text-dark">
+    <i class="fas fa-calendar-alt me-1"></i>
+    {{ \Carbon\Carbon::now('Asia/Kuala_Lumpur')->format('d M Y') }}
+</span>
+
+
                 <span class="badge bg-light text-dark">
-                    <i class="fas fa-clock me-1"></i>
-                    {{ now()->format('g:i A') }}
+                <i class="fas fa-clock me-1"></i>
+                {{ \Carbon\Carbon::now('Asia/Kuala_Lumpur')->format('g:i A') }}
                 </span>
+
             </div>
         </div>
 
@@ -254,17 +257,15 @@
                     <div class="card-body p-4">
                         <div class="d-flex justify-content-between align-items-start">
                             <div>
-                                <div class="text-muted mb-1">Total Revenue</div>
-                                <div class="h2 fw-bold mb-2" style="color: var(--success-color);">
-                                    RM {{ number_format($totalRevenue ?? 0, 2) }}
-                                </div>
-                                <div class="text-success small">
-                                    <i class="fas fa-chart-line me-1"></i>
-                                    {{ $monthGrowth ?? '0' }}% this month
-                                </div>
+                            <div class="text-muted mb-1">Total Sellers</div>
+                            <div class="h2 fw-bold mb-2">{{ $totalSellers ?? 0 }}</div>
+                            <div class="text-success small">
+                            <i class="fas fa-user-check me-1"></i>
+                            {{ $activeSellers ?? 0 }} active
+                           </div>
                             </div>
                             <div class="stat-icon-container bg-success-opacity">
-                                <i class="fas fa-money-bill-wave text-success" style="font-size: 1.5rem;"></i>
+                                <i class="fas fa-store text-success" style="font-size: 1.5rem;"></i>
                             </div>
                         </div>
                         <a href="{{ route('admin.orders.index', ['status' => 'paid']) }}" class="stretched-link"></a>
@@ -354,50 +355,50 @@
                                     </thead>
                                     <tbody>
                                         @foreach($recentOrders as $order)
-                                                                    <tr class="border-bottom">
-                                                                        <td>
-                                                                            <div class="fw-semibold">#{{ $order->id }}</div>
-                                                                            <small class="text-muted">{{ $order->created_at->format('M j') }}</small>
-                                                                        </td>
-                                                                        <td>
-                                                                            <div class="d-flex align-items-center">
-                                                                                <div class="bg-light rounded-circle p-2 me-2">
-                                                                                    <i class="fas fa-user text-muted"></i>
-                                                                                </div>
-                                                                                <div>
-                                                                                    <div class="fw-medium">{{ $order->user->name ?? 'Customer' }}</div>
-                                                                                    <small
-                                                                                        class="text-muted">{{ Str::limit($order->user->email ?? '', 15) }}</small>
-                                                                                </div>
-                                                                            </div>
-                                                                        </td>
-                                                                        <td>
-                                                                            <div class="fw-medium">{{ $order->seller->business_name ?? 'N/A' }}</div>
-                                                                        </td>
-                                                                        <td>
-                                                                            @php
-                                                                                $statusColors = [
-                                                                                    'pending' => 'warning',
-                                                                                    'paid' => 'primary',
-                                                                                    'shipped' => 'info',
-                                                                                    'delivered' => 'success',
-                                                                                    'cancelled' => 'danger'
-                                                                                ];
-                                                                                $statusColor = $statusColors[$order->status] ?? 'secondary';
-                                                                            @endphp
-                                             <span
-                                                                                class="badge bg-{{ $statusColor }}-opacity text-{{ $statusColor }} px-3 py-1">
-                                                                                {{ ucfirst($order->status) }}
-                                                                            </span>
-                                                                        </td>
-                                                                        <td class="fw-bold">RM {{ number_format($order->total_amount ?? 0, 2) }}</td>
-                                                                        <td class="text-end">
-                                                                            <a href="{{ route('admin.orders.show', $order->id) }}"
-                                                                                class="btn btn-light btn-sm">
-                                                                                <i class="fas fa-eye"></i>
-                                                                            </a>
-                                                                        </td>
-                                                                    </tr>
+                                            <tr class="border-bottom">
+                                                <td>
+                                                    <div class="fw-semibold">#{{ $order->id }}</div>
+                                                    <small class="text-muted">{{ $order->created_at->format('M j') }}</small>
+                                                </td>
+                                                <td>
+                                                    <div class="d-flex align-items-center">
+                                                        <div class="bg-light rounded-circle p-2 me-2">
+                                                            <i class="fas fa-user text-muted"></i>
+                                                        </div>
+                                                        <div>
+                                                            <div class="fw-medium">{{ $order->user->name ?? 'Customer' }}</div>
+                                                            <small
+                                                                class="text-muted">{{ Str::limit($order->user->email ?? '', 15) }}</small>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <div class="fw-medium">{{ $order->seller->business_name ?? 'N/A' }}</div>
+                                                </td>
+                                                <td>
+                                                    @php
+                                                        $statusColors = [
+                                                            'pending' => 'warning',
+                                                            'paid' => 'primary',
+                                                            'shipped' => 'info',
+                                                            'delivered' => 'success',
+                                                            'cancelled' => 'danger'
+                                                        ];
+                                                        $statusColor = $statusColors[$order->status] ?? 'secondary';
+                                                    @endphp
+                                                    <span
+                                                        class="badge bg-{{ $statusColor }}-opacity text-{{ $statusColor }} px-3 py-1">
+                                                        {{ ucfirst($order->status) }}
+                                                    </span>
+                                                </td>
+                                                <td class="fw-bold">RM {{ number_format($order->total_amount ?? 0, 2) }}</td>
+                                                <td class="text-end">
+                                                    <a href="{{ route('admin.orders.show', $order->id) }}"
+                                                        class="btn btn-light btn-sm">
+                                                        <i class="fas fa-eye"></i>
+                                                    </a>
+                                                </td>
+                                            </tr>
                                         @endforeach
                                     </tbody>
                                 </table>
@@ -533,7 +534,7 @@
 
             {{-- RIGHT COLUMN - PENDING ACTIONS --}}
             <div class="col-lg-4">
-                <div class="card border-0 shadow-sm h-100">
+                <div class="card border-0 shadow-sm h-60">
                     <div class="card-header bg-transparent border-0 p-4 pb-2">
                         <h5 class="mb-1">Pending Actions</h5>
                         <p class="text-muted small mb-0">Requires attention</p>
@@ -577,159 +578,49 @@
                 </div>
             </div>
         </div>
-
-        {{-- 5. QUICK ACCESS MODULES --}}
-        <div class="row g-4 mt-4">
-            <div class="col-12">
-                <div class="card border-0 shadow-sm">
-                    <div class="card-header bg-transparent border-0 p-4 pb-2">
-                        <div class="d-flex justify-content-between align-items-center">
-                            <div>
-                                <h5 class="mb-1">Management Modules</h5>
-                                <p class="text-muted small mb-0">Quick access to all admin sections</p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="card-body p-4">
-                        <div class="row g-3">
-                            @php
-                                $modules = [
-                                    ['route' => 'admin.users.index', 'icon' => 'fas fa-users', 'title' => 'Users', 'color' => 'primary', 'desc' => 'Manage user accounts'],
-                                    ['route' => 'admin.products.index', 'icon' => 'fas fa-boxes', 'title' => 'Products', 'color' => 'success', 'desc' => 'View and approve products'],
-                                    ['route' => 'admin.categories.index', 'icon' => 'fas fa-tags', 'title' => 'Categories', 'color' => 'info', 'desc' => 'Manage categories'],
-                                    ['route' => 'admin.orders.index', 'icon' => 'fas fa-shopping-cart', 'title' => 'Orders', 'color' => 'warning', 'desc' => 'Process orders'],
-                                    ['route' => 'admin.payments.index', 'icon' => 'fas fa-credit-card', 'title' => 'Payments', 'color' => 'success', 'desc' => 'Monitor transactions'],
-                                    ['route' => 'admin.sellers.index', 'icon' => 'fas fa-store', 'title' => 'Sellers', 'color' => 'secondary', 'desc' => 'Approve sellers'],
-                                    ['route' => 'admin.analytics.index', 'icon' => 'fas fa-chart-bar', 'title' => 'Analytics', 'color' => 'info', 'desc' => 'View reports'],
-                                    ['route' => 'admin.logs.index', 'icon' => 'fas fa-clipboard-list', 'title' => 'Logs', 'color' => 'dark', 'desc' => 'Activity logs'],
-                                ];
-                            @endphp
-
-                            @foreach($modules as $module)
-                                @php
-                                    $routeExists = Route::has($module['route']);
-                                @endphp
-
-                                <div class="col-md-6 col-lg-3">
-                                    @if($routeExists)
-                                        <a href="{{ route($module['route']) }}" class="text-decoration-none text-dark">
-                                    @endif
-                                        <div class="module-card @if(!$routeExists) opacity-50 @endif">
-                                            <div class="module-icon bg-{{ $module['color'] }}-opacity">
-                                                <i class="{{ $module['icon'] }} text-{{ $module['color'] }}"></i>
-                                            </div>
-                                            <h6 class="fw-semibold mb-1">{{ $module['title'] }}</h6>
-                                            <p class="text-muted small mb-0">{{ $module['desc'] }}</p>
-                                        </div>
-                                        @if($routeExists)
-                                            </a>
-                                        @endif
-                                </div>
-                            @endforeach
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        {{-- 6. PLATFORM ANALYTICS --}}
-        <div class="row g-4 mt-4">
-            <div class="col-12">
-                <div class="card border-0 shadow-sm">
-                    <div class="card-header bg-transparent border-0 p-4 pb-2">
-                        <h5 class="mb-1">Platform Analytics</h5>
-                        <p class="text-muted small mb-0">Performance overview</p>
-                    </div>
-                    <div class="card-body p-4">
-                        <div class="row">
-                            <div class="col-md-8">
-                                <div class="bg-light rounded-3 p-4 text-center" style="height: 280px;">
-                                    <div class="d-flex align-items-center justify-content-center h-100">
-                                        <div>
-                                            <i class="fas fa-chart-pie display-1 text-muted mb-3"></i>
-                                            <h5 class="text-muted mb-2">Platform Analytics</h5>
-                                            <p class="text-muted mb-0">Integrate analytics dashboard here</p>
-                                            <small class="text-muted">Chart.js or similar library</small>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-md-4">
-                                <div class="h-100">
-                                    <h6 class="mb-3">Quick Stats</h6>
-                                    <div class="list-group list-group-flush">
-                                        <div class="list-group-item border-0 px-0 d-flex justify-content-between">
-                                            <span>Avg. Order Value</span>
-                                            <span class="fw-bold">RM {{ number_format($avgOrderValue ?? 0, 2) }}</span>
-                                        </div>
-                                        <div class="list-group-item border-0 px-0 d-flex justify-content-between">
-                                            <span>Active Sellers</span>
-                                            <span class="fw-bold">{{ $activeSellers ?? '0' }}</span>
-                                        </div>
-                                        <div class="list-group-item border-0 px-0 d-flex justify-content-between">
-                                            <span>Platform Fee</span>
-                                            <span class="fw-bold">RM {{ number_format($platformFees ?? 0, 2) }}</span>
-                                        </div>
-                                        <div class="list-group-item border-0 px-0 d-flex justify-content-between">
-                                            <span>Satisfaction Rate</span>
-                                            <span class="fw-bold">
-                                                {{ number_format($satisfactionRate ?? 0, 1) }}%
-                                                <i class="fas fa-star text-warning"></i>
-                                            </span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-    </div>
 @endsection
 
-@section('scripts')
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            // Hover effects for cards
-            document.querySelectorAll('.hover-lift').forEach(card => {
-                card.addEventListener('mouseenter', function () {
-                    this.style.zIndex = '10';
+    @section('scripts')
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                // Hover effects for cards
+                document.querySelectorAll('.hover-lift').forEach(card => {
+                    card.addEventListener('mouseenter', function () {
+                        this.style.zIndex = '10';
+                    });
+                    card.addEventListener('mouseleave', function () {
+                        this.style.zIndex = '1';
+                    });
                 });
-                card.addEventListener('mouseleave', function () {
-                    this.style.zIndex = '1';
+
+                // Add loading animation to buttons
+                document.querySelectorAll('a.btn').forEach(button => {
+                    button.addEventListener('click', function (e) {
+                        if (!this.classList.contains('dropdown-toggle')) {
+                            const originalHTML = this.innerHTML;
+                            this.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span> Loading...';
+                            this.disabled = true;
+
+                            // Reset after 2 seconds (in case of error)
+                            setTimeout(() => {
+                                this.innerHTML = originalHTML;
+                                this.disabled = false;
+                            }, 2000);
+                        }
+                    });
+                });
+
+                // Fade in animation
+                const cards = document.querySelectorAll('.card');
+                cards.forEach((card, index) => {
+                    card.style.opacity = '0';
+                    card.style.transform = 'translateY(20px)';
+                    setTimeout(() => {
+                        card.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+                        card.style.opacity = '1';
+                        card.style.transform = 'translateY(0)';
+                    }, index * 100);
                 });
             });
-
-            // Add loading animation to buttons
-            document.querySelectorAll('a.btn').forEach(button => {
-                button.addEventListener('click', function (e) {
-                    if (!this.classList.contains('dropdown-toggle')) {
-                        const originalHTML = this.innerHTML;
-                        this.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span> Loading...';
-                        this.disabled = true;
-
-                        // Reset after 2 seconds (in case of error)
-                        setTimeout(() => {
-                            this.innerHTML = originalHTML;
-                            this.disabled = false;
-                        }, 2000);
-                    }
-                });
-            });
-
-            // Fade in animation
-            const cards = document.querySelectorAll('.card');
-            cards.forEach((card, index) => {
-                card.style.opacity = '0';
-                card.style.transform = 'translateY(20px)';
-                setTimeout(() => {
-                    card.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
-                    card.style.opacity = '1';
-                    card.style.transform = 'translateY(0)';
-                }, index * 100);
-            });
-        });
-    </script>
-@endsection
+        </script>
+    @endsection

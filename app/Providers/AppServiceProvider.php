@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Models\Seller;
 use App\Models\Product;
 use App\Models\Order;
+use App\Models\Message;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -53,6 +54,45 @@ class AppServiceProvider extends ServiceProvider
 
             // Share variable with view
             $view->with('notShippedOrdersCount', $notShippedOrdersCount);
+
         });
+
+        View::composer('layouts.sellers-main', function ($view) {
+
+            if (!Auth::check()) {
+                return;
+            }
+
+            $seller = Seller::where('user_id', Auth::id())->first();
+            if (!$seller) {
+                return;
+            }
+
+            $sellerProductIds = Product::where('seller_id', $seller->id)->pluck('id');
+
+            $notShippedOrdersCount = Order::whereHas('items', function ($q) use ($sellerProductIds) {
+                $q->whereIn('product_id', $sellerProductIds);
+            })
+                ->whereNotIn('status', ['shipped', 'delivered'])
+                ->distinct()
+                ->count();
+
+            $view->with('notShippedOrdersCount', $notShippedOrdersCount);
+        });
+
+        View::composer('layouts.main', function ($view) {
+
+            if (!Auth::check() || Auth::user()->role !== 'buyer') {
+                return;
+            }
+
+            $unreadCount = Message::where('receiver_id', Auth::id())
+                ->whereNull('deleted_at')
+                ->count(); // add ->whereNull('read_at') if you have it
+
+            $view->with('unreadCount', $unreadCount);
+        });
+
     }
+
 }

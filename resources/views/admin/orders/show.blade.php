@@ -226,10 +226,10 @@
 
                     <span class="order-status-large">
                         <i class="bi 
-                                                                    @if($order->status === 'Pending') bi-clock
-                                                                    @elseif($order->status === 'Paid') bi-credit-card
-                                                                    @elseif($order->status === 'Shipped') bi-truck
-                                                                    @endif"></i>
+                                                                                @if($order->status === 'Pending') bi-clock
+                                                                                @elseif($order->status === 'Paid') bi-credit-card
+                                                                                @elseif($order->status === 'Shipped') bi-truck
+                                                                                @endif"></i>
                         {{ $order->status }}
                     </span>
                 </div>
@@ -257,10 +257,10 @@
                         <div class="info-label">Order Status</div>
                         <div class="info-value">
                             <span class="status-badge 
-                                                                        @if($order->status === 'Pending') status-pending
-                                                                        @elseif($order->status === 'Paid') status-paid
-                                                                        @elseif($order->status === 'Shipped') status-shipped
-                                                                        @endif">
+                                                                                    @if($order->status === 'Pending') status-pending
+                                                                                    @elseif($order->status === 'Paid') status-paid
+                                                                                    @elseif($order->status === 'Shipped') status-shipped
+                                                                                    @endif">
                                 {{ $order->status }}
                             </span>
                         </div>
@@ -331,26 +331,13 @@
                     Order Total: RM {{ number_format($order->total_amount, 2) }}
                 </div>
             </div>
-
-            <!-- Admin Actions -->
-            <div class="admin-actions">
-                @if($order->status === 'Pending')
-                    <form action="{{ route('admin.orders.markPaid', $order) }}" method="POST" class="d-inline">
-                        @csrf
-                        <button type="submit" class="btn-status">
-                            <i class="bi bi-check-circle"></i>
-                            Mark as Paid
-                        </button>
-                    </form>
-                @endif
-
-                <button type="button" class="btn-status"
-                    style="background: linear-gradient(135deg, #6c757d 0%, #868e96 100%);">
-                    <i class="bi bi-printer"></i>
-                    Print Invoice
-                </button>
-            </div>
+            <br>
+            <button type="button" class="btn-status" style="background: linear-gradient(135deg, #6c757d 0%, #868e96 100%);">
+                <i class="bi bi-printer"></i>
+                Print Invoice
+            </button>
         </div>
+    </div>
     </div>
 
     <script>

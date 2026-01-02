@@ -257,10 +257,11 @@
 
                                         <!-- Action Buttons -->
                                         <div class="text-end mt-3 d-flex justify-content-end gap-2">
-                                            <button class="btn btn-outline-primary btn-sm view-order-btn"
-                                                data-seller-id="{{ $group['seller_id'] }}" data-order-id="{{ $group['order_id'] }}">
+                                            <a href="{{ route('buyer.order-details', $group['order_id']) }}"
+                                                class="btn btn-outline-primary btn-sm">
                                                 View Order
-                                            </button>
+                                            </a>
+
                                             @if(strtoupper($group['status']) === 'SHIPPED')
                                                 @foreach($group['items'] as $productData)
                                                     @php

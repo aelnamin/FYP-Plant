@@ -23,9 +23,11 @@ class OrderManagementController extends Controller
 
             $query->where(function ($q) use ($search) {
                 $q->whereHas('buyer', function ($qb) use ($search) {
-                    $qb->where('name', 'like', "%{$search}%");
+                    $qb->where('name', 'like', "%{$search}%")
+                        ->orWhere('email', 'like', "%{$search}%");
                 })->orWhere('id', $search);
             });
+
         }
 
         // Sorting

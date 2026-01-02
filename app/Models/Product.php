@@ -26,6 +26,7 @@ class Product extends Model
         'difficulty_level',
         'growth_stage',
         'approved_by',
+        'health_condition',
 
     ];
 

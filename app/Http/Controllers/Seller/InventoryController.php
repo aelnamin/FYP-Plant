@@ -53,6 +53,8 @@ class InventoryController extends Controller
             'difficulty_level' => 'nullable|string',
             'growth_stage' => 'nullable|string',
 
+            'health_condition' => 'nullable|string|max:255',
+
             'variants_input' => 'nullable|string', // ✅ VARIANTS
             'images.*' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
         ]);
@@ -78,7 +80,9 @@ class InventoryController extends Controller
             'difficulty_level' => $request->difficulty_level,
             'growth_stage' => $request->growth_stage,
 
-            'variants' => $variants, // ✅ SAVE VARIANTS
+            'health_condition' => $request->health_condition,
+
+            'variants' => $variants,
             'approval_status' => 'Pending',
         ]);
 
@@ -126,7 +130,7 @@ class InventoryController extends Controller
             'difficulty_level' => 'nullable|string',
             'growth_stage' => 'nullable|string',
 
-            'variants_input' => 'nullable|string', // ✅ VARIANTS
+            'variants_input' => 'nullable|string',
             'images.*' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
             'remove_images' => 'nullable|array',
         ]);
@@ -151,7 +155,10 @@ class InventoryController extends Controller
             'difficulty_level' => $request->difficulty_level,
             'growth_stage' => $request->growth_stage,
 
-            'variants' => $variants, // ✅ UPDATE VARIANTS
+
+            'health_condition' => $request->health_condition,
+
+            'variants' => $variants,
         ]);
 
         // Remove images

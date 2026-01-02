@@ -5,6 +5,16 @@
 @section('content')
     <div class="container mt-4">
         <h2>Add New Product</h2>
+        @if ($errors->any())
+            <div class="alert alert-danger">
+                <ul class="mb-0">
+                    @foreach ($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+            </div>
+        @endif
+
 
         <form action="{{ route('sellers.inventory.store') }}" method="POST" enctype="multipart/form-data">
             @csrf
@@ -38,7 +48,6 @@
                     Example: Small, Medium, Large OR Red, Blue, Green
                 </small>
             </div>
-
 
             <div class="mb-3">
                 <label>Price (RM)</label>
@@ -100,6 +109,12 @@
                     <option value="Young">Young</option>
                     <option value="Tuber">Tuber</option>
                 </select>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Health & Condition</label>
+                <textarea name="health_condition" class="form-control" rows="3"
+                    placeholder="Example: Healthy leaves, no pests, recently repotted"></textarea>
             </div>
 
 

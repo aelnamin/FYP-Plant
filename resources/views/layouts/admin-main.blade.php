@@ -318,14 +318,6 @@
                         </a>
                     </li>
 
-                    <li class="nav-item">
-                        <a href="{{ route('admin.orders.index') }}"
-                            class="nav-link {{ request()->routeIs('admin.categories.*') ? 'active' : '' }}">
-                            <i class="nav-icon fas fa-tags"></i>
-                            <span>Categories</span>
-                        </a>
-                    </li>
-
                     <div class="section-divider">Order Management</div>
                     <li class="nav-item">
                         <a href="{{ route('admin.orders.index') }}"
@@ -338,36 +330,12 @@
                         </a>
                     </li>
 
-                    <li class="nav-item">
-                        <a href="{{ route('admin.orders.index') }}"
-                            class="nav-link {{ request()->routeIs('admin.payments.*') ? 'active' : '' }}">
-                            <i class="nav-icon fas fa-credit-card"></i>
-                            <span>Payments</span>
-                        </a>
-                    </li>
-
                     <div class="section-divider">System</div>
                     <li class="nav-item">
-                        <a href="{{ route('admin.orders.index') }}"
+                        <a href="{{ route('admin.reports.index') }}"
                             class="nav-link {{ request()->routeIs('admin.analytics.*') ? 'active' : '' }}">
                             <i class="nav-icon fas fa-chart-bar"></i>
                             <span>Analytics</span>
-                        </a>
-                    </li>
-
-                    <li class="nav-item">
-                        <a href="{{ route('admin.orders.index') }}"
-                            class="nav-link {{ request()->routeIs('admin.logs.*') ? 'active' : '' }}">
-                            <i class="nav-icon fas fa-clipboard-list"></i>
-                            <span>System Logs</span>
-                        </a>
-                    </li>
-
-                    <li class="nav-item">
-                        <a href="{{ route('admin.orders.index') }}"
-                            class="nav-link {{ request()->routeIs('admin.settings.*') ? 'active' : '' }}">
-                            <i class="nav-icon fas fa-cog"></i>
-                            <span>Settings</span>
                         </a>
                     </li>
 

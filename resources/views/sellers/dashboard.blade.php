@@ -120,10 +120,16 @@
                     summary.</p>
             </div>
             <div class="d-flex align-items-center">
-                <span class="badge bg-light text-dark me-2">
+                <span class="badge bg-light text-dark">
                     <i class="fas fa-calendar-alt me-1"></i>
-                    {{ now()->format('F j, Y') }}
+                    {{ \Carbon\Carbon::now('Asia/Kuala_Lumpur')->format('d M Y') }}
                 </span>
+
+                <span class="badge bg-light text-dark">
+                    <i class="fas fa-clock me-1"></i>
+                    {{ \Carbon\Carbon::now('Asia/Kuala_Lumpur')->format('g:i A') }}
+                </span>
+
             </div>
         </div>
 
@@ -425,35 +431,7 @@
 
             <div class="row g-4">
 
-                {{-- LEFT COLUMN (PROFILE) --}}
-                <div class="col-lg-8">
-                    <div class="card border-0 shadow-sm rounded-3 h-100">
-                        <div class="card-body p-4">
-                            <div class="d-flex align-items-center mb-4">
-                                <div class="bg-primary bg-opacity-10 rounded-circle p-3 me-3">
-                                    <i class="fas fa-store text-primary" style="font-size: 1.5rem;"></i>
-                                </div>
-                                <div>
-                                    <h5 class="mb-1">{{ $seller->business_name ?? 'Your Store' }}</h5>
-                                    <p class="text-muted small mb-0">{{ auth()->user()->email }}</p>
-                                </div>
-                            </div>
 
-                            <div class="row g-2">
-                                <div class="col-md-6">
-                                    <a href="{{ route('sellers.profile') }}" class="btn btn-outline-primary w-100">
-                                        <i class="fas fa-user-edit me-1"></i> Profile
-                                    </a>
-                                </div>
-                                <div class="col-md-6">
-                                    <a href="{{ route('sellers.orders.index') }}" class="btn btn-outline-secondary w-100">
-                                        <i class="fas fa-cog me-1"></i> Settings
-                                    </a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
 
                 {{-- RIGHT COLUMN (QUICK ACTIONS) --}}
                 <div class="col-lg-4">
@@ -470,7 +448,7 @@
                                 <a href="{{ route('sellers.orders.index') }}" class="btn btn-outline-success">
                                     <i class="fas fa-list-alt me-2"></i> View All Orders
                                 </a>
-                                <a href="{{ route('sellers.orders.index') }}" class="btn btn-outline-info">
+                                <a href="{{ route('sellers.chats.index') }}" class="btn btn-outline-info">
                                     <i class="fas fa-comments me-2"></i> Customer Messages
                                 </a>
                                 <a href="{{ route('sellers.orders.index') }}" class="btn btn-outline-warning">
@@ -495,16 +473,8 @@
                         <div class="card-body p-4">
                             <div class="row">
                                 <div class="col-md-8">
-                                    <div class="bg-light rounded-3 p-4 text-center" style="height: 300px;">
-                                        <div class="d-flex align-items-center justify-content-center h-100">
-                                            <div>
-                                                <i class="fas fa-chart-bar display-1 text-muted mb-3"></i>
-                                                <h5 class="text-muted mb-2">Sales Analytics</h5>
-                                                <p class="text-muted mb-0">Integrate Chart.js for detailed insights</p>
-                                                <small class="text-muted">Coming soon</small>
-                                            </div>
-                                        </div>
-                                    </div>
+                                    <canvas id="salesChart" style="height: 300px;"></canvas>
+
                                 </div>
                                 <div class="col-md-4">
                                     <div class="h-100">
@@ -560,6 +530,7 @@
                         }
                     });
                 });
+
             });
         </script>
     @endsection

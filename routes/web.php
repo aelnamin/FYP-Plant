@@ -15,9 +15,13 @@ use App\Http\Controllers\Buyer\ReviewController;
 use App\Http\Controllers\Buyer\TransactionController;
 use App\Http\Controllers\Seller\OrderManagementController;
 use App\Http\Controllers\Admin\ComplaintController;
+use App\Http\Controllers\Admin\ReportController;
 use App\Http\Controllers\Seller\SellerOrderController;
+use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\PaymentController;
+use App\Http\Controllers\Buyer\ChatController as BuyerChatController;
+use App\Http\Controllers\Seller\ChatController as SellerChatController;
 use App\Http\Controllers\Buyer\CartController as BuyerCartController;
 use App\Http\Controllers\Seller\PlantMonitoringController;
 use App\Http\Controllers\Buyer\BuyerProfileController;
@@ -113,6 +117,10 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
 
    Route::resource('complaints', ComplaintController::class);
 
+   //reports
+   Route::get('/reports', [ReportController::class, 'index'])
+      ->name('reports.index');
+
 });
 
 
@@ -187,6 +195,17 @@ Route::middleware(['auth', 'role:seller'])
       Route::post('seller/orders/{order}/paid', [SellerOrderController::class, 'markAsPaid'])
          ->name('orders.paid');
 
+      //seller chat route
+   
+      Route::get('/chats', [SellerChatController::class, 'index'])
+         ->name('chats.index');
+
+      Route::get('/chats/{buyer}', [SellerChatController::class, 'show'])
+         ->name('chats.show');
+
+      Route::post('/chats/{buyer}/send', [SellerChatController::class, 'send'])
+         ->name('chats.send');
+
    });
 
 
@@ -214,6 +233,9 @@ Route::middleware(['auth', 'role:buyer'])->group(function () {
       [TransactionController::class, 'store']
    )->name('buyer.place.order');
 
+   Route::get('/buyer/orders/{order}', [OrderController::class, 'show'])
+      ->name('buyer.orders.details');
+
    Route::get(
       '/transactions',
       [TransactionController::class, 'index']
@@ -228,6 +250,43 @@ Route::middleware(['auth', 'role:buyer'])->group(function () {
    Route::get('reviews', [ReviewController::class, 'index'])->name('buyer.reviews.index'); // My Reviews page
    Route::get('reviews/{product}', [ReviewController::class, 'create'])->name('buyer.reviews.create'); // Leave review
    Route::post('reviews/{product}', [ReviewController::class, 'store'])->name('buyer.reviews.store'); // Submit review
+
+
+
+   Route::get('/buyer/order/{id}', [OrderController::class, 'show'])
+      ->name('buyer.orders.show');
+
+   Route::get('/buyer/order/{id}', [OrderController::class, 'show'])
+      ->name('buyer.order-details');
+
+   Route::get('/buyer/orders/{order}/review', [OrderController::class, 'showReviewPage'])
+      ->name('buyer.orders.review');
+
+   Route::get('/orders/{order}/reviews', [ReviewController::class, 'reviewOrder'])
+      ->name('orders.reviews.index');
+
+   Route::post('/orders/{order}/reviews', [ReviewController::class, 'storeOrderReviews'])
+      ->name('orders.reviews.store');
+   Route::get('/reviews/create/{product}', [ReviewController::class, 'create'])
+      ->name('buyer.reviews.create');
+
+   //Chat routes
+
+   Route::get('/chats', [BuyerChatController::class, 'index'])
+      ->name('buyer.chats.index');
+
+   Route::get('/chats/{seller}', [BuyerChatController::class, 'show'])
+      ->name('buyer.chats.show');
+
+   Route::post('/chats/{seller}/send', [BuyerChatController::class, 'send'])
+      ->name('buyer.chats.send');
+
+   Route::get('/buyer/chats/{seller}/fetch', [BuyerChatController::class, 'fetchNewMessages'])
+      ->name('buyer.chats.fetch');
+
+
+   // NEW: start chat (redirect to show page)
+   Route::get('/chats/start/{seller}', [\App\Http\Controllers\Buyer\ChatController::class, 'startChat'])->name('buyer.chats.start');
 
 
 });

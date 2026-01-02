@@ -22,6 +22,12 @@
                         <label>Password (leave blank to keep current)</label>
                         <input type="password" name="password" class="form-control">
                     </div>
+
+                    <div class="mb-3">
+                        <label>Confirm Password</label>
+                        <input type="password" name="password_confirmation" class="form-control">
+                    </div>
+
                     <div class="mb-3">
                         <label>Role</label>
                         <select name="role" class="form-control" required>

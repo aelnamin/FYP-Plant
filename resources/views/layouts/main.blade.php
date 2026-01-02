@@ -73,6 +73,25 @@
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto d-flex align-items-center">
 
+                <!-- HOME LINK -->
+<li class="nav-item me-3">
+    <a class="nav-link" 
+       href="{{ auth()->check() && auth()->user()->role === 'buyer' 
+                ? route('buyer.dashboard') 
+                : url('/') }}">
+        <i class="bi bi-house" style="font-size: 1.3rem;"></i>
+    </a>
+</li>
+
+<li class="nav-item me-3 position-relative">
+    <a href="{{ route('buyer.chats.index') }}" class="nav-link">
+        <i class="bi bi-chat-dots" style="font-size: 1.3rem;"></i>
+    </a>
+</li>
+
+
+
+
                     <!-- CART ICON -->
                     <li class="nav-item me-3">
     @if($user && $user->role === 'buyer')
@@ -94,7 +113,7 @@
 
 
                     <!-- PROFILE ICON -->
-                    <li class="nav-item">
+                    <li class="nav-item me-3">
                         @if($user)
                             @switch($user->role)
                                 @case('buyer')

@@ -202,10 +202,11 @@
                     <li class="nav-item">
                         <a href="{{ route('sellers.plants.index') }}"
                             class="nav-link {{ request()->routeIs('plants.*') ? 'active' : '' }}">
-                            <i class="nav-icon fas fa-box-open"></i>
+                            <i class="nav-icon fas fa-leaf"></i>
                             <span>Plant Monitoring</span>
                         </a>
                     </li>
+
 
 
 

@@ -133,12 +133,17 @@
 
         {{-- Breadcrumb --}}
         <nav class="breadcrumb mb-4">
-            <a href="{{ route('buyer.dashboard') }}">Home</a>
+            <a href="{{ auth()->check() && auth()->user()->role === 'buyer'
+        ? route('buyer.dashboard')
+        : route('home') }}">
+                Home
+            </a>
             <span class="mx-2">/</span>
             <a href="#">{{ $product->category->category_name }}</a>
             <span class="mx-2">/</span>
             <span class="text-dark">{{ $product->product_name }}</span>
         </nav>
+
 
         <div class="row g-4">
 

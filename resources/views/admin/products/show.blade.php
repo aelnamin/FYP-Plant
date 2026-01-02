@@ -31,8 +31,15 @@
                             {{ number_format($product->price, 2) }}</span></p>
                     <p><strong>Stock:</strong> {{ $product->stock_quantity }}</p>
                     <p><strong>Description:</strong></p>
+                    
+
                     <div class="border rounded p-2 mb-3" style="background-color: #f9f9f9;">
                         {!! nl2br(e($product->description)) !!}
+                    </div>
+
+                    <p><strong>Health & Condition:</strong></p>
+                    <div class="border rounded p-2 mb-3" style="background-color: #f9f9f9;">
+                    {{ $product->health_condition ?? '-' }}
                     </div>
 
                     <div class="mt-3">

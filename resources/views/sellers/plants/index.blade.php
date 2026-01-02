@@ -18,6 +18,21 @@
         font-family: 'Inter', sans-serif;
     }
 
+    .page-header {
+        margin-bottom: 2rem;
+    }
+
+    .page-title {
+        font-weight: 600;
+        color: #2c3e50;
+        margin-bottom: 0.25rem;
+    }
+
+    .page-subtitle {
+        color: #6c757d;
+        font-size: 0.9rem;
+    }
+
     .card {
         transition: transform 0.3s ease, box-shadow 0.3s ease;
     }
@@ -77,11 +92,11 @@
 
 @section('content')
     <div class="container mx-auto px-4 py-8 bg-gray-50">
-        <!-- Header -->
-        <header class="mb-10">
-            <h1 class="text-3xl font-bold text-gray-800">Plant Growth & Care Monitoring</h1>
-            <p class="text-gray-600 mt-2">Track and manage your plants' health and development</p>
-        </header>
+        <!-- Page Header -->
+        <div class="page-header">
+            <h1 class="page-title">Plant Growth & Care Monitoring</h1>
+            <p class="page-subtitle">Track and manage your plants' health and development</p>
+        </div>
 
         <!-- Success Messages -->
         @if(session('success'))
@@ -843,10 +858,10 @@
 
             if (latestLog) {
                 const latestHtml = `
-                                        <p class="font-medium text-gray-800">${latestLog.growth_stage || 'No stage'}</p>
-                                        <p class="text-gray-600 text-sm">Height: ${latestLog.height_cm || 'N/A'} cm</p>
-                                        <p class="text-gray-600 text-sm mt-1">${latestLog.notes || 'No notes'}</p>
-                                    `;
+                                            <p class="font-medium text-gray-800">${latestLog.growth_stage || 'No stage'}</p>
+                                            <p class="text-gray-600 text-sm">Height: ${latestLog.height_cm || 'N/A'} cm</p>
+                                            <p class="text-gray-600 text-sm mt-1">${latestLog.notes || 'No notes'}</p>
+                                        `;
                 const latestContainer = document.getElementById('latest-growth-log');
                 const countElem = document.getElementById('growth-log-count');
                 if (latestContainer) latestContainer.innerHTML = latestHtml;
@@ -867,10 +882,10 @@
                 const daysDiff = Math.floor((today - wateringDate) / (1000 * 60 * 60 * 24));
 
                 const wateringHtml = `
-                                        <p class="font-medium text-gray-800">Last watered: ${daysDiff} days ago</p>
-                                        <p class="text-gray-600 text-sm">Date: ${wateringDate.toLocaleDateString()}</p>
-                                        ${latestWatering.notes ? `<p class="text-gray-600 text-sm">Notes: ${latestWatering.notes}</p>` : ''}
-                                    `;
+                                            <p class="font-medium text-gray-800">Last watered: ${daysDiff} days ago</p>
+                                            <p class="text-gray-600 text-sm">Date: ${wateringDate.toLocaleDateString()}</p>
+                                            ${latestWatering.notes ? `<p class="text-gray-600 text-sm">Notes: ${latestWatering.notes}</p>` : ''}
+                                        `;
                 const wateringContainer = document.getElementById('watering-info');
                 if (wateringContainer) wateringContainer.innerHTML = wateringHtml;
             }
@@ -878,10 +893,10 @@
             if (latestLog) {
                 const careDate = new Date(latestLog.care_date).toLocaleDateString();
                 const careHtml = `
-                                        <p class="font-medium text-gray-800">${formatCareType(latestLog.care_type)}</p>
-                                        <p class="text-gray-600 text-sm">Date: ${careDate}</p>
-                                        <p class="text-gray-600 text-sm mt-1">${latestLog.notes || 'No notes'}</p>
-                                    `;
+                                            <p class="font-medium text-gray-800">${formatCareType(latestLog.care_type)}</p>
+                                            <p class="text-gray-600 text-sm">Date: ${careDate}</p>
+                                            <p class="text-gray-600 text-sm mt-1">${latestLog.notes || 'No notes'}</p>
+                                        `;
                 const latestContainer = document.getElementById('latest-care-log');
                 const countElem = document.getElementById('care-log-count');
                 if (latestContainer) latestContainer.innerHTML = careHtml;
@@ -908,16 +923,16 @@
                 const typeColor = getCareTypeColor(log.care_type);
 
                 historyHtml += `
-                                        <div class="flex items-center p-3 bg-gray-50 rounded-lg">
-                                            <div class="w-10 h-10 ${typeColor.bg} rounded-lg flex items-center justify-center mr-3">
-                                                <i class="${typeIcon} ${typeColor.text}"></i>
+                                            <div class="flex items-center p-3 bg-gray-50 rounded-lg">
+                                                <div class="w-10 h-10 ${typeColor.bg} rounded-lg flex items-center justify-center mr-3">
+                                                    <i class="${typeIcon} ${typeColor.text}"></i>
+                                                </div>
+                                                <div class="flex-1">
+                                                    <div class="font-medium text-gray-800">${formatCareType(log.care_type)}</div>
+                                                    <div class="text-sm text-gray-600">${date} - ${log.notes || 'No notes'}</div>
+                                                </div>
                                             </div>
-                                            <div class="flex-1">
-                                                <div class="font-medium text-gray-800">${formatCareType(log.care_type)}</div>
-                                                <div class="text-sm text-gray-600">${date} - ${log.notes || 'No notes'}</div>
-                                            </div>
-                                        </div>
-                                    `;
+                                        `;
             });
 
             historyContainer.innerHTML = historyHtml;

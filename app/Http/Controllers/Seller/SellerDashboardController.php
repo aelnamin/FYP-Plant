@@ -69,6 +69,32 @@ class SellerDashboardController extends Controller
             })
             ->sum(DB::raw('quantity * price'));
 
+        /* ======================
+      SALES LAST 7 DAYS FOR ANALYTICS
+   ====================== */
+        $sales_last_7_days = OrderItem::whereIn('product_id', $sellerProductIds)
+            ->whereHas('order', function ($q) {
+                $q->whereIn('status', ['paid', 'shipped', 'delivered']);
+            })
+            ->where('created_at', '>=', Carbon::now()->subDays(6)->startOfDay()) // last 7 days including today
+            ->get()
+            ->groupBy(function ($item) {
+                return Carbon::parse($item->created_at)->format('d M'); // group by day
+            })
+            ->map(function ($items) {
+                return $items->sum(fn($i) => $i->quantity * $i->price);
+            });
+
+        // Make sure all 7 days exist in labels (fill 0 if no sales)
+        $last7Days = collect();
+        for ($i = 6; $i >= 0; $i--) {
+            $day = Carbon::now()->subDays($i)->format('d M');
+            $last7Days[$day] = $sales_last_7_days->get($day, 0);
+        }
+
+        $sales_labels = $last7Days->keys()->toArray();  // Convert to array
+        $sales_data = $last7Days->values()->map(fn($v) => (float) $v)->toArray();
+
 
 
         /* ======================
@@ -117,7 +143,9 @@ class SellerDashboardController extends Controller
             'avg_order_value',
             'conversion_rate',
             'best_selling_product',
-            'avg_rating'
+            'avg_rating',
+            'sales_labels',
+            'sales_data'
         ));
     }
 }
