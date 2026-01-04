@@ -227,6 +227,17 @@
                                                                                 </div>
                                                                                 <div class="d-flex justify-content-between align-items-center">
                                                                                     <div class="product-meta">
+                                                                                    <div class="product-variant">
+    Variant: 
+    @if($item->variant && $item->variant !== '')
+        <strong>{{ $item->variant }}</strong>
+        @if(!empty($variants) && count($variants) > 1)
+            <br><small class="text-muted"></small>
+        @endif
+    @else
+        <span class="text-muted">Standard</span>
+    @endif
+</div>
                                                                                         <span class="quantity me-3">
                                                                                             <i class="bi bi-x-square me-1"></i>Qty: {{ $item->quantity }}
                                                                                         </span>
@@ -263,16 +274,12 @@
                                             </a>
 
                                             @if(strtoupper($group['status']) === 'SHIPPED')
-                                                @foreach($group['items'] as $productData)
-                                                    @php
-                                                        $p = $productData['product'];
-                                                    @endphp
-                                                    <a href="{{ route('buyer.reviews.create', $p->id) }}"
-                                                        class="btn btn-primary btn-sm mb-1">
-                                                        Leave Review for {{ $p->product_name }}
-                                                    </a>
-                                                @endforeach
-                                            @endif
+    <a href="{{ route('buyer.order-details', $group['order_id']) }}"
+       class="btn btn-primary btn-sm">
+        <i class="bi bi-star"></i> Review
+    </a>
+@endif
+
 
                                         </div>
                                     </div>

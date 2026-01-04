@@ -189,24 +189,6 @@
                             </div>
                         </div>
 
-                        {{-- Support --}}
-                        <div class="alert alert-light border rounded-3">
-                            <div class="d-flex align-items-start">
-                                <i class="bi bi-question-circle text-success fs-5 me-2"></i>
-                                <div>
-                                    <small class="text-muted">Need help with this order?</small>
-                                    <div class="mt-1">
-                                        <a href="#" class="btn btn-outline-success btn-sm rounded-pill">
-                                            <i class="bi bi-chat-left-text me-1"></i> Contact Support
-                                        </a>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                    </div>
-                </div>
-            </div>
         </div>
 
         <style>

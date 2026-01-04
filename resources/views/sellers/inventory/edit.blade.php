@@ -111,6 +111,13 @@
                     </select>
                 </div>
 
+                <div class="mb-3">
+                <label class="form-label">Health & Condition</label>
+                <textarea name="health_condition" class="form-control" rows="3"
+                 placeholder="Example: Healthy leaves, no pests, recently repotted">{{ old('health_condition', $product->health_condition) }}</textarea>
+                </div>
+
+
 
             </div>
 

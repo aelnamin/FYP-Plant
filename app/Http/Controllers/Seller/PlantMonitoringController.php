@@ -7,17 +7,30 @@ use Illuminate\Support\Facades\Auth;
 use App\Models\Product;
 use App\Models\ProductGrowthLog;
 use App\Models\ProductCareLog;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 
 class PlantMonitoringController extends Controller
 {
     public function index()
     {
+        $seller = Auth::user()->seller;
+
+        // Safety check (optional but good practice)
+        if (!$seller) {
+            abort(403);
+        }
+
         $plantCategoryIds = [2, 4, 5]; // flowers, vegetables, herbs
-        $products = Product::whereIn('category_id', $plantCategoryIds)->get();
+
+        $products = Product::where('seller_id', $seller->id)
+            ->whereIn('category_id', $plantCategoryIds)
+            ->with(['growthLogs', 'careLogs']) // eager load related logs
+            ->get();
 
         return view('sellers.plants.index', compact('products'));
     }
+
 
     public function storeGrowth(Request $request, Product $product)
     {
@@ -26,10 +39,9 @@ class PlantMonitoringController extends Controller
         if (!$seller || $product->seller_id !== $seller->id) {
             return response()->json([
                 'success' => false,
-                'message' => 'Unauthorized. You do not own this product.'
+                'message' => 'Unauthorized'
             ], 403);
         }
-
 
         $validated = $request->validate([
             'growth_stage' => 'required|string',
@@ -37,19 +49,27 @@ class PlantMonitoringController extends Controller
             'notes' => 'nullable|string|max:500',
         ]);
 
-        ProductGrowthLog::create([
+        $growthLog = ProductGrowthLog::create([
             'product_id' => $product->id,
             'seller_id' => $seller->id,
             'growth_stage' => $validated['growth_stage'],
-            'height_cm' => $validated['height_cm'] ?? null,
+            'height_cm' => $validated['height_cm'],
             'notes' => $validated['notes'] ?? null,
+        ]);
+
+        // 🔥 Sync latest data to product
+        $product->update([
+            'current_stage' => $validated['growth_stage'],
+            'last_height_cm' => $validated['height_cm'],
         ]);
 
         return response()->json([
             'success' => true,
-            'message' => 'Growth log saved successfully'
+            'message' => 'Growth log saved',
+            'data' => $growthLog
         ]);
     }
+
 
     public function storeCare(Request $request, Product $product)
     {
@@ -85,26 +105,17 @@ class PlantMonitoringController extends Controller
 
     public function getGrowthData(Product $product)
     {
-        $user = Auth::user();
+        $seller = Auth::user()->seller;
 
-        // 1️⃣ Make sure user is logged in and is a seller
-        if (!$user || $user->role !== 'seller') {
-            return response()->json([
-                'success' => false,
-                'message' => 'Unauthorized. Only sellers can view growth data.'
-            ], 403);
-        }
-
-        // 2️⃣ Check product ownership
-        if ($product->seller_id !== $user->id) {
+        if (!$seller || $product->seller_id !== $seller->id) {
             return response()->json([
                 'success' => false,
                 'message' => 'Unauthorized. You do not own this product.'
             ], 403);
         }
 
-        // 3️⃣ Fetch growth logs
         $growthLogs = ProductGrowthLog::where('product_id', $product->id)
+            ->where('seller_id', $seller->id) // ✅ extra safety
             ->orderByDesc('created_at')
             ->get();
 
@@ -120,26 +131,17 @@ class PlantMonitoringController extends Controller
 
     public function getCareData(Product $product)
     {
-        $user = Auth::user();
+        $seller = Auth::user()->seller;
 
-        // 1️⃣ Make sure user is logged in and is a seller
-        if (!$user || $user->role !== 'seller') {
-            return response()->json([
-                'success' => false,
-                'message' => 'Unauthorized. Only sellers can view care data.'
-            ], 403);
-        }
-
-        // 2️⃣ Check product ownership
-        if ($product->seller_id !== $user->id) {
+        if (!$seller || $product->seller_id !== $seller->id) {
             return response()->json([
                 'success' => false,
                 'message' => 'Unauthorized. You do not own this product.'
             ], 403);
         }
 
-        // 3️⃣ Fetch care logs
         $careLogs = ProductCareLog::where('product_id', $product->id)
+            ->where('seller_id', $seller->id) // ✅ extra safety
             ->orderByDesc('care_date')
             ->orderByDesc('created_at')
             ->get();
@@ -154,5 +156,101 @@ class PlantMonitoringController extends Controller
             ]
         ]);
     }
+
+
+
+    public function show(Product $product)
+    {
+        $user = Auth::user();
+
+        if (!$user || $user->role !== 'seller' || $product->seller_id !== $user->seller->id) {
+            abort(403);
+        }
+
+        // Latest growth log
+        $latestGrowth = ProductGrowthLog::where('product_id', $product->id)
+            ->latest()
+            ->first();
+
+        // Latest care log
+        $latestCare = ProductCareLog::where('product_id', $product->id)
+            ->latest('care_date')
+            ->first();
+
+        // Growth progress calculation
+        $stages = ['seedling', 'vegetative', 'flowering', 'mature'];
+        $currentStage = strtolower($product->current_stage ?? '');
+
+        $currentIndex = array_search($currentStage, $stages);
+        $growthProgress = $currentIndex !== false
+            ? round((($currentIndex + 1) / count($stages)) * 100)
+            : 0;
+
+        // Recent activities (merge growth + care)
+        $recentActivities = collect();
+
+        if ($latestGrowth) {
+            $recentActivities->push((object) [
+                'icon' => 'fa-seedling',
+                'title' => 'Growth Updated',
+                'description' => ucfirst($latestGrowth->growth_stage) .
+                    ($latestGrowth->height_cm ? " ({$latestGrowth->height_cm} cm)" : ''),
+                'created_at' => $latestGrowth->created_at
+            ]);
+        }
+
+        if ($latestCare) {
+            $recentActivities->push((object) [
+                'icon' => 'fa-tint',
+                'title' => ucfirst(str_replace('_', ' ', $latestCare->care_type)),
+                'description' => $latestCare->description ?? 'Care activity recorded',
+                'created_at' => $latestCare->created_at
+            ]);
+        }
+
+        return view('sellers.plants.show', compact(
+            'product',
+            'latestGrowth',
+            'latestCare',
+            'growthProgress',
+            'recentActivities'
+        ));
+    }
+
+    public function printCareReport(Product $product)
+    {
+        $seller = Auth::user()->seller;
+
+        if (!$seller || $product->seller_id !== $seller->id) {
+            abort(403);
+        }
+
+        $growthLogs = ProductGrowthLog::where('product_id', $product->id)
+            ->where('seller_id', $seller->id)
+            ->orderBy('created_at')
+            ->get();
+
+        $careLogs = ProductCareLog::where('product_id', $product->id)
+            ->where('seller_id', $seller->id)
+            ->orderBy('care_date')
+            ->get();
+
+        $latestGrowth = $growthLogs->last();
+
+        $pdf = Pdf::loadView('sellers.plants.care-report', compact(
+            'product',
+            'seller',
+            'growthLogs',
+            'careLogs',
+            'latestGrowth'
+        ));
+
+
+        return $pdf->stream(
+            'Plant_Care_Report_' . $product->id . '.pdf'
+        );
+
+    }
+
 
 }

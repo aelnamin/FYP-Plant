@@ -43,18 +43,15 @@
         }
 
         .btn-matcha {
-            background-color: #4BAE7F;
-            color: white;
-            padding: 12px 24px;
-            width: 600px;
-            border-radius: 50px;
-            font-size: 17px;
-            border: none;
-            transition: 0.3s;
-        }
+    height: 42px;       
+    padding: 0 22px;
+    font-weight: 500;
+    border-radius: 40px;
+}
+
 
         .btn-matcha:hover {
-            background-color: #157347;
+            background-color:rgb(117, 152, 107);
         }
 
         .quantity-selector input {
@@ -109,6 +106,44 @@
             transform: translateY(-8px);
             box-shadow: 0 15px 30px rgba(92, 127, 81, 0.15);
         }
+        .qty-pill {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 140px;                /* matches image */
+    height: 42px;
+    border: 1.5px solid #cfcfcf;
+    border-radius: 999px;        /* pill shape */
+    padding: 0 14px;
+    background: #fff;
+}
+
+.qty-btn {
+    border: none;
+    background: transparent;
+    font-size: 20px;
+    font-weight: 500;
+    cursor: pointer;
+    color: #333;
+    width: 24px;
+    height: 24px;
+    line-height: 1;
+}
+
+.qty-btn:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+
+.qty-value {
+    font-size: 16px;
+    font-weight: 500;
+    color: #000;
+    min-width: 20px;
+    text-align: center;
+}
+
+
     </style>
 
     <div class="container mt-4">
@@ -201,12 +236,20 @@
     @endif
     
     {{-- Quantity selector --}}
-    <div class="d-flex align-items-center gap-2">
-        <button type="button" class="btn btn-outline-secondary btn-sm" id="decrement">-</button>
-        <input type="number" name="quantity" id="quantity" value="1" min="1"
-            class="form-control text-center">
-        <button type="button" class="btn btn-outline-secondary btn-sm" id="increment">+</button>
-        <button type="submit" class="btn btn-matcha ms-2">Add to Cart</button>
+    <div class="d-flex align-items-center gap-3">
+        {{-- Quantity selector --}}
+        <div class="qty-pill">
+            <button type="button" class="qty-btn" id="decrement">−</button>
+            <span class="qty-value" id="quantity">1</span>
+            <button type="button" class="qty-btn" id="increment">+</button>
+        </div>
+
+        <input type="hidden" name="quantity" id="quantityInput" value="1">
+
+        {{-- Add to cart --}}
+        <button type="submit" class="btn btn-matcha border-secondary text-dark shadow-sm">
+            Add to Cart
+        </button>
     </div>
 </form>
                     

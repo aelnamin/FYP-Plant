@@ -205,19 +205,19 @@
         {{-- PAGE HEADER --}}
         <div class="d-flex justify-content-between align-items-center mb-4">
             <div>
-                <h2 class="fw-bold mb-1" style="color: var(--primary-color);">Admin Dashboard</h2>
-                <p class="text-muted mb-0">Welcome back, Administrator! Platform overview and insights.</p>
+                <h2 class="fw-bold mb-1" style="color: var(--primary-color);">Dashboard</h2>
+                <p class="text-muted mb-0">Welcome back, Aether & Leaf.Co! Platform overview and insights.</p>
             </div>
             <div class="d-flex align-items-center">
-            <span class="badge bg-light text-dark">
-    <i class="fas fa-calendar-alt me-1"></i>
-    {{ \Carbon\Carbon::now('Asia/Kuala_Lumpur')->format('d M Y') }}
-</span>
+                <span class="badge bg-light text-dark">
+                    <i class="fas fa-calendar-alt me-1"></i>
+                    {{ \Carbon\Carbon::now('Asia/Kuala_Lumpur')->format('d M Y') }}
+                </span>
 
 
                 <span class="badge bg-light text-dark">
-                <i class="fas fa-clock me-1"></i>
-                {{ \Carbon\Carbon::now('Asia/Kuala_Lumpur')->format('g:i A') }}
+                    <i class="fas fa-clock me-1"></i>
+                    {{ \Carbon\Carbon::now('Asia/Kuala_Lumpur')->format('g:i A') }}
                 </span>
 
             </div>
@@ -257,12 +257,12 @@
                     <div class="card-body p-4">
                         <div class="d-flex justify-content-between align-items-start">
                             <div>
-                            <div class="text-muted mb-1">Total Sellers</div>
-                            <div class="h2 fw-bold mb-2">{{ $totalSellers ?? 0 }}</div>
-                            <div class="text-success small">
-                            <i class="fas fa-user-check me-1"></i>
-                            {{ $activeSellers ?? 0 }} active
-                           </div>
+                                <div class="text-muted mb-1">Total Sellers</div>
+                                <div class="h2 fw-bold mb-2">{{ $totalSellers ?? 0 }}</div>
+                                <div class="text-success small">
+                                    <i class="fas fa-user-check me-1"></i>
+                                    {{ $activeSellers ?? 0 }} active
+                                </div>
                             </div>
                             <div class="stat-icon-container bg-success-opacity">
                                 <i class="fas fa-store text-success" style="font-size: 1.5rem;"></i>

@@ -39,8 +39,8 @@
                     class="border border-gray-300 hover:bg-gray-100 px-5 py-2 rounded-lg">
                     Edit
                 </a>
-            </div>
-        </div>
+                </div>
+  
 
         {{-- Main Grid --}}
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">

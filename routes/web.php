@@ -14,12 +14,14 @@ use App\Http\Controllers\LogoutController;
 use App\Http\Controllers\Buyer\ReviewController;
 use App\Http\Controllers\Buyer\TransactionController;
 use App\Http\Controllers\Seller\OrderManagementController;
-use App\Http\Controllers\Admin\ComplaintController;
+use App\Http\Controllers\Admin\AdminComplaintController;
+use App\Http\Controllers\ComplaintController;
 use App\Http\Controllers\Admin\ReportController;
 use App\Http\Controllers\Seller\SellerOrderController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\PaymentController;
+use App\Http\Controllers\HelpCenterController;
 use App\Http\Controllers\Buyer\ChatController as BuyerChatController;
 use App\Http\Controllers\Seller\ChatController as SellerChatController;
 use App\Http\Controllers\Buyer\CartController as BuyerCartController;
@@ -122,6 +124,12 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
    Route::get('/reports', [ReportController::class, 'index'])
       ->name('reports.index');
 
+   Route::get('/complaints', [AdminComplaintController::class, 'index'])->name('complaints.index');
+   Route::get('/complaints/statistics', [AdminComplaintController::class, 'statistics'])->name('complaints.statistics');
+   Route::get('/complaints/{complaint}', [AdminComplaintController::class, 'show'])->name('complaints.show');
+   Route::put('/complaints/{complaint}', [AdminComplaintController::class, 'update'])->name('complaints.update');
+   Route::post('/complaints/{complaint}/assign', [AdminComplaintController::class, 'assign'])->name('complaints.assign');
+
 });
 
 
@@ -207,6 +215,14 @@ Route::middleware(['auth', 'role:seller'])
       Route::post('/chats/{buyer}/send', [SellerChatController::class, 'send'])
          ->name('chats.send');
 
+      // routes/web.php
+      Route::get(
+         '/plants/{product}/care-report',
+         [PlantMonitoringController::class, 'printCareReport']
+      )->name('plants.care-report');
+
+      Route::get('/plants', [PlantMonitoringController::class, 'index'])->name('plants.index'); // list all plants
+      Route::get('/plants/{plant}', [PlantMonitoringController::class, 'show'])->name('plants.show'); // show single plant
    });
 
 
@@ -293,4 +309,19 @@ Route::middleware(['auth', 'role:buyer'])->group(function () {
    Route::get('buyer/transactions/{order}', [TransactionController::class, 'show'])
       ->name('buyer.transactions.show');
 
+
+   Route::get('/help-center', [HelpCenterController::class, 'index'])
+      ->name('buyer.help-center');
+
+   Route::resource('complaints', ComplaintController::class);
+   Route::get('/complaints/create/{order_id?}', [ComplaintController::class, 'create'])
+      ->name('complaints.create.with-order');
+   Route::get('/complaints/{complaint}', [ComplaintController::class, 'show'])->name('complaints.show');
+
 });
+
+Route::get('/privacy-policy', function () {
+   return view('privacy-policy');
+})->name('privacy.policy');
+
+

@@ -4,8 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration
-{
+return new class extends Migration {
     public function up(): void
     {
         Schema::create('complaints', function (Blueprint $table) {
@@ -44,7 +43,7 @@ return new class extends Migration
 
             // admins table — check your PK name:
             // If your admins table uses admin_id, use that.
-            $table->foreign('handled_by')->references('id')->on('admins')->onDelete('set null');
+            $table->foreign('handled_by')->references('id')->on('users')->onDelete('set null');
 
         });
     }

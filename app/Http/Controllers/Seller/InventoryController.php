@@ -130,6 +130,8 @@ class InventoryController extends Controller
             'difficulty_level' => 'nullable|string',
             'growth_stage' => 'nullable|string',
 
+            'health_condition' => 'nullable|string|max:255',
+
             'variants_input' => 'nullable|string',
             'images.*' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
             'remove_images' => 'nullable|array',

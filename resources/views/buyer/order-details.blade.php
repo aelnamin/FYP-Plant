@@ -62,7 +62,8 @@
                         @endif
                         @if($order->delivered_at)
                             <p class="mb-0 text-success small"><i class="bi bi-check-circle me-1"></i>Delivered
-                                {{ $order->delivered_at->format('M d') }}</p>
+                                {{ $order->delivered_at->format('M d') }}
+                            </p>
                         @endif
                     </div>
                 </div>
@@ -123,8 +124,6 @@
                 <!-- Actions -->
                 <div class="card shadow-sm border mb-4">
                     <div class="card-body">
-                        <h6 class="fw-bold mb-3">Actions</h6>
-
                         @if(in_array($status, ['SHIPPED', 'DELIVERED']))
                             <div class="d-grid gap-2 mb-3">
                                 <a href="#" class="btn btn-outline-primary">
@@ -143,7 +142,7 @@
 
                         <!-- Need Help Section -->
                         @if(in_array($status, ['SHIPPED', 'PAID']))
-                            <h6 class="fw-bold mb-2">Need Help?</h6>
+                            <h6 class="fw-bold mb-2">Support Center</h6>
                             <div class="d-grid gap-2">
                                 @php
                                     $sellers = $order->items->map(fn($i) => $i->product->seller)->unique('id');
@@ -156,9 +155,12 @@
                                     </form>
                                 @endforeach
 
-                                <button class="btn btn-outline-secondary btn-sm w-100">
-                                <i class="bi bi-question-circle me-2"></i> Help Center
-                                </button>
+                                <a href="{{ route('buyer.help-center') }}">
+                                    <button class="btn btn-outline-secondary btn-sm w-100">
+                                        <i class="bi bi-question-circle me-2"></i> Help Center
+                                    </button>
+                                </a>
+
 
 
                                 <a href="{{ route('buyer.transactions.show', $order->id) }}"

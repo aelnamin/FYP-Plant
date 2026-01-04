@@ -63,5 +63,18 @@ class ReviewController extends Controller
 
         return redirect()->route('buyer.reviews.index')->with('success', 'Review submitted successfully!');
     }
+
+    public function order($orderId)
+    {
+        $order = Order::with('items.product')->findOrFail($orderId);
+
+        // Ensure the logged-in user owns this order
+        if ($order->buyer_id !== auth()->id()) {
+            abort(403);
+        }
+
+        return view('buyer.reviews.order', compact('order'));
+    }
+
 }
 

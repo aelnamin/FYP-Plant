@@ -11,6 +11,11 @@
         --gradient: linear-gradient(135deg, #4BAE7F 0%, #2d8a60 100%);
     }
 
+    body {
+        background: #f8f9fa;
+        font-family: 'Inter', -apple-system, sans-serif;
+    }
+
     .cart-container {
         max-width: 1400px;
         margin: 0 auto;
@@ -53,7 +58,7 @@
     .progress-tracker {
         display: flex;
         justify-content: center;
-        gap: 3rem;
+        gap: 8rem;
         margin-bottom: 3rem;
         position: relative;
     }

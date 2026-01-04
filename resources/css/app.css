@@ -362,3 +362,84 @@
 .total-amount {
     color: #5c7f51;
 }
+
+:root {
+    --primary-color: #10b981;
+    --secondary-color: #059669;
+    --accent-color: #34d399;
+}
+
+body {
+    font-family: "Inter", sans-serif;
+}
+
+.page-header {
+    margin-bottom: 2rem;
+}
+
+.page-title {
+    font-weight: 600;
+    color: #2c3e50;
+    margin-bottom: 0.25rem;
+}
+
+.page-subtitle {
+    color: #6c757d;
+    font-size: 0.9rem;
+}
+
+.card {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+}
+
+.progress-bar {
+    height: 10px;
+    border-radius: 5px;
+    background-color: #e5e7eb;
+    overflow: hidden;
+}
+
+.progress-fill {
+    height: 100%;
+    border-radius: 5px;
+    background-color: var(--primary-color);
+    transition: width 0.5s ease;
+}
+
+.stage-indicator {
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 600;
+}
+
+.seedling-stage {
+    background-color: #fef3c7;
+    color: #92400e;
+}
+
+.vegetative-stage {
+    background-color: #d1fae5;
+    color: #065f46;
+}
+
+.flowering-stage {
+    background-color: #fce7f3;
+    color: #9d174d;
+}
+
+.fruiting-stage {
+    background-color: #fde68a;
+    color: #92400e;
+}
+
+.chart-container {
+    position: relative;
+    height: 250px;
+    width: 100%;
+}

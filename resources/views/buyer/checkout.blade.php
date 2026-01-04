@@ -75,7 +75,7 @@
     .progress-tracker {
         display: flex;
         justify-content: center;
-        gap: 3rem;
+        gap: 8rem;
         margin-bottom: 3rem;
         position: relative;
     }
@@ -259,7 +259,6 @@
 
     <!-- Header -->
     <div class="checkout-header text-success">
-        <h1>Complete Your Order</h1>
         <p class="text-muted">Review items and confirm details</p>
     </div>
 
