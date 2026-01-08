@@ -9,6 +9,9 @@ use App\Models\User;
 use App\Models\OrderItem;
 use App\Models\Transaction;
 use App\Models\Complaint;
+use App\Models\Delivery;
+
+
 
 class Order extends Model
 {
@@ -51,4 +54,10 @@ class Order extends Model
     {
         return $this->hasMany(Complaint::class);
     }
+
+    public function delivery()
+    {
+        return $this->hasOne(Delivery::class);
+    }
+
 }

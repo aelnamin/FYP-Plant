@@ -43,15 +43,15 @@
         }
 
         .btn-matcha {
-    height: 42px;       
-    padding: 0 22px;
-    font-weight: 500;
-    border-radius: 40px;
-}
+            height: 42px;
+            padding: 0 22px;
+            font-weight: 500;
+            border-radius: 40px;
+        }
 
 
         .btn-matcha:hover {
-            background-color:rgb(117, 152, 107);
+            background-color: rgb(117, 152, 107);
         }
 
         .quantity-selector input {
@@ -106,44 +106,45 @@
             transform: translateY(-8px);
             box-shadow: 0 15px 30px rgba(92, 127, 81, 0.15);
         }
+
         .qty-pill {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    width: 140px;                /* matches image */
-    height: 42px;
-    border: 1.5px solid #cfcfcf;
-    border-radius: 999px;        /* pill shape */
-    padding: 0 14px;
-    background: #fff;
-}
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            width: 140px;
+            /* matches image */
+            height: 42px;
+            border: 1.5px solid #cfcfcf;
+            border-radius: 999px;
+            /* pill shape */
+            padding: 0 14px;
+            background: #fff;
+        }
 
-.qty-btn {
-    border: none;
-    background: transparent;
-    font-size: 20px;
-    font-weight: 500;
-    cursor: pointer;
-    color: #333;
-    width: 24px;
-    height: 24px;
-    line-height: 1;
-}
+        .qty-btn {
+            border: none;
+            background: transparent;
+            font-size: 20px;
+            font-weight: 500;
+            cursor: pointer;
+            color: #333;
+            width: 24px;
+            height: 24px;
+            line-height: 1;
+        }
 
-.qty-btn:disabled {
-    opacity: 0.4;
-    cursor: not-allowed;
-}
+        .qty-btn:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
 
-.qty-value {
-    font-size: 16px;
-    font-weight: 500;
-    color: #000;
-    min-width: 20px;
-    text-align: center;
-}
-
-
+        .qty-value {
+            font-size: 16px;
+            font-weight: 500;
+            color: #000;
+            min-width: 20px;
+            text-align: center;
+        }
     </style>
 
     <div class="container mt-4">
@@ -218,41 +219,41 @@
 
                 {{-- Add to Cart Form --}}
                 <form action="{{ route('cart.add', $product->id) }}" method="POST" class="mt-4 d-flex flex-column gap-3">
-    @csrf
-    
-    @if(!empty($variants) && count($variants) > 0)
-        <div class="mb-3">
-            <label class="form-label fw-semibold">Select Variant</label>
-            <select name="variant" class="form-select" required style="max-width: 300px;">
-                <option value="">Choose...</option>
-                @foreach($variants as $v)
-                    <option value="{{ $v }}">{{ $v }}</option>
-                @endforeach
-            </select>
-            <small class="text-muted">Available: {{ implode(', ', $variants) }}</small>
-        </div>
-    @else
-        <input type="hidden" name="variant" value="">
-    @endif
-    
-    {{-- Quantity selector --}}
-    <div class="d-flex align-items-center gap-3">
-        {{-- Quantity selector --}}
-        <div class="qty-pill">
-            <button type="button" class="qty-btn" id="decrement">−</button>
-            <span class="qty-value" id="quantity">1</span>
-            <button type="button" class="qty-btn" id="increment">+</button>
-        </div>
+                    @csrf
 
-        <input type="hidden" name="quantity" id="quantityInput" value="1">
+                    @if(!empty($variants) && count($variants) > 0)
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Select Variant</label>
+                            <select name="variant" class="form-select" required style="max-width: 300px;">
+                                <option value="">Choose...</option>
+                                @foreach($variants as $v)
+                                    <option value="{{ $v }}">{{ $v }}</option>
+                                @endforeach
+                            </select>
+                            <small class="text-muted">Available: {{ implode(', ', $variants) }}</small>
+                        </div>
+                    @else
+                        <input type="hidden" name="variant" value="">
+                    @endif
 
-        {{-- Add to cart --}}
-        <button type="submit" class="btn btn-matcha border-secondary text-dark shadow-sm">
-            Add to Cart
-        </button>
-    </div>
-</form>
-                    
+                    {{-- Quantity selector --}}
+                    <div class="d-flex align-items-center gap-3">
+                        {{-- Quantity selector --}}
+                        <div class="qty-pill">
+                            <button type="button" class="qty-btn" id="decrement">−</button>
+                            <span class="qty-value" id="quantity">1</span>
+                            <button type="button" class="qty-btn" id="increment">+</button>
+                        </div>
+
+                        <input type="hidden" name="quantity" id="quantityInput" value="1">
+
+                        {{-- Add to cart --}}
+                        <button type="submit" class="btn btn-matcha border-secondary text-dark shadow-sm">
+                            Add to Cart
+                        </button>
+                    </div>
+                </form>
+
 
                 {{-- Stock indicator --}}
                 <div class="mt-3">
@@ -342,44 +343,53 @@
             document.addEventListener('DOMContentLoaded', function () {
                 const decrementBtn = document.getElementById('decrement');
                 const incrementBtn = document.getElementById('increment');
-                const quantityInput = document.getElementById('quantity');
+                const qtyDisplay = document.getElementById('quantity'); // the span
+                const qtyInput = document.getElementById('quantityInput'); // hidden input
 
                 decrementBtn?.addEventListener('click', () => {
-                    let value = parseInt(quantityInput.value);
-                    if (value > 1) quantityInput.value = value - 1;
+                    let value = parseInt(qtyInput.value);
+                    if (value > 1) {
+                        value -= 1;
+                        qtyInput.value = value;     // update hidden input
+                        qtyDisplay.textContent = value; // update visible span
+                    }
                 });
 
                 incrementBtn?.addEventListener('click', () => {
-                    quantityInput.value = parseInt(quantityInput.value) + 1;
+                    let value = parseInt(qtyInput.value);
+                    value += 1;
+                    qtyInput.value = value;         // update hidden input
+                    qtyDisplay.textContent = value; // update visible span
                 });
             });
         </script>
-   
-   <script>
-document.addEventListener('DOMContentLoaded', function() {
-    const variantSelect = document.querySelector('select[name="variant"]');
-    const addToCartBtn = document.querySelector('.btn-matcha');
-    
-    if (!variantSelect || !addToCartBtn) return;
-    
-    // Save selected variant when "Add to Cart" is clicked
-    addToCartBtn.addEventListener('click', function() {
-        const selectedValue = variantSelect.value;
-        if (selectedValue) {
-            localStorage.setItem('last_variant_product{{ $product->id }}', selectedValue);
-        }
-    });
-    
-    // Load saved variant on page load
-    const savedVariant = localStorage.getItem('last_variant_product{{ $product->id }}');
-    if (savedVariant) {
-        for (let option of variantSelect.options) {
-            if (option.value === savedVariant) {
-                option.selected = true;
-                break;
-            }
-        }
-    }
-});
-</script>
+
+
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                const variantSelect = document.querySelector('select[name="variant"]');
+                const addToCartBtn = document.querySelector('.btn-matcha');
+
+                if (!variantSelect || !addToCartBtn) return;
+
+                // Save selected variant when "Add to Cart" is clicked
+                addToCartBtn.addEventListener('click', function () {
+                    const selectedValue = variantSelect.value;
+                    if (selectedValue) {
+                        localStorage.setItem('last_variant_product{{ $product->id }}', selectedValue);
+                    }
+                });
+
+                // Load saved variant on page load
+                const savedVariant = localStorage.getItem('last_variant_product{{ $product->id }}');
+                if (savedVariant) {
+                    for (let option of variantSelect.options) {
+                        if (option.value === savedVariant) {
+                            option.selected = true;
+                            break;
+                        }
+                    }
+                }
+            });
+        </script>
 @endsection

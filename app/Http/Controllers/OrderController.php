@@ -26,12 +26,13 @@ class OrderController extends Controller
 
     public function show($id)
     {
-        $order = Order::with(['items.product.images', 'buyer', 'items.product.seller'])
-            ->where('buyer_id', auth()->id()) // Optional: ensure user owns the order
+        $order = Order::with(['items.product.images', 'buyer', 'items.product.seller', 'delivery'])
+            ->where('buyer_id', auth()->id())
             ->findOrFail($id);
 
         return view('buyer.order-details', compact('order'));
     }
+
 
 
 
@@ -66,4 +67,48 @@ class OrderController extends Controller
 
         return view('buyer.orders.review-order', compact('order'));
     }
+
+    public function markAsReceived(Order $order)
+    {
+        // Only allow if order has been shipped
+        if (strtoupper($order->status) !== 'SHIPPED') {
+            return back()->with('error', 'Order cannot be marked as received.');
+        }
+
+        // Update order
+        $order->update([
+            'status' => 'DELIVERED',    // buyer marks received → Delivered
+            'received_at' => now(),
+        ]);
+
+        // Update delivery table if exists
+        if ($order->delivery) {
+            $order->delivery->update([
+                'status' => 'Delivered',
+                'delivered_at' => now(),
+            ]);
+        }
+
+        return back()->with('success', 'Order marked as received!');
+    }
+
+    // Buyer/OrderController.php
+    public function received(Order $order)
+    {
+        $order->status = 'COMPLETED';
+        $order->save();
+
+        // Return JSON response for AJAX
+        return response()->json([
+            'status' => strtoupper($order->status),
+            'statusInfo' => [
+                'bg' => 'bg-success',
+                'textColor' => 'text-white',
+                'text' => 'Order Completed',
+                'icon' => 'check-circle'
+            ]
+        ]);
+    }
+
+
 }

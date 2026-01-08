@@ -11,6 +11,7 @@ use App\Http\Controllers\Admin\AdminDashboardController;
 use App\Http\Controllers\Admin\UserManagementController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\LogoutController;
+use App\Http\Controllers\Seller\DeliveryController;
 use App\Http\Controllers\Buyer\ReviewController;
 use App\Http\Controllers\Buyer\TransactionController;
 use App\Http\Controllers\Seller\OrderManagementController;
@@ -223,6 +224,17 @@ Route::middleware(['auth', 'role:seller'])
 
       Route::get('/plants', [PlantMonitoringController::class, 'index'])->name('plants.index'); // list all plants
       Route::get('/plants/{plant}', [PlantMonitoringController::class, 'show'])->name('plants.show'); // show single plant
+   
+      //delivery route
+      Route::post(
+         'orders/{order}/delivery',
+         [DeliveryController::class, 'store']
+      )->name('deliveries.store');
+
+      Route::post('/orders/{order}/deliver', [DeliveryController::class, 'markAsDelivered'])
+         ->name('deliveries.deliver'); // remove "sellers." prefix
+   
+
    });
 
 
@@ -250,6 +262,8 @@ Route::middleware(['auth', 'role:buyer'])->group(function () {
       [TransactionController::class, 'store']
    )->name('buyer.place.order');
 
+   Route::post('/place-order', [CheckoutController::class, 'placeOrder'])->name('buyer.place.order');
+
    Route::get('/buyer/orders/{order}', [OrderController::class, 'show'])
       ->name('buyer.orders.details');
 
@@ -275,6 +289,16 @@ Route::middleware(['auth', 'role:buyer'])->group(function () {
 
    Route::get('/buyer/order/{id}', [OrderController::class, 'show'])
       ->name('buyer.order-details');
+
+   // For viewing specific seller's items within an order
+   Route::get('/orders/{order}/{seller}', [OrderController::class, 'show'])
+      ->name('buyer.order-details.seller');
+
+   // For viewing entire order (all sellers or single seller order)
+   Route::get('/orders/{order}', [OrderController::class, 'show'])
+      ->name('buyer.order-details');
+
+
 
    Route::get('/buyer/orders/{order}/review', [OrderController::class, 'showReviewPage'])
       ->name('buyer.orders.review');
@@ -318,10 +342,16 @@ Route::middleware(['auth', 'role:buyer'])->group(function () {
       ->name('complaints.create.with-order');
    Route::get('/complaints/{complaint}', [ComplaintController::class, 'show'])->name('complaints.show');
 
+
+   Route::patch('/buyer/orders/{order}/received', [OrderController::class, 'markAsReceived'])
+      ->name('buyer.orders.received');
 });
 
 Route::get('/privacy-policy', function () {
    return view('privacy-policy');
 })->name('privacy.policy');
+
+
+
 
 

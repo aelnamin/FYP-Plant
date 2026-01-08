@@ -305,12 +305,6 @@
                 <div class="col-lg-4 col-md-6 mb-4">
                     <h5>Aether & Leaf.Co</h5>
                     <p class="mb-4">Bringing nature's beauty to your doorstep. We specialize in carefully curated plants for every space, ensuring quality and sustainability.</p>
-                    <div class="social-icons">
-                        <a href="#"><i class="fab fa-facebook-f"></i></a>
-                        <a href="#"><i class="fab fa-instagram"></i></a>
-                        <a href="#"><i class="fab fa-twitter"></i></a>
-                        <a href="#"><i class="fab fa-pinterest"></i></a>
-                    </div>
                 </div>
 
                 <!-- Quick Links -->
@@ -360,9 +354,9 @@
                 <div class="col-lg-4 col-md-6 mb-4">
                     <h5>Contact Us</h5>
                     <div class="contact-info mb-4">
-                        <p class="mb-2"><i class="fas fa-map-marker-alt"></i> 123 Green Street, Kuala Lumpur, Malaysia</p>
+                        <p class="mb-2"><i class="fas fa-map-marker-alt"></i> 1016, Jalan Sultan Ismail, 50250 Kuala Lumpur</p>
                         <p class="mb-2"><i class="fas fa-phone"></i> +60 17-274 3933</p>
-                        <p class="mb-2"><i class="fas fa-envelope"></i> info@aetherleaf.com</p>
+                        <p class="mb-2"><i class="fas fa-envelope"></i> aetherleaf@.co.com</p>
                     </div>
                     
                     <h5>Newsletter</h5>

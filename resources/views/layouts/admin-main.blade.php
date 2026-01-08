@@ -318,18 +318,6 @@
                         </a>
                     </li>
 
-                    <div class="section-divider">Order Management</div>
-                    <li class="nav-item">
-                        <a href="{{ route('admin.orders.index') }}"
-                            class="nav-link {{ request()->routeIs('admin.orders.*') ? 'active' : '' }}">
-                            <i class="nav-icon fas fa-shopping-cart"></i>
-                            <span>Orders</span>
-                            @if(($pendingOrders ?? 0) > 0)
-                                <span class="nav-badge">{{ $pendingOrders }}</span>
-                            @endif
-                        </a>
-                    </li>
-
                     <div class="section-divider">System</div>
                     <li class="nav-item">
                         <a href="{{ route('admin.reports.index') }}"

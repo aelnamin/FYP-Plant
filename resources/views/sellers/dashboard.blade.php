@@ -265,8 +265,9 @@
                                         @foreach($recentOrders as $order)
                                             <tr class="border-bottom">
                                                 <td>
-                                                    <div class="fw-semibold">#{{ $order->id }}</div>
-                                                    <small class="text-muted">{{ $order->order_number ?? '' }}</small>
+                                                <h6 class="mb-1">
+                                        #{{ str_pad($order->id, 10, '0', STR_PAD_LEFT) }}
+                                    </h6>
                                                 </td>
                                                 <td>
                                                     <div class="d-flex align-items-center">

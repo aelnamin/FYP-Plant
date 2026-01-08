@@ -48,11 +48,19 @@ class CartController extends Controller
     public function index()
     {
         $cart = Cart::firstOrCreate(['user_id' => Auth::id()]);
+
+        // Load items with product, seller, and images
         $cartItems = $cart->items()->with(['product.seller', 'product.images'])->get();
+
+        // Normalize variants if needed
         $cartItems = $this->normalizeVariants($cartItems);
 
-        return view('buyer.cart', compact('cartItems'));
+        // Group items by seller_id for separate shipping per seller
+        $groupedCart = $cartItems->groupBy(fn($item) => $item->product->seller_id);
+
+        return view('buyer.cart', compact('groupedCart'));
     }
+
 
     /**
      * Add product to cart

@@ -4,29 +4,31 @@
 
 @section('content')
     <div class="container py-4">
-        <head> <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+
+        <head>
+            <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
         </head>
 
-    <style>
-          .page-header {
-            margin-bottom: 2rem;
-        }
+        <style>
+            .page-header {
+                margin-bottom: 2rem;
+            }
 
-        .page-title {
-            font-weight: 600;
-            color: #2c3e50;
-            margin-bottom: 0.25rem;
-        }
+            .page-title {
+                font-weight: 600;
+                color: #2c3e50;
+                margin-bottom: 0.25rem;
+            }
 
-        .page-subtitle {
-            color: #6c757d;
-            font-size: 0.9rem;
-        }
-    </style>
+            .page-subtitle {
+                color: #6c757d;
+                font-size: 0.9rem;
+            }
+        </style>
 
-     <!-- Page Header -->
-     <div class="page-header">
-        <h1 class="page-title">Reports</h1>
+        <!-- Page Header -->
+        <div class="page-header">
+            <h1 class="page-title">Reports</h1>
             <p class="page-subtitle">Monitor users orders and payments</p>
         </div>
 
@@ -68,7 +70,7 @@
                     <div class="card-body">
                         <h6 class="text-muted">Total Revenue</h6>
                         <h3 class="fw-bold text-success">
-                        <i class="bi bi-cash-coin me-2"></i>
+                            <i class="bi bi-cash-coin me-2"></i>
                             RM {{ number_format($totalRevenue, 2) }}
                         </h3>
                     </div>
@@ -80,8 +82,9 @@
                     <div class="card-body">
                         <h6 class="text-muted">Total Paid Orders</h6>
                         <h3 class="fw-bold">
-                        <i class="bi bi-wallet2 me-2"></i>
-                        {{ $totalPaidOrders }}</h3>
+                            <i class="bi bi-wallet2 me-2"></i>
+                            {{ $totalPaidOrders }}
+                        </h3>
                     </div>
                 </div>
             </div>
@@ -140,8 +143,8 @@
                                 <td>{{ $seller->business_name ?? 'Seller #' . $seller->id }}</td>
                                 <td>{{ $seller->products_count }}</td>
                                 <td>
-                                 RM {{ number_format($seller->total_sales ?? 0, 2) }}
-                               </td>
+                                    RM {{ number_format($seller->total_sales ?? 0, 2) }}
+                                </td>
 
                             </tr>
                         @endforeach

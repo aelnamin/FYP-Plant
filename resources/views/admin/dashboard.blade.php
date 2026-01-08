@@ -2,542 +2,175 @@
 
 @section('title', 'Dashboard')
 
-@section('styles')
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-
-    <style>
-        :root {
-            --primary-color: #5C7F51;
-            --secondary-color: #4a6c7d;
-            --success-color: #2a9d8f;
-            --warning-color: #e9c46a;
-            --danger-color: #e76f51;
-            --hover-lift: translateY(-2px);
-            --transition-speed: 0.2s;
-            --border-radius: 12px;
-        }
-
-        .hover-lift {
-            transition: all var(--transition-speed) ease;
-            border: 1px solid transparent;
-        }
-
-        .hover-lift:hover {
-            transform: var(--hover-lift);
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08) !important;
-            border-color: rgba(92, 127, 81, 0.2);
-        }
-
-        .card {
-            border: 1px solid rgba(0, 0, 0, 0.05);
-            border-radius: var(--border-radius);
-            overflow: hidden;
-        }
-
-        .bg-primary-opacity {
-            background-color: rgba(92, 127, 81, 0.1);
-        }
-
-        .bg-success-opacity {
-            background-color: rgba(42, 157, 143, 0.1);
-        }
-
-        .bg-warning-opacity {
-            background-color: rgba(233, 196, 106, 0.1);
-        }
-
-        .bg-info-opacity {
-            background-color: rgba(66, 153, 225, 0.1);
-        }
-
-        .badge {
-            font-weight: 500;
-            letter-spacing: 0.3px;
-        }
-
-        .table th {
-            font-size: 0.85rem;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            color: #6c757d;
-            border-bottom: 2px solid #dee2e6 !important;
-        }
-
-        .table tbody tr {
-            transition: all 0.2s ease;
-        }
-
-        .table tbody tr:hover {
-            background-color: rgba(92, 127, 81, 0.05);
-        }
-
-        .btn {
-            border-radius: 8px;
-            font-weight: 500;
-            transition: all 0.2s ease;
-        }
-
-        .btn-outline-success {
-            border-color: var(--primary-color);
-            color: var(--primary-color);
-        }
-
-        .btn-outline-success:hover {
-            background-color: var(--primary-color);
-            border-color: var(--primary-color);
-            color: white;
-        }
-
-        .btn-success {
-            background-color: var(--primary-color);
-            border-color: var(--primary-color);
-        }
-
-        .btn-success:hover {
-            background-color: #4a6c42;
-            border-color: #4a6c42;
-        }
-
-        .dropdown-menu {
-            border: 1px solid rgba(0, 0, 0, 0.1);
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-            border-radius: 8px;
-        }
-
-        .dropdown-item {
-            border-radius: 6px;
-            margin: 2px;
-        }
-
-        .dropdown-item:hover {
-            background-color: rgba(92, 127, 81, 0.1);
-        }
-
-        .display-1 {
-            opacity: 0.3;
-        }
-
-        .stat-icon-container {
-            width: 48px;
-            height: 48px;
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .module-card {
-            border-radius: 10px;
-            border: 1px solid #eef2f7;
-            transition: all 0.2s ease;
-            padding: 1.25rem;
-            height: 100%;
-        }
-
-        .module-card:hover {
-            border-color: var(--primary-color);
-            transform: translateY(-3px);
-            box-shadow: 0 6px 20px rgba(92, 127, 81, 0.1);
-        }
-
-        .module-icon {
-            width: 40px;
-            height: 40px;
-            border-radius: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-bottom: 1rem;
-        }
-
-        .status-badge {
-            padding: 0.5rem 1rem;
-            border-radius: 8px;
-            font-size: 0.875rem;
-            font-weight: 500;
-        }
-
-        .scroll-container {
-            max-height: 320px;
-            overflow-y: auto;
-            padding-right: 0.5rem;
-        }
-
-        .scroll-container::-webkit-scrollbar {
-            width: 5px;
-        }
-
-        .scroll-container::-webkit-scrollbar-track {
-            background: #f8f9fa;
-            border-radius: 10px;
-        }
-
-        .scroll-container::-webkit-scrollbar-thumb {
-            background: #d1d5db;
-            border-radius: 10px;
-        }
-
-        @media (max-width: 768px) {
-            .h2 {
-                font-size: 1.5rem;
-            }
-
-            .h5 {
-                font-size: 1.1rem;
-            }
-
-            .table-responsive {
-                font-size: 0.9rem;
-            }
-
-            .card-body {
-                padding: 1rem !important;
-            }
-        }
-    </style>
-@endsection
-
 @section('content')
-    <div class="container-fluid px-lg-4">
-
-        {{-- PAGE HEADER --}}
-        <div class="d-flex justify-content-between align-items-center mb-4">
+    <div class="container-fluid px-4 py-4">
+        <!-- Header -->
+        <div class="d-flex justify-content-between align-items-center mb-5">
             <div>
-                <h2 class="fw-bold mb-1" style="color: var(--primary-color);">Dashboard</h2>
-                <p class="text-muted mb-0">Welcome back, Aether & Leaf.Co! Platform overview and insights.</p>
+                <h1 class="h2 fw-bold text-gray-900 mb-1">Dashboard</h1>
+                <p class="text-gray-600 mb-0">Welcome back, Aether & Leaf.Co! Platform overview and insights.</p>
             </div>
-            <div class="d-flex align-items-center">
-                <span class="badge bg-light text-dark">
+            <div class="d-flex gap-2">
+                <span class="badge bg-light text-gray-700 px-3 py-2">
                     <i class="fas fa-calendar-alt me-1"></i>
                     {{ \Carbon\Carbon::now('Asia/Kuala_Lumpur')->format('d M Y') }}
                 </span>
-
-
-                <span class="badge bg-light text-dark">
+                <span class="badge bg-light text-gray-700 px-3 py-2">
                     <i class="fas fa-clock me-1"></i>
                     {{ \Carbon\Carbon::now('Asia/Kuala_Lumpur')->format('g:i A') }}
                 </span>
-
             </div>
         </div>
 
-        {{-- 1. KEY METRICS --}}
-        <div class="row g-3 mb-4">
-            <div class="col-xl-3 col-md-6">
-                <div class="card border-0 shadow-sm h-100 hover-lift">
+        <!-- Stats -->
+        <div class="row g-4 mb-5">
+            <!-- Total Users -->
+            <div class="col-xl-3 col-lg-6">
+                <div class="card border-0 shadow-sm hover-card">
                     <div class="card-body p-4">
                         <div class="d-flex justify-content-between align-items-start">
                             <div>
-                                <div class="text-muted mb-1">Total Users</div>
-                                <div class="h2 fw-bold mb-2">{{ $totalUsers }}</div>
+                                <p class="text-gray-600 mb-1">Total Users</p>
+                                <h2 class="fw-bold mb-2">{{ $totalUsers }}</h2>
                                 <div class="d-flex align-items-center">
-                                    <span class="badge bg-primary-opacity text-primary px-2 py-1 me-2">
+                                    <span class="badge bg-primary-100 text-primary-700 px-2 py-1 me-2">
                                         <i class="fas fa-user-check me-1"></i>
-                                        {{ $activeUsers ?? 'N/A' }} Active
+                                        {{ $activeUsers ?? '0' }} Active
                                     </span>
-                                    <span class="badge bg-warning-opacity text-warning px-2 py-1">
+                                    <span class="badge bg-warning-100 text-warning-700 px-2 py-1">
                                         <i class="fas fa-user-clock me-1"></i>
                                         {{ $newUsersToday ?? '0' }} Today
                                     </span>
                                 </div>
                             </div>
-                            <div class="stat-icon-container bg-primary-opacity">
-                                <i class="fas fa-users text-primary" style="font-size: 1.5rem;"></i>
+                            <div class="bg-primary-50 rounded-circle p-3">
+                                <i class="fas fa-users text-primary-600" style="font-size: 1.5rem;"></i>
                             </div>
                         </div>
-                        <a href="{{ route('admin.users.index') }}" class="stretched-link"></a>
                     </div>
                 </div>
             </div>
 
-            <div class="col-xl-3 col-md-6">
-                <div class="card border-0 shadow-sm h-100 hover-lift">
+            <!-- Total Sellers -->
+            <div class="col-xl-3 col-lg-6">
+                <div class="card border-0 shadow-sm hover-card">
                     <div class="card-body p-4">
                         <div class="d-flex justify-content-between align-items-start">
                             <div>
-                                <div class="text-muted mb-1">Total Sellers</div>
-                                <div class="h2 fw-bold mb-2">{{ $totalSellers ?? 0 }}</div>
-                                <div class="text-success small">
+                                <p class="text-gray-600 mb-1">Total Sellers</p>
+                                <h2 class="fw-bold mb-2">{{ $totalSellers ?? '0' }}</h2>
+                                <div class="text-success">
                                     <i class="fas fa-user-check me-1"></i>
-                                    {{ $activeSellers ?? 0 }} active
+                                    {{ $activeSellers ?? '0' }} active
                                 </div>
                             </div>
-                            <div class="stat-icon-container bg-success-opacity">
+                            <div class="bg-success-50 rounded-circle p-3">
                                 <i class="fas fa-store text-success" style="font-size: 1.5rem;"></i>
                             </div>
                         </div>
-                        <a href="{{ route('admin.orders.index', ['status' => 'paid']) }}" class="stretched-link"></a>
                     </div>
                 </div>
             </div>
 
-            <div class="col-xl-3 col-md-6">
-                <div class="card border-0 shadow-sm h-100 hover-lift">
+            <!-- Total Products -->
+            <div class="col-xl-3 col-lg-6">
+                <div class="card border-0 shadow-sm hover-card">
                     <div class="card-body p-4">
                         <div class="d-flex justify-content-between align-items-start">
                             <div>
-                                <div class="text-muted mb-1">Total Products</div>
-                                <div class="h2 fw-bold mb-2">{{ $totalProducts }}</div>
+                                <p class="text-gray-600 mb-1">Total Products</p>
+                                <h2 class="fw-bold mb-2">{{ $totalProducts }}</h2>
                                 @if(($pendingProducts ?? 0) > 0)
-                                    <div class="text-warning small">
+                                    <div class="text-danger">
                                         <i class="fas fa-exclamation-circle me-1"></i>
                                         {{ $pendingProducts }} pending approval
                                     </div>
                                 @else
-                                    <div class="text-success small">
+                                    <div class="text-success">
                                         <i class="fas fa-check-circle me-1"></i>
                                         All products approved
                                     </div>
                                 @endif
                             </div>
-                            <div class="stat-icon-container bg-info-opacity">
+                            <div class="bg-info-50 rounded-circle p-3">
                                 <i class="fas fa-boxes text-info" style="font-size: 1.5rem;"></i>
                             </div>
                         </div>
-                        <a href="{{ route('admin.products.index') }}" class="stretched-link"></a>
                     </div>
                 </div>
             </div>
 
-            <div class="col-xl-3 col-md-6">
-                <div class="card border-0 shadow-sm h-100 hover-lift">
+            <!-- Pending Actions -->
+            <div class="col-xl-3 col-lg-6">
+                <div class="card border-0 shadow-sm hover-card">
                     <div class="card-body p-4">
                         <div class="d-flex justify-content-between align-items-start">
                             <div>
-                                <div class="text-muted mb-1">Pending Actions</div>
-                                <div class="h2 fw-bold mb-2 text-warning">{{ $pendingSellers ?? 0 }}</div>
-                                <div class="text-warning small">
+                                <p class="text-gray-600 mb-1">Pending Actions</p>
+                                <h2 class="fw-bold text-warning mb-2">{{ $pendingSellers ?? '0' }}</h2>
+                                <div class="text-warning">
                                     <i class="fas fa-store-alt me-1"></i>
                                     {{ $pendingSellers }} sellers to approve
                                 </div>
                             </div>
-                            <div class="stat-icon-container bg-warning-opacity">
+                            <div class="bg-warning-50 rounded-circle p-3">
                                 <i class="fas fa-bell text-warning" style="font-size: 1.5rem;"></i>
                             </div>
                         </div>
-                        <a href="{{ route('admin.sellers.index') }}" class="stretched-link"></a>
                     </div>
                 </div>
             </div>
         </div>
 
+        <!-- Main Content -->
         <div class="row g-4">
-            {{-- LEFT COLUMN --}}
+            <!-- Order Status -->
             <div class="col-lg-8">
-                {{-- 2. RECENT ORDERS --}}
-                <div class="card border-0 shadow-sm h-100">
-                    <div class="card-header bg-transparent border-0 p-4 pb-2">
-                        <div class="d-flex justify-content-between align-items-center">
-                            <div>
-                                <h5 class="mb-1">Recent Orders</h5>
-                                <p class="text-muted small mb-0">Latest platform transactions</p>
-                            </div>
-                            <a href="{{ route('admin.orders.index') }}" class="btn btn-outline-success btn-sm">
-                                <i class="fas fa-list me-1"></i> View All
-                            </a>
-                        </div>
-                    </div>
-                    <div class="card-body p-4 pt-0">
-                        @if(!empty($recentOrders) && $recentOrders->count())
-                            <div class="table-responsive">
-                                <table class="table table-hover align-middle">
-                                    <thead>
-                                        <tr class="bg-light">
-                                            <th class="border-0" style="width: 15%">Order ID</th>
-                                            <th class="border-0" style="width: 20%">Customer</th>
-                                            <th class="border-0" style="width: 20%">Seller</th>
-                                            <th class="border-0" style="width: 15%">Status</th>
-                                            <th class="border-0" style="width: 15%">Amount</th>
-                                            <th class="border-0 text-end" style="width: 15%">Actions</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        @foreach($recentOrders as $order)
-                                            <tr class="border-bottom">
-                                                <td>
-                                                    <div class="fw-semibold">#{{ $order->id }}</div>
-                                                    <small class="text-muted">{{ $order->created_at->format('M j') }}</small>
-                                                </td>
-                                                <td>
-                                                    <div class="d-flex align-items-center">
-                                                        <div class="bg-light rounded-circle p-2 me-2">
-                                                            <i class="fas fa-user text-muted"></i>
-                                                        </div>
-                                                        <div>
-                                                            <div class="fw-medium">{{ $order->user->name ?? 'Customer' }}</div>
-                                                            <small
-                                                                class="text-muted">{{ Str::limit($order->user->email ?? '', 15) }}</small>
-                                                        </div>
-                                                    </div>
-                                                </td>
-                                                <td>
-                                                    <div class="fw-medium">{{ $order->seller->business_name ?? 'N/A' }}</div>
-                                                </td>
-                                                <td>
-                                                    @php
-                                                        $statusColors = [
-                                                            'pending' => 'warning',
-                                                            'paid' => 'primary',
-                                                            'shipped' => 'info',
-                                                            'delivered' => 'success',
-                                                            'cancelled' => 'danger'
-                                                        ];
-                                                        $statusColor = $statusColors[$order->status] ?? 'secondary';
-                                                    @endphp
-                                                    <span
-                                                        class="badge bg-{{ $statusColor }}-opacity text-{{ $statusColor }} px-3 py-1">
-                                                        {{ ucfirst($order->status) }}
-                                                    </span>
-                                                </td>
-                                                <td class="fw-bold">RM {{ number_format($order->total_amount ?? 0, 2) }}</td>
-                                                <td class="text-end">
-                                                    <a href="{{ route('admin.orders.show', $order->id) }}"
-                                                        class="btn btn-light btn-sm">
-                                                        <i class="fas fa-eye"></i>
-                                                    </a>
-                                                </td>
-                                            </tr>
-                                        @endforeach
-                                    </tbody>
-                                </table>
-                            </div>
-                        @else
-                            <div class="text-center py-5">
-                                <div class="display-1 text-muted mb-3">
-                                    <i class="fas fa-clipboard-list"></i>
-                                </div>
-                                <h5 class="text-muted mb-3">No Recent Orders</h5>
-                                <p class="text-muted">Orders will appear here when they are placed.</p>
-                            </div>
-                        @endif
-                    </div>
-                </div>
-            </div>
-
-            {{-- RIGHT COLUMN --}}
-            <div class="col-lg-4">
-                {{-- 3. ORDER STATUS SUMMARY --}}
-                <div class="card border-0 shadow-sm h-100">
-                    <div class="card-header bg-transparent border-0 p-4 pb-2">
-                        <div class="d-flex justify-content-between align-items-center">
-                            <div>
-                                <h5 class="mb-1">Order Status</h5>
-                                <p class="text-muted small mb-0">Platform-wide overview</p>
-                            </div>
-                        </div>
+                <div class="card border-0 shadow-sm">
+                    <div class="card-header bg-transparent border-0 p-4">
+                        <h5 class="fw-semibold mb-1">Order Status</h5>
+                        <p class="text-gray-600 small mb-0">Platform-wide overview</p>
                     </div>
                     <div class="card-body p-4 pt-0">
                         <div class="row g-3">
-                            <div class="col-12">
-                                <div
-                                    class="status-badge bg-warning-opacity text-warning d-flex justify-content-between align-items-center p-3">
-                                    <div>
-                                        <i class="fas fa-clock me-2"></i>
-                                        <span>Pending</span>
-                                    </div>
-                                    <span class="fw-bold h5 mb-0">{{ $pendingOrders ?? '0' }}</span>
+                            <div class="col-md-3 col-6">
+                                <div class="text-center p-4 bg-warning-soft rounded-3">
+                                    <i class="fas fa-clock text-warning fs-3 mb-2"></i>
+                                    <div class="h4 fw-bold text-warning mb-1">{{ $pendingOrders ?? '0' }}</div>
+                                    <div class="text-gray-700">Pending</div>
                                 </div>
                             </div>
-                            <div class="col-12">
-                                <div
-                                    class="status-badge bg-success-opacity text-success d-flex justify-content-between align-items-center p-3">
-                                    <div>
-                                        <i class="fas fa-check-circle me-2"></i>
-                                        <span>Paid</span>
-                                    </div>
-                                    <span class="fw-bold h5 mb-0">{{ $paidOrders ?? '0' }}</span>
+                            <div class="col-md-3 col-6">
+                                <div class="text-center p-4 bg-success-soft rounded-3">
+                                    <i class="fas fa-check-circle text-success fs-3 mb-2"></i>
+                                    <div class="h4 fw-bold text-success mb-1">{{ $paidOrders ?? '0' }}</div>
+                                    <div class="text-gray-700">Paid</div>
                                 </div>
                             </div>
-                            <div class="col-12">
-                                <div
-                                    class="status-badge bg-danger-opacity text-danger d-flex justify-content-between align-items-center p-3">
-                                    <div>
-                                        <i class="fas fa-times-circle me-2"></i>
-                                        <span>Cancelled</span>
-                                    </div>
-                                    <span class="fw-bold h5 mb-0">{{ $cancelledOrders ?? '0' }}</span>
+                            <div class="col-md-3 col-6">
+                                <div class="text-center p-4 bg-info-soft rounded-3">
+                                    <i class="fas fa-shipping-fast text-info fs-3 mb-2"></i>
+                                    <div class="h4 fw-bold text-info mb-1">{{ $shippedOrders ?? '0' }}</div>
+                                    <div class="text-gray-700">Shipped</div>
                                 </div>
                             </div>
-                            <div class="col-12">
-                                <div
-                                    class="status-badge bg-info-opacity text-info d-flex justify-content-between align-items-center p-3">
-                                    <div>
-                                        <i class="fas fa-shipping-fast me-2"></i>
-                                        <span>Shipped</span>
-                                    </div>
-                                    <span class="fw-bold h5 mb-0">{{ $shippedOrders ?? '0' }}</span>
+                            <div class="col-md-3 col-6">
+                                <div class="text-center p-4 bg-danger-soft rounded-3">
+                                    <i class="fas fa-times-circle text-danger fs-3 mb-2"></i>
+                                    <div class="h4 fw-bold text-danger mb-1">{{ $cancelledOrders ?? '0' }}</div>
+                                    <div class="text-gray-700">Cancelled</div>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
 
-        {{-- 4. RECENT PRODUCTS --}}
-        <div class="row g-4 mt-4">
-            <div class="col-lg-8">
-                <div class="card border-0 shadow-sm">
-                    <div class="card-header bg-transparent border-0 p-4 pb-2">
-                        <div class="d-flex justify-content-between align-items-center">
-                            <div>
-                                <h5 class="mb-1">Recent Products</h5>
-                                <p class="text-muted small mb-0">Newly added products</p>
-                            </div>
-                            <a href="{{ route('admin.products.index') }}" class="btn btn-outline-success btn-sm">
-                                <i class="fas fa-list me-1"></i> View All
-                            </a>
-                        </div>
-                    </div>
-                    <div class="card-body p-4 pt-0">
-                        <div class="scroll-container">
-                            <div class="row g-3">
-                                @foreach($recentProducts as $p)
-                                    <div class="col-12">
-                                        <a href="{{ route('admin.products.show', $p->id) }}"
-                                            class="text-decoration-none text-dark">
-                                            <div class="d-flex align-items-center p-3 border rounded-3 hover-lift">
-                                                <img src="{{ $p->images->first() ? asset('images/' . $p->images->first()->image_path) : asset('images/default.jpg') }}"
-                                                    class="rounded-3 me-3"
-                                                    style="width: 60px; height: 60px; object-fit: cover;">
-                                                <div class="flex-grow-1">
-                                                    <div class="fw-medium mb-1">{{ Str::limit($p->product_name, 35) }}</div>
-                                                    <div class="d-flex justify-content-between align-items-center">
-                                                        <small class="text-muted">
-                                                            {{ $p->seller->business_name ?? 'No Seller' }}
-                                                        </small>
-                                                        <span class="text-success fw-semibold">
-                                                            RM {{ number_format($p->price, 2) }}
-                                                        </span>
-                                                    </div>
-                                                </div>
-                                                <div class="ms-3">
-                                                    @if($p->status == 'pending')
-                                                        <span class="badge bg-warning">Pending</span>
-                                                    @elseif($p->status == 'approved')
-                                                        <span class="badge bg-success">Approved</span>
-                                                    @else
-                                                        <span class="badge bg-secondary">{{ ucfirst($p->status) }}</span>
-                                                    @endif
-                                                </div>
-                                            </div>
-                                        </a>
-                                    </div>
-                                @endforeach
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            {{-- RIGHT COLUMN - PENDING ACTIONS --}}
+            <!-- Pending Actions -->
             <div class="col-lg-4">
-                <div class="card border-0 shadow-sm h-60">
-                    <div class="card-header bg-transparent border-0 p-4 pb-2">
-                        <h5 class="mb-1">Pending Actions</h5>
-                        <p class="text-muted small mb-0">Requires attention</p>
+                <div class="card border-0 shadow-sm">
+                    <div class="card-header bg-transparent border-0 p-4">
+                        <h5 class="fw-semibold mb-1">Pending Actions</h5>
                     </div>
                     <div class="card-body p-4 pt-0">
                         <div class="list-group list-group-flush">
@@ -571,56 +204,249 @@
                                     <i class="fas fa-shopping-cart text-primary me-2"></i>
                                     <span>Pending Orders</span>
                                 </div>
-                                <span class="badge bg-primary rounded-pill">{{ $pendingOrders ?? '0' }}</span>
+                                <span class="badge bg-primary-600 rounded-pill">{{ $pendingOrders ?? '0' }}</span>
                             </a>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-@endsection
 
-    @section('scripts')
-        <script>
-            document.addEventListener('DOMContentLoaded', function () {
-                // Hover effects for cards
-                document.querySelectorAll('.hover-lift').forEach(card => {
-                    card.addEventListener('mouseenter', function () {
-                        this.style.zIndex = '10';
-                    });
-                    card.addEventListener('mouseleave', function () {
-                        this.style.zIndex = '1';
-                    });
+        <!-- Recent Products -->
+        <div class="row g-4 mt-4">
+            <div class="col-12">
+                <div class="card border-0 shadow-sm">
+                    <div class="card-header bg-transparent border-0 p-4">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <h5 class="fw-semibold mb-1">Recent Products</h5>
+                                <p class="text-gray-600 small mb-0">Newly added products</p>
+                            </div>
+                            <a href="{{ route('admin.products.index') }}" class="btn btn-outline-primary btn-sm">
+                                <i class="fas fa-list me-1"></i> View All
+                            </a>
+                        </div>
+                    </div>
+                    <div class="card-body p-4 pt-0">
+                        <div class="row g-3">
+                            @foreach($recentProducts as $p)
+                                <div class="col-md-6 col-lg-4 col-xl-3">
+                                    <a href="{{ route('admin.products.show', $p->id) }}" class="text-decoration-none text-dark">
+                                        <div class="card border hover-card h-100">
+                                            <div class="card-body p-3">
+                                                <div class="d-flex align-items-start gap-3">
+                                                    <img src="{{ $p->images->first() ? asset('images/' . $p->images->first()->image_path) : asset('images/default.jpg') }}"
+                                                        class="rounded-3" style="width: 60px; height: 60px; object-fit: cover;">
+                                                    <div class="flex-grow-1">
+                                                        <div class="fw-semibold mb-1">{{ Str::limit($p->product_name, 25) }}
+                                                        </div>
+                                                        <div class="d-flex justify-content-between align-items-center">
+                                                            <small class="text-gray-600">
+                                                                {{ $p->seller->business_name ?? 'No Seller' }}
+                                                            </small>
+                                                            <span class="text-success fw-semibold">
+                                                                RM {{ number_format($p->price, 2) }}
+                                                            </span>
+                                                        </div>
+                                                    </div>
+                                                    <div>
+                                                        @if($p->status == 'pending')
+                                                            <span class="badge bg-warning">Pending</span>
+                                                        @elseif($p->status == 'approved')
+                                                            <span class="badge bg-success">Approved</span>
+                                                        @else
+                                                            <span class="badge bg-secondary">{{ ucfirst($p->status) }}</span>
+                                                        @endif
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </a>
+                                </div>
+                            @endforeach
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <style>
+        :root {
+            --color-primary-50: #f5f7f0;
+            --color-primary-100: #e9edd9;
+            --color-primary-600: #6e8055;
+            --color-primary-700: #566546;
+
+            --color-success-50: #f0f7f3;
+            --color-success-100: #dcefe4;
+            --color-success-soft: #e8f5eb;
+            --color-success-700: #2d6b47;
+
+            --color-warning-50: #fef9f0;
+            --color-warning-100: #fef0d7;
+            --color-warning-soft: #fff4e0;
+            --color-warning-700: #9c6c1a;
+
+            --color-info-50: #f0f7fc;
+            --color-info-100: #dcedf9;
+            --color-info-soft: #e3f2fd;
+            --color-info-700: #1a6094;
+
+            --color-danger-50: #fdf2f2;
+            --color-danger-100: #fde8e8;
+            --color-danger-soft: #fdeaea;
+            --color-danger-700: #9b1c1c;
+
+            --color-gray-600: #6b7280;
+            --color-gray-700: #374151;
+            --color-gray-900: #111827;
+        }
+
+        /* Color Utilities */
+        .text-primary-600 {
+            color: var(--color-primary-600) !important;
+        }
+
+        .text-primary-700 {
+            color: var(--color-primary-700) !important;
+        }
+
+        .bg-primary-50 {
+            background-color: var(--color-primary-50) !important;
+        }
+
+        .bg-primary-100 {
+            background-color: var(--color-primary-100) !important;
+        }
+
+        .bg-primary-600 {
+            background-color: var(--color-primary-600) !important;
+        }
+
+        .bg-success-50 {
+            background-color: var(--color-success-50) !important;
+        }
+
+        .bg-success-100 {
+            background-color: var(--color-success-100) !important;
+        }
+
+        .bg-success-soft {
+            background-color: var(--color-success-soft) !important;
+        }
+
+        .text-success-700 {
+            color: var(--color-success-700) !important;
+        }
+
+        .bg-warning-50 {
+            background-color: var(--color-warning-50) !important;
+        }
+
+        .bg-warning-100 {
+            background-color: var(--color-warning-100) !important;
+        }
+
+        .bg-warning-soft {
+            background-color: var(--color-warning-soft) !important;
+        }
+
+        .text-warning-700 {
+            color: var(--color-warning-700) !important;
+        }
+
+        .bg-info-50 {
+            background-color: var(--color-info-50) !important;
+        }
+
+        .bg-info-100 {
+            background-color: var(--color-info-100) !important;
+        }
+
+        .bg-info-soft {
+            background-color: var(--color-info-soft) !important;
+        }
+
+        .text-info-700 {
+            color: var(--color-info-700) !important;
+        }
+
+        .bg-danger-50 {
+            background-color: var(--color-danger-50) !important;
+        }
+
+        .bg-danger-100 {
+            background-color: var(--color-danger-100) !important;
+        }
+
+        .bg-danger-soft {
+            background-color: var(--color-danger-soft) !important;
+        }
+
+        .text-danger-700 {
+            color: var(--color-danger-700) !important;
+        }
+
+        .text-gray-600 {
+            color: var(--color-gray-600) !important;
+        }
+
+        .text-gray-700 {
+            color: var(--color-gray-700) !important;
+        }
+
+        .text-gray-900 {
+            color: var(--color-gray-900) !important;
+        }
+
+        /* Components */
+        .card {
+            border-radius: 12px;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .hover-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(110, 128, 85, 0.1) !important;
+        }
+
+        .rounded-3 {
+            border-radius: 12px !important;
+        }
+
+        .btn-outline-primary {
+            color: var(--color-primary-600);
+            border-color: var(--color-primary-600);
+        }
+
+        .btn-outline-primary:hover {
+            background-color: var(--color-primary-600);
+            border-color: var(--color-primary-600);
+            color: white;
+        }
+
+        .list-group-item:hover {
+            background-color: var(--color-primary-50) !important;
+        }
+
+        .fs-3 {
+            font-size: 1.5rem !important;
+        }
+    </style>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Simple hover effects
+            const cards = document.querySelectorAll('.hover-card');
+            cards.forEach(card => {
+                card.addEventListener('mouseenter', function () {
+                    this.style.zIndex = '10';
                 });
-
-                // Add loading animation to buttons
-                document.querySelectorAll('a.btn').forEach(button => {
-                    button.addEventListener('click', function (e) {
-                        if (!this.classList.contains('dropdown-toggle')) {
-                            const originalHTML = this.innerHTML;
-                            this.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span> Loading...';
-                            this.disabled = true;
-
-                            // Reset after 2 seconds (in case of error)
-                            setTimeout(() => {
-                                this.innerHTML = originalHTML;
-                                this.disabled = false;
-                            }, 2000);
-                        }
-                    });
-                });
-
-                // Fade in animation
-                const cards = document.querySelectorAll('.card');
-                cards.forEach((card, index) => {
-                    card.style.opacity = '0';
-                    card.style.transform = 'translateY(20px)';
-                    setTimeout(() => {
-                        card.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
-                        card.style.opacity = '1';
-                        card.style.transform = 'translateY(0)';
-                    }, index * 100);
+                card.addEventListener('mouseleave', function () {
+                    this.style.zIndex = '1';
                 });
             });
-        </script>
-    @endsection
+        });
+    </script>
+@endsection

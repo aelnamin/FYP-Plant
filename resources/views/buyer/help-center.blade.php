@@ -91,7 +91,7 @@
                         </li>
                         <li class="faq-item" data-question="How do I request a refund?">
                             <span class="faq-question">How do I request a refund?</span>
-                            <p class="faq-answer">To request a refund, contact our support team via the “Contact Support”
+                            <p class="faq-answer">To request a refund, file a complaint via the “File a Complaint”
                                 button. Provide your order number and reason for the refund.</p>
                         </li>
                         <li class="faq-item" data-question="What's your return policy?">
@@ -114,12 +114,10 @@
                 <h2 style="margin-bottom: 10px;">Still Need Help?</h2>
                 <p style="margin-bottom: 20px; color: #666;">Our support team is here to assist you.</p>
                 <div class="contact-buttons">
+
                     <a href="{{ route('complaints.create') }}" class="contact-btn">
-                        <i class="fas fa-envelope"></i> Contact Support
+                        <i class="fas fa-exclamation-circle"></i> File a Complaint
                     </a>
-                    <a href="{{ route('complaints.create') }}" class="contact-btn">
-    <i class="fas fa-exclamation-circle"></i> File a Complaint
-</a>
 
 
                 </div>

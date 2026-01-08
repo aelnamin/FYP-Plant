@@ -5,6 +5,31 @@
 @section('content')
     <div class="container py-5">
 
+        {{-- Validation Errors --}}
+        @if ($errors->any())
+            <div class="alert alert-danger rounded-3">
+                <ul class="mb-0">
+                    @foreach ($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+            </div>
+        @endif
+
+        {{-- Success Message --}}
+        @if (session('success'))
+            <div class="alert alert-success rounded-3">
+                {{ session('success') }}
+            </div>
+        @endif
+
+        {{-- Error Message --}}
+        @if (session('error'))
+            <div class="alert alert-danger rounded-3">
+                {{ session('error') }}
+            </div>
+        @endif
+
         @if(isset($sellerId) && $orders->count() > 0)
 
             @foreach($orders as $order)
@@ -45,10 +70,11 @@
                                 </div>
 
                                 <span class="badge
-                                                                                    @if($order->status === 'Paid') bg-primary
-                                                                                    @elseif($order->status === 'Shipped') bg-success
-                                                                                    @else bg-secondary
-                                                                                    @endif">
+                                                    @if($order->status === 'Paid') bg-primary
+                                                    @elseif($order->status === 'Shipped') bg-success
+                                                    @elseif($order->status === 'Delivered') bg-success
+                                                    @else bg-secondary
+                                                    @endif">
                                     {{ $order->status }}
                                 </span>
                             </div>
@@ -70,6 +96,13 @@
                                         <div class="fw-semibold">
                                             {{ $item->product->product_name }}
                                         </div>
+
+                                        <!-- Variant -->
+                                        <div class="text-secondary small">
+                                            <i class="fas fa-tag me-1"></i>
+                                            {{ $item->variant && $item->variant !== '' ? $item->variant : 'Standard' }}
+                                        </div>
+
                                         <small class="text-muted">
                                             Qty: {{ $item->quantity }}
                                         </small>
@@ -88,31 +121,55 @@
                                     Total: RM {{ number_format($sellerTotal, 2) }}
                                 </strong>
                             </div>
+
                             {{-- Action --}}
-<div class="mt-3 text-end">
-    @if($order->status === 'Pending')
-        <form action="{{ route('sellers.orders.paid', $order->id) }}" method="POST" class="d-inline">
-            @csrf
-            <button class="btn btn-primary btn-sm rounded-pill">
-                Mark as Paid
-            </button>
-        </form>
-    @elseif($order->status === 'Paid')
-        <form action="{{ route('sellers.orders.ship', $order->id) }}" method="POST" class="d-inline">
-            @csrf
-            <button class="btn btn-success btn-sm rounded-pill">
-                Mark as Shipped
-            </button>
-        </form>
-    @elseif($order->status === 'Shipped')
-        <span class="text-success fw-semibold">
-            Already Shipped
-        </span>
-    @endif
-</div>
+                            <div class="mt-3 text-end">
+                                @if($order->status === 'Pending')
+                                    <form action="{{ route('sellers.orders.paid', $order->id) }}" method="POST" class="d-inline">
+                                        @csrf
+                                        <button class="btn btn-primary btn-sm rounded-pill">
+                                            Mark as Paid
+                                        </button>
+                                    </form>
 
+                                @elseif($order->status === 'Paid' && !$order->delivery)
+                                    <form action="{{ route('sellers.deliveries.store', $order->id) }}" method="POST" class="d-inline">
+                                        @csrf
 
-                            
+                                        <input type="hidden" name="courier_name" value="J&T Express">
+
+                                        <input type="text" name="tracking_number" class="form-control form-control-sm d-inline w-50 me-2"
+                                            placeholder="Tracking Number" required>
+
+                                        <button class="btn btn-success btn-sm rounded-pill">
+                                            Ship Order
+                                        </button>
+                                    </form>
+
+                                @elseif($order->status === 'Shipped' && $order->delivery)
+                                    <span class="text-success fw-semibold">
+                                        Shipped • {{ $order->delivery->courier_name }} |
+                                        {{ $order->delivery->tracking_number }}
+                                    </span>
+
+                                    {{-- Mark as Delivered Button --}}
+                                    @if(!$order->delivery->delivered_at)
+                                        <form action="{{ route('sellers.deliveries.deliver', $order->id) }}" method="POST"
+                                            class="d-inline ms-2">
+                                            @csrf
+                                            <button class="btn btn-info btn-sm rounded-pill">
+                                                Mark as Delivered
+                                            </button>
+                                        </form>
+                                    @endif
+
+                                @elseif($order->status === 'Delivered')
+                                    <span class="text-success fw-semibold">
+                                        Delivered • {{ $order->delivery->courier_name }} |
+                                        {{ $order->delivery->tracking_number }}
+                                    </span>
+                                @endif
+                            </div>
 
                         </div>
                     </div>

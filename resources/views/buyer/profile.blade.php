@@ -228,15 +228,11 @@
                                                                                 <div class="d-flex justify-content-between align-items-center">
                                                                                     <div class="product-meta">
                                                                                     <div class="product-variant">
-    Variant: 
-    @if($item->variant && $item->variant !== '')
-        <strong>{{ $item->variant }}</strong>
-        @if(!empty($variants) && count($variants) > 1)
-            <br><small class="text-muted"></small>
-        @endif
-    @else
-        <span class="text-muted">Standard</span>
-    @endif
+     <!-- Variant -->
+     <div class="text-secondary small">
+                                                <i class="fas fa-tag me-1"></i>
+                                                {{ $item->variant && $item->variant !== '' ? $item->variant : 'Standard' }}
+                                            </div>
 </div>
                                                                                         <span class="quantity me-3">
                                                                                             <i class="bi bi-x-square me-1"></i>Qty: {{ $item->quantity }}
@@ -273,7 +269,7 @@
                                                 View Order
                                             </a>
 
-                                            @if(strtoupper($group['status']) === 'SHIPPED')
+                                            @if(strtoupper($group['status']) === 'DELIVERED')
     <a href="{{ route('buyer.order-details', $group['order_id']) }}"
        class="btn btn-primary btn-sm">
         <i class="bi bi-star"></i> Review

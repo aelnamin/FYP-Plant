@@ -26,45 +26,70 @@
             </div>
         </div>
 
-        {{-- Order Status Timeline --}}
-        <div class="card shadow-sm rounded-4 mb-4 border-0">
-            <div class="card-body">
-                <h5 class="fw-bold mb-4">Order Status</h5>
-                <div class="row text-center">
-                    @php
-                        $statusStages = ['Placed' => 'check-lg', 'Paid' => 'credit-card', 'Shipped' => 'truck'];
-                    @endphp
-                    @foreach($statusStages as $stage => $icon)
-                        <div class="col-md-4 mb-3 mb-md-0">
-                            @php
-                                $active = match ($stage) {
-                                    'Placed' => true,
-                                    'Paid' => in_array($order->status, ['Paid', 'Shipped']),
-                                    'Shipped' => $order->status === 'Shipped',
-                                    default => false,
-                                };
-                            @endphp
-                            <div class="d-flex flex-column align-items-center">
-                                <div class="mb-2">
-                                    <div class="rounded-circle d-inline-flex align-items-center justify-content-center 
-                                                    {{ $active ? 'bg-success text-white' : 'bg-light text-dark border' }}"
-                                        style="width:50px;height:50px;">
-                                        <i class="bi bi-{{ $icon }} fs-5"></i>
-                                    </div>
-                                </div>
-                                <h6 class="fw-bold">{{ $stage }}</h6>
-                                <small class="text-muted">
-                                    @if($stage === 'Placed') {{ $order->created_at->format('d M, h:i A') }}
-                                    @elseif($stage === 'Paid') {{ $active ? 'Completed' : 'Pending' }}
-                                    @elseif($stage === 'Shipped') {{ $active ? 'Shipped' : 'Processing' }}
-                                    @endif
-                                </small>
+ {{-- Order Status Timeline --}}
+<div class="card shadow-sm rounded-4 mb-4 border-0">
+    <div class="card-body">
+        <h5 class="fw-bold mb-4">Order Status</h5>
+        <div class="row text-center">
+            @php
+                // Define stages and icons
+                $statusStages = [
+                    'Placed' => 'check-lg',
+                    'Paid' => 'credit-card',
+                    'Shipped' => 'truck',
+                    'Delivered' => 'check2-circle', // new stage
+                ];
+
+                // Current order status in uppercase
+                $currentStatus = strtoupper($order->status);
+            @endphp
+
+            @foreach($statusStages as $stage => $icon)
+                @php
+                    // Determine if this stage is active
+                    $active = match ($stage) {
+                        'Placed' => true,
+                        'Paid' => in_array($currentStatus, ['PAID','SHIPPED','DELIVERED','COMPLETED']),
+                        'Shipped' => in_array($currentStatus, ['SHIPPED','DELIVERED','COMPLETED']),
+                        'Delivered' => in_array($currentStatus, ['DELIVERED','COMPLETED']),
+                        default => false,
+                    };
+
+                    // Determine stage timestamp
+                    $stageTime = match ($stage) {
+                        'Placed' => $order->placed_at ?? $order->created_at,
+                        'Paid' => $order->paid_at ?? null,
+                        'Shipped' => $order->shipped_at ?? null,
+                        'Delivered' => $order->delivered_at ?? null,
+                        default => null,
+                    };
+                @endphp
+
+                <div class="col-md-3 mb-3 mb-md-0">
+                    <div class="d-flex flex-column align-items-center">
+                        <div class="mb-2">
+                            <div class="rounded-circle d-inline-flex align-items-center justify-content-center 
+                                        {{ $active ? 'bg-success text-white' : 'bg-light text-dark border' }}"
+                                style="width:50px;height:50px;">
+                                <i class="bi bi-{{ $icon }} fs-5"></i>
                             </div>
                         </div>
-                    @endforeach
+                        <h6 class="fw-bold">{{ $stage }}</h6>
+                        <small class="text-muted">
+                            @if($stageTime)
+                                {{ \Carbon\Carbon::parse($stageTime)->format('d M, h:i A') }}
+                            @else
+                                {{ $active ? 'Completed' : 'Pending' }}
+                            @endif
+                        </small>
+                    </div>
                 </div>
-            </div>
+            @endforeach
         </div>
+    </div>
+</div>
+
+
 
         <div class="row g-4">
             {{-- Order Items --}}
@@ -72,56 +97,50 @@
                 <div class="card shadow-sm rounded-4 border-0 h-100">
                     <div class="card-header bg-light border-0 py-3">
                         <h5 class="fw-bold mb-0">
-                            <i class="bi bi-cart3 text-success me-2"></i>
+                            <i class="bi bi-cart3 text-me-2" style="color: #8a9c6a;"></i>
                             Order Items ({{ $order->items->count() }})
                         </h5>
                     </div>
                     <div class="card-body">
                         <div class="list-group list-group-flush">
-                            @foreach($order->items as $item)
-                                @if($item->product)
-                                    <div class="list-group-item border-0 px-0 py-3">
-                                        <div class="row align-items-center">
-                                            {{-- Product Image --}}
-                                            <div class="col-auto">
-                                                <div class="position-relative">
-                                                    <img src="{{ $item->product->images->first() ? asset('images/' . $item->product->images->first()->image_path) : asset('images/default.jpg') }}"
-                                                        class="rounded-3" style="width:80px;height:80px;object-fit:cover;"
-                                                        alt="{{ $item->product->product_name }}">
-                                                    @if($item->quantity > 1)
-                                                        <span
-                                                            class="badge bg-success position-absolute top-0 start-100 translate-middle rounded-circle">
-                                                            {{ $item->quantity }}
-                                                        </span>
-                                                    @endif
-                                                </div>
-                                            </div>
-
-                                            {{-- Product Info --}}
-                                            <div class="col">
-                                                <h6 class="fw-bold mb-1">{{ $item->product->product_name }}</h6>
-                                                @if($item->variant)
-                                                    <small class="text-muted d-block">
-                                                        <i class="bi bi-tag me-1"></i> Variant: {{ $item->variant }}
-                                                    </small>
-                                                @endif
-                                                <small class="text-muted">Unit Price: RM
-                                                    {{ number_format($item->price, 2) }}</small>
-                                                <small class="text-muted d-block">
-                                                    Seller: {{ $item->product->seller->business_name ?? 'Unknown' }}
-                                                </small>
-                                            </div>
-
-                                            {{-- Price --}}
-                                            <div class="col-auto text-end">
-                                                <div class="fw-bold text-success fs-5">
-                                                    RM {{ number_format($item->price * $item->quantity, 2) }}
-                                                </div>
-                                                <small class="text-muted">
-                                                    RM {{ number_format($item->price, 2) }} × {{ $item->quantity }}
-                                                </small>
-                                            </div>
+                            @php
+                                // Group items by seller
+                                $groupedItems = $order->items->groupBy(fn($item) => $item->product->seller_id ?? 0);
+                            @endphp
+                            @foreach($groupedItems as $sellerId => $items)
+                                @if($items->first()?->product?->seller)
+                                    <div class="seller-section mb-3">
+                                        <div class="seller-header d-flex align-items-center mb-2 p-2 rounded"
+                                            style="background-color: #f8f9fa; border: 1px solid #e9ecef;">
+                                            <i class="fas fa-store me-2" style="color: #8a9c6a;"></i>
+                                            <h6 class="fw-semibold mb-0" style="font-size: 0.9rem;">
+                                                {{ $items->first()->product->seller->business_name ?? $items->first()->product->seller->name }}
+                                            </h6>
                                         </div>
+
+                                        @foreach($items as $item)
+                                            @if($item->product)
+                                                <div class="d-flex align-items-start mb-3 pb-3 border-bottom"
+                                                    style="border-color: #e9ecef !important;">
+                                                    <img src="{{ $item->product->images->first() ? asset('images/' . $item->product->images->first()->image_path) : asset('images/default.jpg') }}"
+                                                        class="rounded-3 me-3"
+                                                        style="width: 60px; height: 60px; object-fit: cover; border: 1px solid #e9ecef;">
+                                                    <div class="flex-grow-1">
+                                                        <h6 class="fw-semibold text-dark mb-1" style="font-size: 0.95rem;">
+                                                            {{ $item->product->product_name }}
+                                                        </h6>
+                                                        <p class="text-secondary small mb-1">Qty: {{ $item->quantity }}</p>
+                                                        <div class="text-secondary small mb-1">
+                                                            <i class="fas fa-tag me-1"></i>
+                                                            {{ $item->variant && $item->variant !== '' ? $item->variant : 'Standard' }}
+                                                        </div>
+                                                        <p class="fw-bold mb-0" style="color: #8a9c6a; font-size: 0.95rem;">
+                                                            RM {{ number_format($item->price * $item->quantity, 2) }}
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                            @endif
+                                        @endforeach
                                     </div>
                                 @endif
                             @endforeach
@@ -137,58 +156,58 @@
                         <h5 class="fw-bold mb-0">Order Summary</h5>
                     </div>
                     <div class="card-body">
-                        {{-- Status --}}
-                        <div class="text-center mb-4">
-                            <span class="badge rounded-pill px-4 py-2 fs-6 
-                                @if($order->status === 'Pending') bg-warning text-dark
-                                @elseif($order->status === 'Paid') bg-primary
-                                @elseif($order->status === 'Shipped') bg-success
-                                @else bg-secondary @endif">
-                                <i class="bi 
-                                    @if($order->status === 'Pending') bi-clock
-                                    @elseif($order->status === 'Paid') bi-check-circle
-                                    @elseif($order->status === 'Shipped') bi-truck
-                                    @endif me-2"></i>
-                                {{ $order->status }}
-                            </span>
-                        </div>
 
-                        {{-- Summary --}}
+                        {{-- Calculate subtotal, shipping, and total --}}
                         @php
-                            $subtotal = $order->items->sum(fn($item) => $item->price * $item->quantity);
-                            $shipping = 10.60;
-                            $total = $subtotal + $shipping;
-                        @endphp
+    $subtotal = $order->items->sum(fn($item) => $item->price * $item->quantity);
 
-                        <div class="mb-4">
-                            <div class="d-flex justify-content-between mb-2">
-                                <span class="text-muted">Subtotal</span>
-                                <span>RM {{ number_format($subtotal, 2) }}</span>
+    // Flat shipping per seller
+    $numSellers = $groupedItems->count();
+    $shippingPerSeller = 10.60;
+    $delivery = $numSellers * $shippingPerSeller; // total delivery for all sellers
+
+    $total = $subtotal + $delivery;
+@endphp
+
+<div class="d-flex justify-content-between mb-2">
+    <span class="text-secondary">Subtotal</span>
+    <span class="fw-semibold text-dark">RM {{ number_format($subtotal, 2) }}</span>
+</div>
+
+<div class="d-flex justify-content-between mb-2">
+    <span class="text-secondary">Delivery (inc. 6% SST)</span>
+    <span class="fw-semibold text-dark">RM {{ number_format($delivery, 2) }}</span>
+</div>
+
+                        <hr class="my-3" style="border-color: #e9ecef;">
+
+                        {{-- Total --}}
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <h6 class="fw-bold text-dark mb-1">Total</h6>
+                                <small class="text-secondary">Including delivery</small>
                             </div>
-                            <div class="d-flex justify-content-between mb-2">
-                                <span class="text-muted">Shipping</span>
-                                <span class="text-success">RM {{ number_format($shipping, 2) }}</span>
-                            </div>
-                            <hr>
-                            <div class="d-flex justify-content-between">
-                                <strong>Total Amount</strong>
-                                <strong class="text-success fs-4">RM {{ number_format($total, 2) }}</strong>
-                            </div>
+                            <h4 class="fw-bold mb-0" style="color: #8a9c6a;">
+                                RM {{ number_format($total, 2) }}
+                            </h4>
                         </div>
 
                         {{-- Payment Info --}}
-                        <div class="mb-4">
+                        <div class="mt-4">
                             <h6 class="fw-bold mb-3">Payment Information</h6>
                             <div class="d-flex justify-content-between mb-2">
-                                <span class="text-muted">Method</span>
-                                <span>Online Payment</span>
+                                <span class="text-secondary">Payment Method</span>
+                                <span>{{ $order->payment_method ?? 'Online Payment' }}</span>
                             </div>
                             <div class="d-flex justify-content-between mb-2">
-                                <span class="text-muted">Status</span>
-                                <span class="badge bg-success">Paid</span>
+                                <span class="text-secondary">Status</span>
+                                <span class="badge bg-success">{{ $order->status }}</span>
                             </div>
                         </div>
 
+                    </div>
+                </div>
+            </div>
         </div>
 
         <style>
@@ -206,6 +225,22 @@
                 box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
                 transition: all 0.2s ease;
             }
+
+            .seller-section {
+                border: 1px solid #e9ecef;
+                border-radius: 0.75rem;
+                padding: 1rem;
+                margin-bottom: 1rem;
+                background-color: #fff;
+            }
+
+            .seller-section .seller-header {
+                background-color: #f8f9fa;
+                padding: 0.5rem 1rem;
+                border-radius: 0.5rem;
+                margin-bottom: 0.5rem;
+            }
         </style>
+
     </div>
 @endsection

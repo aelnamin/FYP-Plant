@@ -6,29 +6,30 @@
     <div class="container py-5">
         <!-- Back Button -->
         <div class="mb-4">
-            <a href="{{ route('complaints.index') }}" class="btn btn-matcha-outline rounded-pill px-4">
+            <a href="{{ route('complaints.index') }}" class="btn btn-outline-primary rounded-pill px-4">
                 <i class="fas fa-arrow-left me-2"></i>Back to Complaints
             </a>
         </div>
 
         <!-- Main Card -->
-        <div class="card border-0 border-2 shadow-lg rounded-4 overflow-hidden">
+        <div class="card border-primary-200 border-2 shadow-lg rounded-4 overflow-hidden">
             <!-- Header -->
-            <div class="card-header bg-matcha-light border-0 py-4 px-5">
+            <div class="card-header bg-primary-50 border-0 py-4 px-5">
                 <div class="d-flex justify-content-between align-items-center">
                     <div>
-                        <h1 class="h3 fw-bold text-dark mb-1">Complaint Details</h1>
-                        <p class="text-dark mb-0">ID: #{{ $complaint->complaint_id }}</p>
+                        <h1 class="h3 fw-bold text-gray-900 mb-1">Complaint Details</h1>
+                        <p class="text-primary-700 mb-0">ID: #{{ $complaint->complaint_id }}</p>
                     </div>
                     @php
                         $statusColors = [
-                            'pending' => ['bg' => 'bg-warning', 'text' => 'dark'],
-                            'resolved' => ['bg' => 'bg-matcha-success', 'text' => 'white'],
-                            'in_progress' => ['bg' => 'bg-matcha-info', 'text' => 'white']
+                            'pending' => ['bg' => 'bg-warning-soft', 'text' => 'text-warning-800'],
+                            'resolved' => ['bg' => 'bg-success-soft', 'text' => 'text-success-800'],
+                            'in_progress' => ['bg' => 'bg-info-soft', 'text' => 'text-info-800'],
+                            'cancelled' => ['bg' => 'bg-error-soft', 'text' => 'text-error-800']
                         ];
-                        $status = $statusColors[$complaint->status] ?? ['bg' => 'bg-secondary', 'text' => 'white'];
+                        $status = $statusColors[$complaint->status] ?? ['bg' => 'bg-gray-200', 'text' => 'text-gray-700'];
                     @endphp
-                    <span class="badge {{ $status['bg'] }} text-{{ $status['text'] }} rounded-pill px-4 py-2 fs-6">
+                    <span class="badge {{ $status['bg'] }} {{ $status['text'] }} rounded-pill px-4 py-2 fs-6">
                         {{ ucfirst(str_replace('_', ' ', $complaint->status)) }}
                     </span>
                 </div>
@@ -39,22 +40,23 @@
                 <div class="row g-4 mb-5">
                     <!-- Order Information -->
                     <div class="col-md-6">
-                        <div class="card border-0 bg-light rounded-4 h-100">
+                        <div class="card border-primary-200 border-2 rounded-4 h-100 hover-lift">
                             <div class="card-body p-4">
                                 <div class="d-flex align-items-center mb-3">
-                                    <div class="bg-matcha-light rounded-3 p-3 me-3">
-                                        <i class="fas fa-shopping-basket text-matcha fs-5"></i>
+                                    <div class="bg-primary-100 rounded-3 p-3 me-3">
+                                        <i class="fas fa-shopping-basket text-primary-700 fs-5"></i>
                                     </div>
-                                    <h5 class="fw-bold mb-0">Order Information</h5>
+                                    <h5 class="fw-bold text-gray-900 mb-0">Order Information</h5>
                                 </div>
                                 <div class="ps-5">
                                     <div class="mb-3">
-                                        <span class="text-matcha d-block">Order ID</span>
-                                        <span class="fw-semibold fs-5 text-dark">#{{ $complaint->order_id }}</span>
+                                        <span class="text-primary-700 d-block">Order ID</span>
+                                        <span class="fw-semibold fs-5 text-gray-900">#{{ $complaint->order_id }}</span>
                                     </div>
                                     <div>
-                                        <span class="text-matcha d-block">Submitted Date</span>
-                                        <span class="fw-medium">{{ $complaint->created_at->format('F d, Y') }}</span>
+                                        <span class="text-primary-700 d-block">Submitted Date</span>
+                                        <span
+                                            class="fw-medium text-gray-800">{{ $complaint->created_at->format('F d, Y') }}</span>
                                     </div>
                                 </div>
                             </div>
@@ -63,27 +65,29 @@
 
                     <!-- Complaint Details -->
                     <div class="col-md-6">
-                        <div class="card border-0 bg-light rounded-4 h-100">
+                        <div class="card border-primary-200 border-2 rounded-4 h-100 hover-lift">
                             <div class="card-body p-4">
                                 <div class="d-flex align-items-center mb-3">
-                                    <div class="bg-matcha-light rounded-3 p-3 me-3">
-                                        <i class="fas fa-leaf text-matcha fs-5"></i>
+                                    <div class="bg-primary-100 rounded-3 p-3 me-3">
+                                        <i class="fas fa-clock text-primary-700 fs-5"></i>
                                     </div>
-                                    <h5 class="fw-bold mb-0">Timeline</h5>
+                                    <h5 class="fw-bold text-gray-900 mb-0">Timeline</h5>
                                 </div>
                                 <div class="ps-5">
                                     <div class="mb-3">
-                                        <span class="text-matcha d-block">Created</span>
-                                        <span class="fw-medium">{{ $complaint->created_at->format('M d, Y h:i A') }}</span>
+                                        <span class="text-primary-700 d-block">Created</span>
+                                        <span class="fw-medium text-gray-800">{{ $complaint->created_at->format('F d, Y') }}
+                                            at {{ $complaint->created_at->format('g:i A') }}</span>
                                     </div>
                                     <div class="mb-3">
-                                        <span class="text-matcha d-block">Last Updated</span>
-                                        <span class="fw-medium">{{ $complaint->updated_at->format('M d, Y h:i A') }}</span>
+                                        <span class="text-primary-700 d-block">Last Updated</span>
+                                        <span class="fw-medium text-gray-800">{{ $complaint->updated_at->format('F d, Y') }}
+                                            at {{ $complaint->updated_at->format('g:i A') }}</span>
                                     </div>
                                     @if($complaint->admin)
                                         <div>
-                                            <span class="text-matcha d-block">Assigned Admin</span>
-                                            <span class="fw-medium">{{ $complaint->admin->name }}</span>
+                                            <span class="text-primary-700 d-block">Assigned Admin</span>
+                                            <span class="fw-medium text-gray-800">{{ $complaint->admin->name }}</span>
                                         </div>
                                     @endif
                                 </div>
@@ -95,12 +99,12 @@
                 <!-- Complaint Message -->
                 <div class="mb-5">
                     <h5 class="fw-bold mb-3 d-flex align-items-center">
-                        <i class="fas fa-comment-dots text-matcha me-2"></i>
+                        <i class="fas fa-comment-dots text-primary-600 me-2"></i>
                         Your Complaint Message
                     </h5>
-                    <div class="card border-start border-3 border-matcha rounded-end-4 bg-matcha-lighter">
+                    <div class="card border-start border-3 border-primary-400 rounded-end-4 bg-primary-50">
                         <div class="card-body p-4">
-                            <p class="mb-0 fs-6 lh-lg text-dark">{{ $complaint->complaint_message }}</p>
+                            <p class="mb-0 fs-6 lh-lg text-gray-800">{{ $complaint->complaint_message }}</p>
                         </div>
                     </div>
                 </div>
@@ -109,21 +113,22 @@
                 @if($complaint->admin_response)
                     <div class="mb-4">
                         <h5 class="fw-bold mb-3 d-flex align-items-center">
-                            <i class="fas fa-headset text-matcha-success me-2"></i>
+                            <i class="fas fa-headset text-primary-600 me-2"></i>
                             Admin Response
                         </h5>
-                        <div class="card border-0 bg-dark bg-opacity-10 rounded-4">
+                        <div class="card border-0 bg-success-soft rounded-4">
                             <div class="card-body p-4">
                                 <div class="d-flex align-items-start">
-                                    <div class="bg-dark bg-opacity-25 rounded-3 p-3 me-3">
-                                        <i class="fas fa-user-shield text-dark fs-5"></i>
+                                    <div class="bg-primary-100 rounded-3 p-3 me-3">
+                                        <i class="fas fa-user-shield text-primary-700 fs-5"></i>
                                     </div>
                                     <div class="flex-grow-1">
-                                        <p class="mb-3 fs-6 text-dark">{{ $complaint->admin_response }}</p>
-                                        <div class="d-flex justify-content-between align-items-center text-matcha">
+                                        <p class="mb-3 fs-6 text-gray-800">{{ $complaint->admin_response }}</p>
+                                        <div class="d-flex justify-content-between align-items-center text-primary-600">
                                             <small>
                                                 <i class="fas fa-clock me-1"></i>
-                                                Responded on {{ $complaint->updated_at->format('M d, Y h:i A') }}
+                                                Responded on {{ $complaint->updated_at->format('F d, Y') }} at
+                                                {{ $complaint->updated_at->format('g:i A') }}
                                             </small>
                                             @if($complaint->admin)
                                                 <small class="fw-medium">
@@ -139,26 +144,27 @@
                     </div>
                 @else
                     <!-- Pending Status -->
-                    <div class="alert border-0 bg-warning bg-opacity-10 rounded-4 d-flex align-items-center p-4">
-                        <div class="bg-warning bg-opacity-25 rounded-3 p-3 me-3">
-                            <i class="fas fa-clock text-matcha-warning fs-5"></i>
+                    <div class="alert border-0 bg-warning-soft rounded-4 d-flex align-items-center p-4">
+                        <div class="bg-primary-100 rounded-3 p-3 me-3">
+                            <i class="fas fa-clock text-primary-700 fs-5"></i>
                         </div>
                         <div>
-                            <h6 class="fw-bold text-dark mb-1">Under Review</h6>
-                            <p class="text-dark mb-0">Your complaint is being reviewed. An admin will respond shortly.</p>
+                            <h6 class="fw-bold text-gray-900 mb-1">Under Review</h6>
+                            <p class="text-primary-700 mb-0">Your complaint is being reviewed. An admin will respond shortly.
+                            </p>
                         </div>
                     </div>
                 @endif
 
                 <!-- Action Buttons -->
-                <div class="d-flex justify-content-between align-items-center mt-5 pt-4 border-top border-matcha-light">
-                    <a href="{{ route('complaints.index') }}" class="btn btn-matcha-outline rounded-pill px-4">
+                <div class="d-flex justify-content-between align-items-center mt-5 pt-4 border-top border-primary-200">
+                    <a href="{{ route('complaints.index') }}" class="btn btn-outline-primary rounded-pill px-4">
                         <i class="fas fa-list me-2"></i>View All Complaints
                     </a>
                     @if($complaint->status !== 'resolved')
                         <div class="text-end">
-                            <small class="text-matcha d-block mb-1">Expected response within 24-48 hours</small>
-                            <span class="badge bg-matcha-light text-dark rounded-pill px-3 py-2">
+                            <small class="text-primary-600 d-block mb-1">Expected response within 24-48 hours</small>
+                            <span class="badge bg-primary-100 text-primary-700 rounded-pill px-3 py-2">
                                 <i class="fas fa-hourglass-half me-1"></i>Processing
                             </span>
                         </div>
@@ -171,107 +177,371 @@
     <!-- Custom Styles -->
     <style>
         :root {
-            --matcha: rgb(138, 166, 106);
-            --matcha-dark: #689F38;
-            --matcha-light: #DCEDC8;
-            --matcha-lighter: #F1F8E9;
-            --matcha-warning: #FFB74D;
-            --matcha-success: #81C784;
-            --matcha-info: #4FC3F7;
+            /* Base color: #8a9c6a */
+            --color-primary-50: #f5f7f0;
+            --color-primary-100: #e9edd9;
+            --color-primary-200: #d4dcba;
+            --color-primary-300: #b8c592;
+            --color-primary-400: #9bad72;
+            --color-primary-500: #8a9c6a;
+            --color-primary-600: #6e8055;
+            --color-primary-700: #566546;
+            --color-primary-800: #465239;
+            --color-primary-900: #3b4530;
+
+            /* Harmonious status colors */
+            --color-success-50: #f0f7f3;
+            --color-success-100: #dcefe4;
+            --color-success-soft: #e8f5eb;
+            --color-success-800: #2d6b47;
+
+            --color-warning-50: #fef9f0;
+            --color-warning-100: #fef0d7;
+            --color-warning-soft: #fff4e0;
+            --color-warning-800: #9c6c1a;
+
+            --color-info-50: #f0f7fc;
+            --color-info-100: #dcedf9;
+            --color-info-soft: #e3f2fd;
+            --color-info-800: #1a6094;
+
+            --color-error-50: #fdf2f2;
+            --color-error-100: #fde8e8;
+            --color-error-soft: #fdeaea;
+            --color-error-800: #9b1c1c;
+
+            /* Neutral colors */
+            --color-gray-100: #f3f4f6;
+            --color-gray-200: #e5e7eb;
+            --color-gray-300: #d1d5db;
+            --color-gray-400: #9ca3af;
+            --color-gray-500: #6b7280;
+            --color-gray-600: #4b5563;
+            --color-gray-700: #374151;
+            --color-gray-800: #1f2937;
+            --color-gray-900: #111827;
         }
 
-        .text-matcha {
-            color: var(--matcha-dark) !important;
+        /* Primary Color Utilities */
+        .text-primary-50 {
+            color: var(--color-primary-50) !important;
         }
 
-        .text-matcha-success {
-            color: var(--matcha-success) !important;
+        .text-primary-100 {
+            color: var(--color-primary-100) !important;
         }
 
-        .text-matcha-warning {
-            color: var(--matcha-warning) !important;
+        .text-primary-200 {
+            color: var(--color-primary-200) !important;
         }
 
-        .bg-matcha {
-            background-color: var(--matcha) !important;
+        .text-primary-300 {
+            color: var(--color-primary-300) !important;
         }
 
-        .bg-matcha-light {
-            background-color: var(--matcha-light) !important;
+        .text-primary-400 {
+            color: var(--color-primary-400) !important;
         }
 
-        .bg-matcha-lighter {
-            background-color: var(--matcha-lighter) !important;
+        .text-primary-500 {
+            color: var(--color-primary-500) !important;
         }
 
-        .bg-matcha-warning {
-            background-color: var(--matcha-warning) !important;
+        .text-primary-600 {
+            color: var(--color-primary-600) !important;
         }
 
-        .bg-matcha-success {
-            background-color: var(--matcha-success) !important;
+        .text-primary-700 {
+            color: var(--color-primary-700) !important;
         }
 
-        .bg-matcha-info {
-            background-color: var(--matcha-info) !important;
+        .text-primary-800 {
+            color: var(--color-primary-800) !important;
         }
 
-        .border-matcha {
-            border-color: var(--matcha) !important;
+        .text-primary-900 {
+            color: var(--color-primary-900) !important;
         }
 
-        .border-matcha-light {
-            border-color: var(--matcha-light) !important;
+        .bg-primary-50 {
+            background-color: var(--color-primary-50) !important;
         }
 
-        .btn-matcha-outline {
-            background-color: transparent !important;
-            border-color: var(--matcha) !important;
-            color: var(--matcha-dark) !important;
+        .bg-primary-100 {
+            background-color: var(--color-primary-100) !important;
         }
 
-        .btn-matcha-outline:hover {
-            background-color: var(--matcha) !important;
+        .bg-primary-200 {
+            background-color: var(--color-primary-200) !important;
+        }
+
+        .bg-primary-300 {
+            background-color: var(--color-primary-300) !important;
+        }
+
+        .bg-primary-400 {
+            background-color: var(--color-primary-400) !important;
+        }
+
+        .bg-primary-500 {
+            background-color: var(--color-primary-500) !important;
+        }
+
+        .bg-primary-600 {
+            background-color: var(--color-primary-600) !important;
+        }
+
+        .bg-primary-700 {
+            background-color: var(--color-primary-700) !important;
+        }
+
+        .bg-primary-800 {
+            background-color: var(--color-primary-800) !important;
+        }
+
+        .bg-primary-900 {
+            background-color: var(--color-primary-900) !important;
+        }
+
+        .border-primary-50 {
+            border-color: var(--color-primary-50) !important;
+        }
+
+        .border-primary-100 {
+            border-color: var(--color-primary-100) !important;
+        }
+
+        .border-primary-200 {
+            border-color: var(--color-primary-200) !important;
+        }
+
+        .border-primary-300 {
+            border-color: var(--color-primary-300) !important;
+        }
+
+        .border-primary-400 {
+            border-color: var(--color-primary-400) !important;
+        }
+
+        .border-primary-500 {
+            border-color: var(--color-primary-500) !important;
+        }
+
+        .border-primary-600 {
+            border-color: var(--color-primary-600) !important;
+        }
+
+        .border-primary-700 {
+            border-color: var(--color-primary-700) !important;
+        }
+
+        .border-primary-800 {
+            border-color: var(--color-primary-800) !important;
+        }
+
+        .border-primary-900 {
+            border-color: var(--color-primary-900) !important;
+        }
+
+        /* Neutral Color Utilities */
+        .text-gray-100 {
+            color: var(--color-gray-100) !important;
+        }
+
+        .text-gray-200 {
+            color: var(--color-gray-200) !important;
+        }
+
+        .text-gray-300 {
+            color: var(--color-gray-300) !important;
+        }
+
+        .text-gray-400 {
+            color: var(--color-gray-400) !important;
+        }
+
+        .text-gray-500 {
+            color: var(--color-gray-500) !important;
+        }
+
+        .text-gray-600 {
+            color: var(--color-gray-600) !important;
+        }
+
+        .text-gray-700 {
+            color: var(--color-gray-700) !important;
+        }
+
+        .text-gray-800 {
+            color: var(--color-gray-800) !important;
+        }
+
+        .text-gray-900 {
+            color: var(--color-gray-900) !important;
+        }
+
+        .bg-gray-100 {
+            background-color: var(--color-gray-100) !important;
+        }
+
+        .bg-gray-200 {
+            background-color: var(--color-gray-200) !important;
+        }
+
+        .bg-gray-300 {
+            background-color: var(--color-gray-300) !important;
+        }
+
+        .bg-gray-400 {
+            background-color: var(--color-gray-400) !important;
+        }
+
+        .bg-gray-500 {
+            background-color: var(--color-gray-500) !important;
+        }
+
+        .bg-gray-600 {
+            background-color: var(--color-gray-600) !important;
+        }
+
+        .bg-gray-700 {
+            background-color: var(--color-gray-700) !important;
+        }
+
+        .bg-gray-800 {
+            background-color: var(--color-gray-800) !important;
+        }
+
+        .bg-gray-900 {
+            background-color: var(--color-gray-900) !important;
+        }
+
+        /* Status Color Utilities */
+        .bg-success-soft {
+            background-color: var(--color-success-soft) !important;
+        }
+
+        .bg-warning-soft {
+            background-color: var(--color-warning-soft) !important;
+        }
+
+        .bg-info-soft {
+            background-color: var(--color-info-soft) !important;
+        }
+
+        .bg-error-soft {
+            background-color: var(--color-error-soft) !important;
+        }
+
+        .text-success-800 {
+            color: var(--color-success-800) !important;
+        }
+
+        .text-warning-800 {
+            color: var(--color-warning-800) !important;
+        }
+
+        .text-info-800 {
+            color: var(--color-info-800) !important;
+        }
+
+        .text-error-800 {
+            color: var(--color-error-800) !important;
+        }
+
+        /* Buttons */
+        .btn-primary {
+            background-color: var(--color-primary-600) !important;
+            border-color: var(--color-primary-600) !important;
             color: white !important;
+            transition: all 0.3s ease;
         }
 
+        .btn-primary:hover {
+            background-color: var(--color-primary-700) !important;
+            border-color: var(--color-primary-700) !important;
+            color: white !important;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(110, 128, 85, 0.3);
+        }
+
+        .btn-outline-primary {
+            background-color: transparent !important;
+            border: 2px solid var(--color-primary-500) !important;
+            color: var(--color-primary-700) !important;
+            transition: all 0.3s ease;
+        }
+
+        .btn-outline-primary:hover {
+            background-color: var(--color-primary-600) !important;
+            border-color: var(--color-primary-600) !important;
+            color: white !important;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(110, 128, 85, 0.2);
+        }
+
+        /* Cards & Effects */
+        .hover-lift {
+            transition: all 0.3s ease;
+        }
+
+        .hover-lift:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 10px 25px rgba(110, 128, 85, 0.15) !important;
+        }
+
+        /* Alerts */
+        .alert {
+            border-width: 1px;
+        }
+
+        /* Badges */
         .badge {
             font-weight: 500;
-            letter-spacing: 0.5px;
+            letter-spacing: 0.3px;
         }
 
+        /* Borders */
         .border-start {
             border-left-width: 4px !important;
         }
 
+        /* Border Radius */
         .rounded-end-4 {
             border-top-right-radius: 1rem !important;
             border-bottom-right-radius: 1rem !important;
         }
 
-        .bg-opacity-10 {
-            --bs-bg-opacity: 0.1;
+        .rounded-3 {
+            border-radius: 0.75rem !important;
         }
 
-        .bg-opacity-25 {
-            --bs-bg-opacity: 0.25;
+        .rounded-4 {
+            border-radius: 1rem !important;
         }
 
-        .card {
-            transition: all 0.3s ease;
-        }
-
-        .card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 25px rgba(139, 195, 74, 0.1) !important;
-        }
-
+        /* Typography */
         .fs-6 {
             font-size: 1.05rem !important;
         }
 
         .lh-lg {
             line-height: 1.7 !important;
+        }
+
+        /* Shadows */
+        .shadow-lg {
+            box-shadow: 0 10px 25px rgba(110, 128, 85, 0.1) !important;
+        }
+
+        /* Animation */
+        .card {
+            transition: all 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(110, 128, 85, 0.12) !important;
         }
     </style>
 @endsection

@@ -151,16 +151,16 @@
                         <div class="product-name">{{ $item->product->product_name }}</div>
 
                         <div class="product-variant">
-    Variant: 
-    @if($item->variant && $item->variant !== '')
-        <strong>{{ $item->variant }}</strong>
-        @if(!empty($variants) && count($variants) > 1)
-            <br><small class="text-muted"></small>
-        @endif
-    @else
-        <span class="text-muted">Standard</span>
-    @endif
-</div>
+                            Variant:
+                            @if($item->variant && $item->variant !== '')
+                                <strong>{{ $item->variant }}</strong>
+                                @if(!empty($variants) && count($variants) > 1)
+                                    <br><small class="text-muted"></small>
+                                @endif
+                            @else
+                                <span class="text-muted">Standard</span>
+                            @endif
+                        </div>
                         <div class="quantity-control">
                             <form action="{{ route('cart.update', $item->id) }}" method="POST"
                                 class="d-flex align-items-center gap-1">
