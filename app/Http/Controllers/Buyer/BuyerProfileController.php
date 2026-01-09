@@ -15,12 +15,52 @@ class BuyerProfileController extends Controller
         /** @var \App\Models\User $user */
         $user = Auth::user();
 
+        // Get orders with items and their sellers
         $orders = $user->orders()
-            ->with('items.product.seller')
+            ->with(['items.product.images', 'items.product.seller'])
             ->latest()
             ->get();
 
-        return view('buyer.profile', compact('user', 'orders'));
+        // Create grouped orders by seller within each order
+        $groupedOrders = collect();
+
+        foreach ($orders as $order) {
+            // Group items in this order by seller
+            $sellerGroups = $order->items->groupBy('product.seller_id');
+
+            foreach ($sellerGroups as $sellerId => $items) {
+                $firstItem = $items->first();
+                $seller = $firstItem->product->seller ?? null;
+
+                // ===============================
+                // USE SELLER-SPECIFIC STATUS
+                // ===============================
+                $sellerStatus = $firstItem->seller_status ?? 'Pending';
+
+                // Calculate totals for this seller's items
+                $subtotal = $items->sum(fn($item) => $item->price * $item->quantity);
+                $deliveryFee = 10.60; // Per seller delivery fee, adjust if needed
+                $total = $subtotal + $deliveryFee;
+
+                $groupedOrders->push([
+                    'order_id' => $order->id,
+                    'seller_id' => $sellerId,
+                    'seller_name' => $seller->business_name ?? 'Unknown Seller',
+                    'order_date' => $order->created_at,
+                    'status' => $sellerStatus, // <-- Seller-specific status
+                    'items' => $items,
+                    'item_count' => $items->count(),
+                    'subtotal' => $subtotal,
+                    'delivery_fee' => $deliveryFee,
+                    'total' => $total,
+                ]);
+            }
+        }
+
+        // Sort by order date (most recent first)
+        $groupedOrders = $groupedOrders->sortByDesc('order_date')->values();
+
+        return view('buyer.profile', compact('user', 'groupedOrders'));
     }
 
 

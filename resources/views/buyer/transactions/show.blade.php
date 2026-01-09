@@ -197,7 +197,8 @@
                             <h6 class="fw-bold mb-3">Payment Information</h6>
                             <div class="d-flex justify-content-between mb-2">
                                 <span class="text-secondary">Payment Method</span>
-                                <span>{{ $order->payment_method ?? 'Online Payment' }}</span>
+                                {{ $order->transaction?->payment_method ?? 'Online Payment' }}
+
                             </div>
                             <div class="d-flex justify-content-between mb-2">
                                 <span class="text-secondary">Status</span>

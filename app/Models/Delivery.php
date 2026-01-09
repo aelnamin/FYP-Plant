@@ -13,6 +13,7 @@ class Delivery extends Model
 
     protected $fillable = [
         'order_id',
+        'seller_id',
         'courier_name',
         'tracking_number',
         'status',
@@ -20,11 +21,23 @@ class Delivery extends Model
         'delivered_at',
     ];
 
-    /**
-     * A delivery belongs to an order
-     */
+    // Cast the datetime fields
+    protected $casts = [
+        'shipped_at' => 'datetime',
+        'delivered_at' => 'datetime',
+        'created_at' => 'datetime',
+        'updated_at' => 'datetime',
+    ];
+
+
     public function order()
     {
         return $this->belongsTo(Order::class);
     }
+    // In Delivery.php
+    public function seller()
+    {
+        return $this->belongsTo(Seller::class, 'seller_id');
+    }
+
 }

@@ -13,9 +13,12 @@ class OrderItem extends Model
     protected $fillable = [
         'order_id',
         'product_id',
+        'seller_id',
         'variants',
         'quantity',
-        'price'
+        'price',
+        'seller_status',
+
     ];
 
     public function order()
@@ -29,7 +32,12 @@ class OrderItem extends Model
     }
     public function seller()
     {
-        return $this->belongsTo(User::class, 'seller_id');
+        return $this->belongsTo(Seller::class, 'seller_id');
+    }
+    // Add scope for seller items
+    public function scopeForSeller($query, $sellerId)
+    {
+        return $query->where('seller_id', $sellerId);
     }
 
 }

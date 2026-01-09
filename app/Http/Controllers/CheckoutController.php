@@ -76,6 +76,9 @@ class CheckoutController extends Controller
     /**
      * Place order
      */
+    /**
+     * Place order
+     */
     public function placeOrder(Request $request)
     {
         $user = Auth::user();
@@ -88,13 +91,15 @@ class CheckoutController extends Controller
         }
 
         $cartItems = CartItem::where('cart_id', $cart->id)
-            ->with('product')
+            ->with('product')  // only product needed
             ->get();
+
 
         if ($cartItems->isEmpty()) {
             return redirect()->route('buyer.cart')
                 ->with('error', 'Your cart is empty.');
         }
+
 
         $request->validate([
             'payment_method' => 'required|string',
@@ -117,7 +122,8 @@ class CheckoutController extends Controller
                 'payment_method' => $request->payment_method,
             ]);
 
-            // Create order items
+
+            // Create order items - UPDATED VERSION
             foreach ($cartItems as $item) {
                 OrderItem::create([
                     'order_id' => $order->id,
@@ -125,6 +131,7 @@ class CheckoutController extends Controller
                     'quantity' => $item->quantity,
                     'price' => $item->product->price,
                     'variant' => $item->variant ?? 'Standard',
+                    'seller_status' => 'pending',  // ← ADDED
                 ]);
             }
 

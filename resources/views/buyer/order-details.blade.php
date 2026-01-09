@@ -16,8 +16,11 @@
         </div>
 
         @php
-            $status = strtoupper($order->status);
-            $statusInfo = match ($status) {
+            $status = $sellerId
+                ? $order->items->firstWhere('product.seller_id', $sellerId)->seller_status ?? 'Pending'
+                : $order->status ?? 'Pending';
+
+            $statusInfo = match (strtoupper($status)) {
                 'PENDING' => ['bg' => 'bg-warning', 'textColor' => 'text-dark', 'text' => 'Pending', 'icon' => 'clock'],
                 'PAID' => ['bg' => 'bg-info', 'textColor' => 'text-white', 'text' => 'Paid', 'icon' => 'check-circle'],
                 'SHIPPED' => ['bg' => 'bg-light', 'textColor' => 'text-dark', 'text' => 'Your order has been shipped by seller', 'icon' => 'truck'],
@@ -25,11 +28,8 @@
                 'CANCELLED' => ['bg' => 'bg-danger', 'textColor' => 'text-white', 'text' => 'Cancelled', 'icon' => 'x-circle'],
                 default => ['bg' => 'bg-secondary', 'textColor' => 'text-white', 'text' => 'Unknown', 'icon' => 'question-circle'],
             };
-
-            $subtotal = $order->items->sum(fn($i) => $i->price * $i->quantity);
-            $deliveryFee = 10.60;
-            $total = $subtotal + $deliveryFee;
         @endphp
+
 
         <div class="row g-4">
             <!-- Left Column -->
@@ -37,13 +37,11 @@
                 <!-- Order Status -->
                 <div class="card border-light shadow-sm rounded-3 mb-4">
                     <div class="card-body p-4 text-center">
-                        <div class="{{ $statusInfo['bg'] }} {{ $statusInfo['text'] }} rounded-circle d-inline-flex align-items-center justify-content-center p-3 mb-3"
+                        <div class="{{ $statusInfo['bg'] }} rounded-circle d-inline-flex align-items-center justify-content-center p-3 mb-3"
                             style="width: 60px; height: 60px;">
                             <i class="fas fa-{{ $statusInfo['icon'] }} fs-4"></i>
                         </div>
-                        <h4 class="fw-bold text-dark mb-2">
-                            {{ $statusInfo['text'] === 'text-dark' ? 'Pending' : $statusInfo['text'] }}
-                        </h4>
+                        <h4 class="fw-bold text-dark mb-2">{{ $statusInfo['text'] }}</h4>
                         <p class="text-secondary mb-0">
                             <i class="fas fa-calendar me-1"></i>
                             Ordered on {{ $order->created_at->format('M d, Y') }}
@@ -80,24 +78,53 @@
                             <div class="card-body p-4">
                                 <div class="d-flex align-items-center mb-3">
                                     <div class="rounded-2 p-2 me-2" style="background-color: #e8f0e8;">
-                                        <i class="fas fa-truck" style="color: #8a9c6a;"></i>
+                                        <i class="bi bi-card-text" style="color: #8a9c6a;"></i>
                                     </div>
                                     <h6 class="fw-bold text-dark mb-0">Shipping Information</h6>
                                 </div>
                                 <div class="ps-4">
+                                    <!-- Shipping Method -->
                                     <p class="fw-semibold text-dark mb-1">
                                         {{ $order->shipping_method ?? 'Standard Shipping' }}
                                     </p>
-                                    @if($order->tracking_number)
+
+                                    @php
+                                        // Collect possible tracking sources (priority order)
+                                        $delivery = collect([
+                                            $order->delivery,
+                                            ...$order->items->pluck('delivery')
+                                        ])->first(fn($d) => optional($d)->tracking_number);
+
+                                        $trackingNumber = $delivery?->tracking_number;
+                                        $courierName = $delivery?->courier_name ?? 'Courier';
+
+                                        $shippedAt = $order->shipped_at ?? $delivery?->shipped_at;
+                                        $deliveredAt = $order->delivered_at ?? $delivery?->delivered_at;
+                                    @endphp
+
+
+                                    @if($delivery)
                                         <p class="text-secondary small mb-1">
-                                            <i class="fas fa-barcode me-1"></i>{{ $order->tracking_number }}
+                                            <i class="fas fa-truck me-1"></i>
+                                            {{ $delivery->courier_name ?? 'Courier not specified' }} •
+                                            <strong>#{{ $delivery->tracking_number ?? 'N/A' }}</strong>
                                         </p>
-                                    @endif
-                                    @if($order->delivered_at)
-                                        <p class="text-success small mb-0">
-                                            <i class="fas fa-check-circle me-1"></i>
-                                            Delivered {{ $order->delivered_at->format('M d') }}
-                                        </p>
+
+                                        @if($delivery->shipped_at)
+                                            <p class="text-secondary small mb-0">
+                                                <i class="fas fa-calendar-alt me-1"></i>
+                                                Shipped on {{ $delivery->shipped_at->format('M d, Y') }}
+                                            </p>
+                                        @endif
+
+                                        @if($delivery->delivered_at)
+                                            <p class="text-success small mb-0 mt-1">
+                                                <i class="fas fa-check-circle me-1"></i>
+                                                Delivered on {{ $delivery->delivered_at->format('M d, Y') }}
+                                            </p>
+                                        @endif
+                                    @else
+                                        <p class="text-muted small mb-0">Your order has not been shipped yet.</p>
                                     @endif
                                 </div>
                             </div>
@@ -114,42 +141,82 @@
                             </div>
                             <h6 class="fw-bold text-dark mb-0">Order Items</h6>
                         </div>
+                        <hr>
+                        <!-- Group by seller if not filtered -->
+                        @if(!$sellerId)
+                            @foreach($items->groupBy(fn($item) => $item->product->seller_id) as $sellerId => $sellerItems)
+                                @php $seller = $sellerItems->first()->product->seller; @endphp
+                                <div class="mb-4 pb-4 border-bottom" style="border-color: #e9ecef !important;">
+                                    <div class="d-flex align-items-center mb-3">
+                                        <div class="rounded-2 p-1 me-2" style="background-color: #f8f9fa;">
+                                            <i class="fas fa-store" style="color: #6c757d;"></i>
+                                        </div>
+                                        <span class="fw-bold text-dark">{{ $seller->business_name ?? 'Seller' }}</span>
+                                        <a href="{{ route('buyer.orders.show', ['order' => $order->id, 'seller' => $sellerId]) }}"
+                                            class="btn btn-sm btn-outline-secondary ms-auto">
+                                            View Seller Items Only
+                                        </a>
+                                    </div>
 
-                        @foreach($order->items->groupBy(fn($i) => $i->product->seller_id) as $items)
-                            @php $seller = $items->first()->product->seller; @endphp
-                            <div class="mb-4 pb-4 border-bottom" style="border-color: #e9ecef !important;">
+                                    @foreach($sellerItems as $item)
+                                        @php $product = $item->product; @endphp
+                                        <div class="d-flex align-items-start mb-3">
+                                            <img src="{{ $product->images->first() ? asset('images/' . $product->images->first()->image_path) : asset('images/default.png') }}"
+                                                alt="{{ $product->product_name }}" class="rounded-3 me-3"
+                                                style="width: 60px; height: 60px; object-fit: cover; border: 1px solid #e9ecef;">
+                                            <div class="flex-grow-1">
+                                                <h6 class="fw-semibold text-dark mb-1">{{ $product->product_name }}</h6>
+                                                <div class="text-secondary small">
+                                                    <i class="fas fa-tag me-1"></i>
+                                                    {{ $item->variant && $item->variant !== '' ? $item->variant : 'Standard' }}
+                                                </div>
+                                                <p class="text-secondary small mb-1">Qty: {{ $item->quantity }}</p>
+                                                <p class="text-secondary small mb-0">RM {{ number_format($item->price, 2) }} each</p>
+                                            </div>
+                                            <div class="text-end">
+                                                <p class="fw-bold mb-0" style="color: #8a9c6a;">
+                                                    RM {{ number_format($item->price * $item->quantity, 2) }}
+                                                </p>
+                                            </div>
+                                        </div>
+                                    @endforeach
+                                </div>
+                            @endforeach
+                        @else
+                            <!-- Show filtered items for specific seller -->
+                            @if($selectedSeller)
                                 <div class="d-flex align-items-center mb-3">
                                     <div class="rounded-2 p-1 me-2" style="background-color: #f8f9fa;">
                                         <i class="fas fa-store" style="color: #6c757d;"></i>
                                     </div>
-                                    <span class="fw-bold text-dark">{{ $seller->business_name ?? 'Seller' }}</span>
+                                    <span class="fw-bold text-dark">{{ $selectedSeller->business_name ?? 'Seller' }}</span>
                                 </div>
+                            @endif
 
-                                @foreach($items as $item)
-                                    @php $product = $item->product; @endphp
-                                    <div class="d-flex align-items-start mb-3">
-                                        <img src="{{ $product->images->first() ? asset('images/' . $product->images->first()->image_path) : asset('images/default.png') }}"
-                                            alt="{{ $product->product_name }}" class="rounded-3 me-3"
-                                            style="width: 60px; height: 60px; object-fit: cover; border: 1px solid #e9ecef;">
-                                        <div class="flex-grow-1">
-                                            <h6 class="fw-semibold text-dark mb-1">{{ $product->product_name }}</h6>
-                                            <!-- Variant -->
-                                            <div class="text-secondary small">
-                                                <i class="fas fa-tag me-1"></i>
-                                                {{ $item->variant && $item->variant !== '' ? $item->variant : 'Standard' }}
-                                            </div>
-                                            <p class="text-secondary small mb-1">Qty: {{ $item->quantity }}</p>
-                                            <p class="text-secondary small mb-0">RM {{ number_format($item->price, 2) }} each</p>
+                            @foreach($items as $item)
+                                @php $product = $item->product; @endphp
+                                <div class="d-flex align-items-start mb-3 pb-3 border-bottom"
+                                    style="border-color: #e9ecef !important;">
+                                    <img src="{{ $product->images->first() ? asset('images/' . $product->images->first()->image_path) : asset('images/default.png') }}"
+                                        alt="{{ $product->product_name }}" class="rounded-3 me-3"
+                                        style="width: 60px; height: 60px; object-fit: cover; border: 1px solid #e9ecef;">
+                                    <div class="flex-grow-1">
+                                        <h6 class="fw-semibold text-dark mb-1">{{ $product->product_name }}</h6>
+                                        <div class="text-secondary small">
+                                            <i class="fas fa-tag me-1"></i>
+                                            {{ $item->variant && $item->variant !== '' ? $item->variant : 'Standard' }}
                                         </div>
-                                        <div class="text-end">
-                                            <p class="fw-bold mb-0" style="color: #8a9c6a;">
-                                                RM {{ number_format($item->price * $item->quantity, 2) }}
-                                            </p>
-                                        </div>
+                                        <p class="text-secondary small mb-1">Qty: {{ $item->quantity }}</p>
+                                        <p class="text-secondary small mb-0">RM {{ number_format($item->price, 2) }} each</p>
                                     </div>
-                                @endforeach
-                            </div>
-                        @endforeach
+                                    <div class="text-end">
+                                        <p class="fw-bold mb-0" style="color: #8a9c6a;">
+                                            RM {{ number_format($item->price * $item->quantity, 2) }}
+                                        </p>
+                                    </div>
+                                </div>
+                            @endforeach
+                        @endif
                     </div>
                 </div>
             </div>
@@ -171,10 +238,10 @@
                             <span class="fw-semibold text-dark">RM {{ number_format($subtotal, 2) }}</span>
                         </div>
                         <div class="d-flex justify-content-between mb-3">
-                            <span class="text-secondary">Delivery (inc. 6% SST)</span>
+                            <span class="text-secondary">Delivery (incl. 6% SST)</span>
                             <span class="fw-semibold text-dark">RM {{ number_format($deliveryFee, 2) }}</span>
                         </div>
-                        <hr class="my-3" style="border-color: #e9ecef !important;">
+                        <hr class="my-3" style="border-color: #e9ecef;">
                         <div class="d-flex justify-content-between align-items-center">
                             <div>
                                 <h6 class="fw-bold text-dark mb-1">Total</h6>
@@ -186,32 +253,46 @@
                 </div>
 
                 <!-- Actions -->
-                @if(in_array($status, ['SHIPPED', 'DELIVERED', 'PAID']))
+                @php
+                    // Normalize status for comparison
+                    $normalizedStatus = strtoupper(trim($status));
+                    $showActions = in_array($normalizedStatus, ['SHIPPED', 'DELIVERED', 'PAID', 'COMPLETED']);
+                @endphp
+
+                @if($showActions)
                     <div class="card border-light shadow-sm rounded-3">
                         <div class="card-body p-4">
+                        @if($normalizedStatus === 'SHIPPED' || $normalizedStatus === 'DELIVERED')
+    <!-- Mark as Received Button -->
+    <div class="d-grid gap-2 mb-4">
+        <form action="{{ route('buyer.orders.received', $order->id) }}{{ $sellerId ? '?seller=' . $sellerId : '' }}" method="POST">
+            @csrf
+            @method('PATCH')
+            <button type="submit" class="btn btn-outline-success rounded-pill py-2">
+                Order Received
+            </button>
+        </form>
+    </div>
+@endif
 
-                            @if($status === 'SHIPPED')
-                                <!-- Mark as Received Button -->
+
+                            @if(in_array($normalizedStatus, ['SHIPPED', 'DELIVERED', 'COMPLETED']))
                                 <div class="d-grid gap-2 mb-4">
-                                    <form action="{{ route('buyer.orders.received', $order->id) }}" method="POST">
-                                        @csrf
-                                        @method('PATCH')
-                                        <button type="submit" class="btn btn-outline-success rounded-pill py-2">
-                                            Order Received
-                                        </button>
-                                    </form>
-                                </div>
-                            @endif
+                                    @if($sellerId)
+                                        <!-- Return/Refund for specific seller -->
+                                        <a href="#" class="btn btn-outline-dark rounded-pill py-2">
+                                            <i class="fas fa-undo me-2"></i> Return/Refund for
+                                            {{ $selectedSeller->business_name ?? 'Seller' }}
+                                        </a>
+                                    @else
+                                        <a href="#" class="btn btn-outline-dark rounded-pill py-2">
+                                            <i class="fas fa-undo me-2"></i> Request Return/Refund
+                                        </a>
+                                    @endif
 
-                            @if(in_array($status, ['SHIPPED', 'DELIVERED']))
-                                <div class="d-grid gap-2 mb-4">
-                                    <a href="#" class="btn btn-outline-dark rounded-pill py-2">
-                                        <i class="fas fa-undo me-2"></i> Request Return/Refund
-                                    </a>
-
-                                    @foreach($order->items as $item)
+                                    @foreach($items as $item)
                                         @php $product = $item->product; @endphp
-                                        <a href="{{ route('buyer.reviews.create', ['order' => $order->id, 'product' => $product->id]) }}"
+                                        <a href="{{ route('buyer.reviews.create', ['order' => $order->id, 'product' => $product->id]) }}{{ $sellerId ? '?seller=' . $sellerId : '' }}"
                                             class="btn rounded-pill py-2 border-0" style="background-color: #8a9c6a; color: white;">
                                             <i class="bi bi-star me-2"></i> Rate {{ $product->product_name }}
                                         </a>
@@ -219,36 +300,43 @@
                                 </div>
                             @endif
 
-                            <!-- Support Center -->
-                            <div>
-                                <div class="d-flex align-items-center mb-3">
-                                    <div class="rounded-2 p-2 me-2" style="background-color: #e8f0e8;">
-                                        <i class="fas fa-headset" style="color: #8a9c6a;"></i>
+                            <!-- Support Center - ALWAYS SHOW FOR DELIVERED/COMPLETED ORDERS -->
+                            @if(in_array($normalizedStatus, ['DELIVERED', 'COMPLETED', 'SHIPPED', 'PAID']))
+                                <div>
+                                    <div class="d-flex align-items-center mb-3">
+                                        <div class="rounded-2 p-2 me-2" style="background-color: #e8f0e8;">
+                                            <i class="fas fa-headset" style="color: #8a9c6a;"></i>
+                                        </div>
+                                        <h6 class="fw-bold text-dark mb-0">Support Center</h6>
                                     </div>
-                                    <h6 class="fw-bold text-dark mb-0">Support Center</h6>
-                                </div>
-                                <div class="d-grid gap-2">
-                                    @php
-                                        $sellers = $order->items->map(fn($i) => $i->product->seller)->unique('id');
-                                    @endphp
-                                    @foreach($sellers as $seller)
-                                        <form action="{{ route('buyer.chats.start', $seller->user_id) }}" method="GET">
-                                            <button type="submit" class="btn btn-outline-secondary rounded-pill w-100">
-                                                <i class="fas fa-comment me-2"></i> Contact {{ $seller->business_name }}
-                                            </button>
-                                        </form>
-                                    @endforeach
+                                    <div class="d-grid gap-2">
+                                        @if($sellerId && $selectedSeller)
+                                            <form action="{{ route('buyer.chats.start', $selectedSeller->user_id) }}" method="GET">
+                                                <button type="submit" class="btn btn-outline-secondary rounded-pill w-100">
+                                                    <i class="fas fa-comment me-2"></i> Contact {{ $selectedSeller->business_name }}
+                                                </button>
+                                            </form>
+                                        @else
+                                            @foreach($order->items->map(fn($item) => $item->product->seller)->unique('id') as $seller)
+                                                <form action="{{ route('buyer.chats.start', $seller->user_id) }}" method="GET">
+                                                    <button type="submit" class="btn btn-outline-secondary rounded-pill w-100">
+                                                        <i class="fas fa-comment me-2"></i> Contact {{ $seller->business_name }}
+                                                    </button>
+                                                </form>
+                                            @endforeach
+                                        @endif
 
-                                    <a href="{{ route('buyer.help-center') }}" class="btn btn-outline-secondary rounded-pill">
-                                        <i class="fas fa-question-circle me-2"></i> Help Center
-                                    </a>
+                                        <a href="{{ route('buyer.help-center') }}" class="btn btn-outline-secondary rounded-pill">
+                                            <i class="fas fa-question-circle me-2"></i> Help Center
+                                        </a>
 
-                                    <a href="{{ route('buyer.transactions.show', $order->id) }}"
-                                        class="btn btn-outline-secondary rounded-pill">
-                                        <i class="fas fa-receipt me-2"></i> View Transaction
-                                    </a>
+                                        <a href="{{ route('buyer.transactions.show', $order->id) }}{{ $sellerId ? '?seller=' . $sellerId : '' }}"
+                                            class="btn btn-outline-secondary rounded-pill">
+                                            <i class="fas fa-receipt me-2"></i> View Transaction
+                                        </a>
+                                    </div>
                                 </div>
-                            </div>
+                            @endif
                         </div>
                     </div>
                 @endif
@@ -266,11 +354,6 @@
 
                     .rounded-3 {
                         border-radius: 0.75rem !important;
-                    }
-
-                    .sticky-top {
-                        position: sticky;
-                        z-index: 1;
                     }
 
                     .btn:hover {
@@ -291,14 +374,6 @@
                     .btn-outline-secondary:hover {
                         background-color: #6c757d;
                         color: white;
-                    }
-
-                    .text-dark {
-                        color: #212529 !important;
-                    }
-
-                    .text-secondary {
-                        color: #6c757d !important;
                     }
                 </style>
 @endsection

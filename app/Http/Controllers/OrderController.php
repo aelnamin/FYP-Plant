@@ -24,17 +24,50 @@ class OrderController extends Controller
     }
 
 
-    public function show($id)
+    public function show(Request $request, $id)
     {
-        $order = Order::with(['items.product.images', 'buyer', 'items.product.seller', 'delivery'])
+        $order = Order::with(['items.product.images', 'buyer', 'items.product.seller', 'delivery', 'transaction',])
+            ->where('id', $id)
             ->where('buyer_id', auth()->id())
-            ->findOrFail($id);
+            ->firstOrFail(); // ✅ FIX
 
-        return view('buyer.order-details', compact('order'));
+        // Optional seller filter
+        $sellerId = $request->query('seller');
+        $selectedSeller = null;
+
+        if ($sellerId) {
+            $items = $order->items->filter(
+                fn($item) => $item->product->seller_id == $sellerId
+            );
+
+            $selectedSeller = $order->items
+                ->first(fn($item) => $item->product->seller_id == $sellerId)
+                ?->product
+                    ?->seller;
+        } else {
+            $items = $order->items;
+        }
+
+        $sellerCount = $sellerId
+            ? 1
+            : $items->pluck('product.seller_id')->unique()->count();
+
+        $deliveryPerSeller = 10.60;
+        $deliveryFee = $deliveryPerSeller * $sellerCount;
+        $subtotal = $items->sum(fn($item) => $item->price * $item->quantity);
+        $total = $subtotal + $deliveryFee;
+
+        return view('buyer.order-details', compact(
+            'order',
+            'items',
+            'sellerId',
+            'selectedSeller',
+            'subtotal',
+            'deliveryFee',
+            'total',
+            'sellerCount'
+        ));
     }
-
-
-
 
     public function update(Request $request, $id)
     {
@@ -68,28 +101,26 @@ class OrderController extends Controller
         return view('buyer.orders.review-order', compact('order'));
     }
 
-    public function markAsReceived(Order $order)
+    public function markAsReceived(Request $request, Order $order)
     {
-        // Only allow if order has been shipped
-        if (strtoupper($order->status) !== 'SHIPPED') {
-            return back()->with('error', 'Order cannot be marked as received.');
+        // Only allow buyer to mark order as received
+        $user = auth()->user();
+
+        if ($order->buyer_id !== $user->id) {
+            abort(403, 'Unauthorized action.');
         }
 
-        // Update order
+        // Only allow if order is delivered
+        if (!in_array(strtoupper($order->status), ['DELIVERED'])) {
+            return redirect()->back()->with('error', 'You cannot mark this order as received.');
+        }
+
         $order->update([
-            'status' => 'DELIVERED',    // buyer marks received → Delivered
-            'received_at' => now(),
+            'status' => 'COMPLETED',
+            'completed_at' => now(), // optional, if you track completion
         ]);
 
-        // Update delivery table if exists
-        if ($order->delivery) {
-            $order->delivery->update([
-                'status' => 'Delivered',
-                'delivered_at' => now(),
-            ]);
-        }
-
-        return back()->with('success', 'Order marked as received!');
+        return redirect()->back()->with('success', 'Order marked as received!');
     }
 
     // Buyer/OrderController.php

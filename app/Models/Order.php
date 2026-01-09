@@ -25,6 +25,12 @@ class Order extends Model
         'status',
     ];
 
+    // Add casts
+    protected $casts = [
+        'created_at' => 'datetime',
+        'updated_at' => 'datetime',
+    ];
+
     public function buyer()
     {
         return $this->belongsTo(User::class, 'buyer_id');
@@ -60,4 +66,16 @@ class Order extends Model
         return $this->hasOne(Delivery::class);
     }
 
+    // In Order.php
+    public function deliveries()
+    {
+        return $this->hasMany(Delivery::class);
+    }
+
+
+    // Add relationship to get seller's items
+    public function sellerItems($sellerId)
+    {
+        return $this->items()->where('seller_id', $sellerId);
+    }
 }

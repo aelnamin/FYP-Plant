@@ -201,10 +201,6 @@ Route::middleware(['auth', 'role:seller'])
       Route::get('/plants/{product}/care-data', [PlantMonitoringController::class, 'getCareData'])
          ->name('plants.care.data');
 
-
-      Route::post('seller/orders/{order}/paid', [SellerOrderController::class, 'markAsPaid'])
-         ->name('orders.paid');
-
       //seller chat route
    
       Route::get('/chats', [SellerChatController::class, 'index'])
@@ -231,9 +227,14 @@ Route::middleware(['auth', 'role:seller'])
          [DeliveryController::class, 'store']
       )->name('deliveries.store');
 
-      Route::post('/orders/{order}/deliver', [DeliveryController::class, 'markAsDelivered'])
-         ->name('deliveries.deliver'); // remove "sellers." prefix
-   
+      Route::patch(
+         '/deliveries/{delivery}/delivered',
+         [DeliveryController::class, 'markAsDelivered']
+      )->name('deliveries.delivered');
+
+
+      Route::post('orders/{order}/paid', [SellerOrderController::class, 'markAsPaid'])->name('orders.paid');
+      Route::post('orders/{order}/shipped', [SellerOrderController::class, 'markAsShipped'])->name('orders.shipped');
 
    });
 
@@ -261,8 +262,6 @@ Route::middleware(['auth', 'role:buyer'])->group(function () {
       '/place-order',
       [TransactionController::class, 'store']
    )->name('buyer.place.order');
-
-   Route::post('/place-order', [CheckoutController::class, 'placeOrder'])->name('buyer.place.order');
 
    Route::get('/buyer/orders/{order}', [OrderController::class, 'show'])
       ->name('buyer.orders.details');

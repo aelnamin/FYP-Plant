@@ -20,6 +20,14 @@
                     <div class="alert alert-info">
                         You already reviewed this product. Your rating: {{ $existingReview->rating }}/5
                     </div>
+                    <div class="text-center mt-3">
+    <a href="{{ route('buyer.reviews.index') }}" class="btn btn-primary px-4 py-2 rounded-pill">
+        View my review
+    </a>
+</div>
+
+
+
                 @else
                     <!-- Product Card -->
                     <div class="card mb-4">

@@ -249,6 +249,7 @@
                     </div>
                     <div class="card-body p-4 pt-0">
                         @if(!empty($recentOrders) && $recentOrders->count())
+
                             <div class="table-responsive">
                                 <table class="table table-hover align-middle">
                                     <thead>
@@ -265,9 +266,9 @@
                                         @foreach($recentOrders as $order)
                                             <tr class="border-bottom">
                                                 <td>
-                                                <h6 class="mb-1">
-                                        #{{ str_pad($order->id, 10, '0', STR_PAD_LEFT) }}
-                                    </h6>
+                                                    <h6 class="mb-1">
+                                                        #{{ str_pad($order->id, 10, '0', STR_PAD_LEFT) }}
+                                                    </h6>
                                                 </td>
                                                 <td>
                                                     <div class="d-flex align-items-center">
@@ -431,93 +432,94 @@
 
             <div class="row g-4 mt-4">
 
-{{-- QUICK ACTIONS (Left) --}}
-<div class="col-lg-4">
-    <div class="card border-0 shadow-sm rounded-3 h-100">
-        <div class="card-header bg-transparent border-0 p-4 pb-2">
-            <h5 class="mb-1">Quick Actions</h5>
-            <p class="text-muted small mb-0">Frequently used tasks</p>
-        </div>
-        <div class="card-body p-4 pt-0">
-            <div class="d-grid gap-2">
-                <a href="{{ route('sellers.inventory.create') }}" class="btn btn-success">
-                    <i class="fas fa-plus-circle me-2"></i> Add New Product
-                </a>
-                <a href="{{ route('sellers.orders.index') }}" class="btn btn-outline-success">
-                    <i class="fas fa-list-alt me-2"></i> View All Orders
-                </a>
-                <a href="{{ route('sellers.chats.index') }}" class="btn btn-outline-info">
-                    <i class="fas fa-comments me-2"></i> Customer Messages
-                </a>
-                <a href="{{ route('sellers.orders.index') }}" class="btn btn-outline-warning">
-                    <i class="fas fa-exchange-alt me-2"></i> Returns & Refunds
-                </a>
-            </div>
-        </div>
-    </div>
-</div>
-
-{{-- ANALYTICS (Right) --}}
-<div class="col-lg-8">
-    <div class="card border-0 shadow-sm rounded-3 h-100">
-        <div class="card-header bg-transparent border-0 p-4 pb-2">
-            <h5 class="mb-1">Performance Analytics</h5>
-            <p class="text-muted small mb-0">Sales trends and insights</p>
-        </div>
-        <div class="card-body p-4">
-            <div class="row">
-                <div class="col-md-8">
-                    <canvas id="salesChart" style="height: 300px;"></canvas>
-                </div>
-                <div class="col-md-4">
-                    <div class="h-100">
-                        <h6 class="mb-3">Quick Stats</h6>
-                        <div class="list-group list-group-flush">
-                            <div class="list-group-item border-0 px-0 d-flex justify-content-between">
-                                <span>Avg. Order Value</span>
-                                <span class="fw-bold">RM {{ number_format($avg_order_value ?? 0, 2) }}</span>
-                            </div>
-                            <div class="list-group-item border-0 px-0 d-flex justify-content-between">
-                                <span>Conversion Rate</span>
-                                <span class="fw-bold">{{ number_format($conversion_rate ?? 0, 1) }}%</span>
-                            </div>
-                            <div class="list-group-item border-0 px-0 d-flex justify-content-between">
-                                <span>Best Selling</span>
-                                <span class="fw-bold">{{ $best_selling_product ?? 'N/A' }}</span>
-                            </div>
-                            <div class="list-group-item border-0 px-0 d-flex justify-content-between">
-                                <span>Customer Rating</span>
-                                <span class="fw-bold">
-                                    {{ number_format($avg_rating ?? 0, 1) }}
-                                    <i class="fas fa-star text-warning"></i>
-                                </span>
+                {{-- QUICK ACTIONS (Left) --}}
+                <div class="col-lg-4">
+                    <div class="card border-0 shadow-sm rounded-3 h-100">
+                        <div class="card-header bg-transparent border-0 p-4 pb-2">
+                            <h5 class="mb-1">Quick Actions</h5>
+                            <p class="text-muted small mb-0">Frequently used tasks</p>
+                        </div>
+                        <div class="card-body p-4 pt-0">
+                            <div class="d-grid gap-2">
+                                <a href="{{ route('sellers.inventory.create') }}" class="btn btn-success">
+                                    <i class="fas fa-plus-circle me-2"></i> Add New Product
+                                </a>
+                                <a href="{{ route('sellers.orders.index') }}" class="btn btn-outline-success">
+                                    <i class="fas fa-list-alt me-2"></i> View All Orders
+                                </a>
+                                <a href="{{ route('sellers.chats.index') }}" class="btn btn-outline-info">
+                                    <i class="fas fa-comments me-2"></i> Customer Messages
+                                </a>
+                                <a href="{{ route('sellers.orders.index') }}" class="btn btn-outline-warning">
+                                    <i class="fas fa-exchange-alt me-2"></i> Returns & Refunds
+                                </a>
                             </div>
                         </div>
+                    </div>
+                </div>
 
-</div>
+                {{-- ANALYTICS (Right) --}}
+                <div class="col-lg-8">
+                    <div class="card border-0 shadow-sm rounded-3 h-100">
+                        <div class="card-header bg-transparent border-0 p-4 pb-2">
+                            <h5 class="mb-1">Performance Analytics</h5>
+                            <p class="text-muted small mb-0">Sales trends and insights</p>
+                        </div>
+                        <div class="card-body p-4">
+                            <div class="row">
+                                <div class="col-md-8">
+                                    <canvas id="salesChart" style="height: 300px;"></canvas>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="h-100">
+                                        <h6 class="mb-3">Quick Stats</h6>
+                                        <div class="list-group list-group-flush">
+                                            <div class="list-group-item border-0 px-0 d-flex justify-content-between">
+                                                <span>Avg. Order Value</span>
+                                                <span class="fw-bold">RM
+                                                    {{ number_format($avg_order_value ?? 0, 2) }}</span>
+                                            </div>
+                                            <div class="list-group-item border-0 px-0 d-flex justify-content-between">
+                                                <span>Conversion Rate</span>
+                                                <span class="fw-bold">{{ number_format($conversion_rate ?? 0, 1) }}%</span>
+                                            </div>
+                                            <div class="list-group-item border-0 px-0 d-flex justify-content-between">
+                                                <span>Best Selling</span>
+                                                <span class="fw-bold">{{ $best_selling_product ?? 'N/A' }}</span>
+                                            </div>
+                                            <div class="list-group-item border-0 px-0 d-flex justify-content-between">
+                                                <span>Customer Rating</span>
+                                                <span class="fw-bold">
+                                                    {{ number_format($avg_rating ?? 0, 1) }}
+                                                    <i class="fas fa-star text-warning"></i>
+                                                </span>
+                                            </div>
+                                        </div>
 
-            
+                                    </div>
+
+
 @endsection
 
-    @section('scripts')
-        <script>
-            document.addEventListener('DOMContentLoaded', function () {
-                // Initialize tooltips
-                var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
-                var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
-                    return new bootstrap.Tooltip(tooltipTriggerEl);
-                });
+                                @section('scripts')
+                                    <script>
+                                        document.addEventListener('DOMContentLoaded', function () {
+                                            // Initialize tooltips
+                                            var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+                                            var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+                                                return new bootstrap.Tooltip(tooltipTriggerEl);
+                                            });
 
-                // Add loading animation to buttons
-                document.querySelectorAll('.btn').forEach(button => {
-                    button.addEventListener('click', function (e) {
-                        if (!this.classList.contains('dropdown-toggle')) {
-                            this.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span> Loading...';
-                            this.disabled = true;
-                        }
-                    });
-                });
+                                            // Add loading animation to buttons
+                                            document.querySelectorAll('.btn').forEach(button => {
+                                                button.addEventListener('click', function (e) {
+                                                    if (!this.classList.contains('dropdown-toggle')) {
+                                                        this.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span> Loading...';
+                                                        this.disabled = true;
+                                                    }
+                                                });
+                                            });
 
-            });
-        </script>
-    @endsection
+                                        });
+                                    </script>
+                                @endsection

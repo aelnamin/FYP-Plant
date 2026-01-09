@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Seller;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Order;
+use App\Models\OrderItem;
+use App\Models\Product;
 use App\Models\Seller;
 
 class SellerOrderController extends Controller
@@ -61,20 +63,37 @@ class SellerOrderController extends Controller
 
     public function markAsPaid($orderId)
     {
-        $order = Order::where('status', 'Pending')->findOrFail($orderId);
-        $order->update(['status' => 'Paid']);
-        return back()->with('success', 'Order marked as Paid.');
+        $seller = Seller::where('user_id', Auth::id())->firstOrFail();
+
+        // Update only this seller's items
+        OrderItem::where('order_id', $orderId)
+            ->whereHas('product', fn($q) => $q->where('seller_id', $seller->id))
+            ->update(['seller_status' => 'paid']);
+
+        return back()->with('success', 'Your products have been marked as Paid.');
     }
 
-    /**
-     * Mark order as Shipped
-     */
     public function markAsShipped($orderId)
     {
+        $seller = Seller::where('user_id', Auth::id())->firstOrFail();
 
-        $order = Order::where('status', 'Paid')->findOrFail($orderId);
-        $order->update(['status' => 'Shipped']);
+        // Update only this seller's items
+        OrderItem::where('order_id', $orderId)
+            ->whereHas('product', fn($q) => $q->where('seller_id', $seller->id))
+            ->update(['seller_status' => 'shipped']);
 
-        return back()->with('success', 'Order marked as shipped.');
+        return back()->with('success', 'Your products have been marked as Shipped.');
     }
+
+    public function markAsDelivered($orderId)
+    {
+        $seller = Seller::where('user_id', Auth::id())->firstOrFail();
+
+        OrderItem::where('order_id', $orderId)
+            ->whereHas('product', fn($q) => $q->where('seller_id', $seller->id))
+            ->update(['seller_status' => 'delivered']);
+
+        return back()->with('success', 'Your products have been marked as Delivered.');
+    }
+
 }
