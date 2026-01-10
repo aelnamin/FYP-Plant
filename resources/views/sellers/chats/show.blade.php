@@ -59,16 +59,20 @@
                             <div class="d-flex justify-content-end mt-1">
                                 <div class="chat-bubble chat-bubble-right">
                                     {{ $msg->message }}
-                                    <small class="d-block text-end text-muted mt-1 chat-time"
-                                        data-time="{{ $msg->created_at }}"></small>
+                                    <small class="d-block text-end text-muted mt-1">
+    {{ $msg->created_at->timezone('Asia/Kuala_Lumpur')->format('d/m/Y g:i A') }}
+</small>
+
                                 </div>
                             </div>
                         @else
                             <div class="d-flex justify-content-start mt-1">
                                 <div class="chat-bubble chat-bubble-left">
                                     {{ $msg->message }}
-                                    <small class="d-block text-start text-muted mt-1 chat-time"
-                                        data-time="{{ $msg->created_at }}"></small>
+                                    <small class="d-block text-start text-muted mt-1">
+    {{ $msg->created_at->timezone('Asia/Kuala_Lumpur')->format('d/m/Y g:i A') }}
+</small>
+
                                 </div>
                             </div>
                         @endif

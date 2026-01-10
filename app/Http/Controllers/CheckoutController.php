@@ -76,9 +76,6 @@ class CheckoutController extends Controller
     /**
      * Place order
      */
-    /**
-     * Place order
-     */
     public function placeOrder(Request $request)
     {
         $user = Auth::user();

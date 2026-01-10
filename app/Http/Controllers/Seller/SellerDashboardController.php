@@ -44,30 +44,47 @@ class SellerDashboardController extends Controller
             $q->whereIn('product_id', $sellerProductIds);
         });
 
-        $total_orders = (clone $ordersQuery)->distinct()->count();
-        $paid_orders = (clone $ordersQuery)->where('status', 'paid')->distinct()->count();
-        $pending_orders = (clone $ordersQuery)->where('status', 'pending')->distinct()->count();
+        // total orders
+        $total_orders = OrderItem::whereIn('product_id', $sellerProductIds)
+            ->distinct('order_id')
+            ->count();
+
+        // paid orders
+        $paid_orders = OrderItem::whereIn('product_id', $sellerProductIds)
+            ->where('seller_status', 'paid')
+            ->distinct('order_id')
+            ->count();
+
+        $sellerProductIds = $seller->products()->pluck('id');
+
+        // Count distinct orders where seller_status = 'paid'
+        $orders_to_ship = OrderItem::whereIn('product_id', $sellerProductIds)
+            ->where('seller_status', 'pending')
+            ->distinct('order_id')
+            ->count();
+
+        $pending_orders = $orders_to_ship;
 
         /* ======================
            TOTAL REVENUE (SELLER ONLY)
         ====================== */
+
         $total_revenue = OrderItem::whereIn('product_id', $sellerProductIds)
-            ->whereHas('order', function ($q) {
-                $q->whereIn('status', ['paid', 'shipped', 'delivered']);
-            })
-            ->sum(DB::raw('quantity * price'));
+            ->whereIn('seller_status', ['pending', 'paid', 'shipped', 'delivered'])
+            ->get()
+            ->sum(fn($item) => $item->quantity * $item->price);
 
 
         /* ======================
     MONTH REVENUE
  ====================== */
         $month_revenue = OrderItem::whereIn('product_id', $sellerProductIds)
-            ->whereHas('order', function ($q) {
-                $q->whereIn('status', ['paid', 'shipped', 'delivered'])
-                    ->whereMonth('created_at', Carbon::now()->month)
-                    ->whereYear('created_at', Carbon::now()->year);
-            })
-            ->sum(DB::raw('quantity * price'));
+            ->whereIn('seller_status', ['pending', 'paid', 'shipped', 'delivered'])
+            ->whereMonth('created_at', Carbon::now()->month)
+            ->whereYear('created_at', Carbon::now()->year)
+            ->get()
+            ->sum(fn($item) => $item->quantity * $item->price);
+
 
         /* ======================
       SALES LAST 7 DAYS FOR ANALYTICS
