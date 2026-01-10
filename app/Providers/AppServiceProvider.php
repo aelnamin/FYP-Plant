@@ -46,11 +46,11 @@ class AppServiceProvider extends ServiceProvider
 
             // Count orders NOT shipped yet (exclude shipped & delivered)
             $notShippedOrdersCount = Order::whereHas('items', function ($q) use ($sellerProductIds) {
-                $q->whereIn('product_id', $sellerProductIds);
+                $q->whereIn('product_id', $sellerProductIds)
+                    ->whereNotIn('seller_status', ['shipped', 'delivered', 'completed', 'cancelled']);
             })
-                ->whereNotIn('status', ['shipped', 'delivered'])
-                ->distinct()
-                ->count();
+                ->distinct('id')
+                ->count('id');
 
             // Share variable with view
             $view->with('notShippedOrdersCount', $notShippedOrdersCount);
@@ -71,11 +71,11 @@ class AppServiceProvider extends ServiceProvider
             $sellerProductIds = Product::where('seller_id', $seller->id)->pluck('id');
 
             $notShippedOrdersCount = Order::whereHas('items', function ($q) use ($sellerProductIds) {
-                $q->whereIn('product_id', $sellerProductIds);
+                $q->whereIn('product_id', $sellerProductIds)
+                    ->whereNotIn('seller_status', ['shipped', 'delivered', 'completed', 'cancelled']);
             })
-                ->whereNotIn('status', ['shipped', 'delivered'])
-                ->distinct()
-                ->count();
+                ->distinct('id')
+                ->count('id');
 
             $view->with('notShippedOrdersCount', $notShippedOrdersCount);
         });

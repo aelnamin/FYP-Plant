@@ -70,7 +70,7 @@ class SellerDashboardController extends Controller
         ====================== */
 
         $total_revenue = OrderItem::whereIn('product_id', $sellerProductIds)
-            ->whereIn('seller_status', ['pending', 'paid', 'shipped', 'delivered'])
+            ->whereIn('seller_status', ['pending', 'paid', 'shipped', 'delivered', 'completed'])
             ->get()
             ->sum(fn($item) => $item->quantity * $item->price);
 
@@ -79,7 +79,7 @@ class SellerDashboardController extends Controller
     MONTH REVENUE
  ====================== */
         $month_revenue = OrderItem::whereIn('product_id', $sellerProductIds)
-            ->whereIn('seller_status', ['pending', 'paid', 'shipped', 'delivered'])
+            ->whereIn('seller_status', ['pending', 'paid', 'shipped', 'delivered', 'completed'])
             ->whereMonth('created_at', Carbon::now()->month)
             ->whereYear('created_at', Carbon::now()->year)
             ->get()

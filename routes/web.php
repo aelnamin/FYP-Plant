@@ -335,8 +335,9 @@ Route::middleware(['auth', 'role:buyer'])->group(function () {
    Route::get('/complaints/{complaint}', [ComplaintController::class, 'show'])->name('complaints.show');
 
 
-   Route::patch('/buyer/orders/{order}/received', [OrderController::class, 'markAsReceived'])
+   Route::patch('/buyer/orders/{order}/received', [OrderController::class, 'received'])
       ->name('buyer.orders.received');
+
 });
 
 Route::get('/privacy-policy', function () {

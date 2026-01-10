@@ -31,11 +31,10 @@ class SellerOrderController extends Controller
 
         $sellerId = $seller->id; // This is the seller_id used in products table
 
-        // Fetch orders that contain at least one product from this seller
-        $orders = Order::whereIn('status', ['Pending', 'Paid', 'Shipped'])
-            ->whereHas('items.product', function ($q) use ($sellerId) {
-                $q->where('seller_id', $sellerId);
-            })
+        // Fetch all orders containing this seller's products (no status filter)
+        $orders = Order::whereHas('items.product', function ($q) use ($sellerId) {
+            $q->where('seller_id', $sellerId);
+        })
             ->with(['items.product.images', 'buyer'])
             ->latest()
             ->get();

@@ -108,40 +108,69 @@ class OrderController extends Controller
 
     public function markAsReceived(Request $request, Order $order)
     {
-        // Only allow buyer to mark order as received
         $user = auth()->user();
 
+        // Ensure the buyer owns the order
         if ($order->buyer_id !== $user->id) {
             abort(403, 'Unauthorized action.');
         }
 
-        // Only allow if order is delivered
-        if (!in_array(strtoupper($order->status), ['DELIVERED'])) {
-            return redirect()->back()->with('error', 'You cannot mark this order as received.');
+        // Optional seller filter
+        $sellerId = $request->query('seller');
+
+        // Update items
+        if ($sellerId) {
+            $order->items()
+                ->whereHas('product', fn($q) => $q->where('seller_id', $sellerId))
+                ->update(['seller_status' => 'completed']);
+        } else {
+            $order->items()->update(['seller_status' => 'completed']);
         }
 
+        // Update overall order status
         $order->update([
             'status' => 'COMPLETED',
-            'completed_at' => now(), // optional, if you track completion
+            'completed_at' => now(), // optional timestamp
         ]);
 
         return redirect()->back()->with('success', 'Order marked as received!');
     }
 
-    // Buyer/OrderController.php
-    public function received(Order $order)
-    {
-        $order->status = 'COMPLETED';
-        $order->save();
 
-        // Return JSON response for AJAX
+    // Buyer/OrderController.php
+    public function received(Request $request, Order $order)
+    {
+        $user = auth()->user();
+
+        if ($order->buyer_id !== $user->id) {
+            return response()->json(['error' => 'Unauthorized'], 403);
+        }
+
+        $sellerId = $request->query('seller');
+
+        // Update items
+        if ($sellerId) {
+            $order->items()
+                ->whereHas('product', fn($q) => $q->where('seller_id', $sellerId))
+                ->update(['seller_status' => 'completed']);
+        } else {
+            $order->items()->update(['seller_status' => 'completed']);
+        }
+
+        // Update order status
+        $order->update([
+            'status' => 'COMPLETED',
+            'completed_at' => now(),
+        ]);
+
+        // Return updated status info
         return response()->json([
-            'status' => strtoupper($order->status),
+            'status' => 'COMPLETED',
             'statusInfo' => [
                 'bg' => 'bg-success',
                 'textColor' => 'text-white',
                 'text' => 'Order Completed',
-                'icon' => 'check-circle'
+                'icon' => 'check-circle',
             ]
         ]);
     }

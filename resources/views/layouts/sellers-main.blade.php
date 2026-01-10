@@ -263,7 +263,7 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
     <script>
-        // Mobile sidebar toggle
+        // Mobile sidebar 
         document.addEventListener('DOMContentLoaded', function () {
             const sidebarToggle = document.getElementById('sidebarToggle');
             const sidebar = document.querySelector('.sidebar');
@@ -295,18 +295,9 @@
                 }
             });
 
-            // Add pending orders count (example - you'll need to implement the actual count)
-            // fetch('/api/seller/pending-orders-count')
-            //     .then(response => response.json())
-            //     .then(data => {
-            //         const badge = document.getElementById('pending-orders-count');
-            //         if (badge && data.count > 0) {
-            //             badge.textContent = data.count;
-            //         }
-            //     });
         });
 
-        // Add smooth transitions
+
         document.documentElement.style.scrollBehavior = 'smooth';
     </script>
 

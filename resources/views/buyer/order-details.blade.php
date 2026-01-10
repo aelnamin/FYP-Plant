@@ -20,14 +20,15 @@
                 ? $order->items->firstWhere('product.seller_id', $sellerId)->seller_status ?? 'Pending'
                 : $order->status ?? 'Pending';
 
-            $statusInfo = match (strtoupper($status)) {
-                'PENDING' => ['bg' => 'bg-warning', 'textColor' => 'text-dark', 'text' => 'Pending', 'icon' => 'clock'],
-                'PAID' => ['bg' => 'bg-info', 'textColor' => 'text-white', 'text' => 'Paid', 'icon' => 'check-circle'],
-                'SHIPPED' => ['bg' => 'bg-light', 'textColor' => 'text-dark', 'text' => 'Your order has been shipped by seller', 'icon' => 'truck'],
-                'DELIVERED', 'COMPLETED' => ['bg' => 'bg-light', 'textColor' => 'text-white', 'text' => 'Your product has arrived', 'icon' => 'truck'],
-                'CANCELLED' => ['bg' => 'bg-danger', 'textColor' => 'text-white', 'text' => 'Cancelled', 'icon' => 'x-circle'],
-                default => ['bg' => 'bg-secondary', 'textColor' => 'text-white', 'text' => 'Unknown', 'icon' => 'question-circle'],
-            };
+                $statusInfo = match (strtoupper($status)) {
+    'PENDING' => ['bg' => 'bg-warning', 'textColor' => 'text-dark', 'text' => 'Pending', 'icon' => 'clock'],
+    'PAID' => ['bg' => 'bg-info', 'textColor' => 'text-white', 'text' => 'Paid', 'icon' => 'check-circle'],
+    'SHIPPED' => ['bg' => 'bg-light', 'textColor' => 'text-dark', 'text' => 'Your order has been shipped by seller', 'icon' => 'truck'],
+    'DELIVERED' => ['bg' => 'bg-light', 'textColor' => 'text-dark', 'text' => 'Your product has arrived', 'icon' => 'truck'],
+    'COMPLETED' => ['bg' => 'bg-success', 'textColor' => 'text-white', 'text' => 'Order has been completed', 'icon' => 'check-circle'],
+    'CANCELLED' => ['bg' => 'bg-danger', 'textColor' => 'text-white', 'text' => 'Cancelled', 'icon' => 'x-circle'],
+    default => ['bg' => 'bg-secondary', 'textColor' => 'text-white', 'text' => 'Unknown', 'icon' => 'question-circle'],
+};
         @endphp
 
 
@@ -89,10 +90,7 @@
                                     </p>
 
                                     @php
-    /**
-     * Get delivery strictly by order_id
-     * Filter by seller_id ONLY if seller is selected
-     */
+    
     $delivery = $sellerId
         ? $order->deliveries->where('seller_id', $sellerId)->first()
         : $order->deliveries->first();
@@ -265,14 +263,14 @@
                         @if($normalizedStatus === 'SHIPPED' || $normalizedStatus === 'DELIVERED')
     <!-- Mark as Received Button -->
     <div class="d-grid gap-2 mb-4">
-        <form action="{{ route('buyer.orders.received', $order->id) }}{{ $sellerId ? '?seller=' . $sellerId : '' }}" method="POST">
-            @csrf
-            @method('PATCH')
-            <button type="submit" class="btn btn-outline-success rounded-pill py-2">
-                Order Received
-            </button>
-        </form>
-    </div>
+    <button id="btn-received" 
+            class="btn btn-outline-success rounded-pill py-2"
+            data-order-id="{{ $order->id }}"
+            data-seller-id="{{ $sellerId ?? '' }}">
+        Order Received
+    </button>
+</div>
+
 @endif
 
 
@@ -377,3 +375,40 @@
                     }
                 </style>
 @endsection
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+$(document).ready(function() {
+    $('#btn-received').click(function(e) {
+        e.preventDefault();
+
+        let button = $(this);
+        let orderId = button.data('order-id');
+        let sellerId = button.data('seller-id');
+        let url = `/buyer/orders/${orderId}/received`;
+        if(sellerId) url += '?seller=' + sellerId;
+
+        $.ajax({
+            url: url,
+            type: 'PATCH',
+            data: {
+                _token: '{{ csrf_token() }}'
+            },
+            success: function(response) {
+                // Disable button and change text
+                button.prop('disabled', true).text('Received').removeClass('btn-outline-success').addClass('btn-success');
+
+                // Update status badge dynamically
+                const statusBadge = $('.card-body .rounded-circle i.fas').closest('.rounded-circle');
+                statusBadge.removeClass().addClass('rounded-circle d-inline-flex align-items-center justify-content-center p-3 mb-3 bg-success');
+                statusBadge.find('i').removeClass().addClass('fas fa-check-circle text-white');
+
+                $('.card-body h4.fw-bold').text(response.statusInfo.text);
+            },
+            error: function(xhr) {
+                alert(xhr.responseJSON?.error || 'Something went wrong');
+            }
+        });
+    });
+});
+</script>
