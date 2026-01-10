@@ -227,7 +227,7 @@
                                         <!-- Action Buttons - FIXED -->
                                         <div class="d-flex justify-content-between align-items-center mt-3 pt-3 border-top">
                                             <div class="text-muted small">
-                                                Items from {{ $group['seller_name'] }} only
+                                                Items from {{ $group['seller_name'] }} 
                                             </div>
                                             <div class="d-flex gap-2">
                                                 <!-- View Order button - FIXED ROUTE -->

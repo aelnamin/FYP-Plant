@@ -34,7 +34,7 @@ class Delivery extends Model
     {
         return $this->belongsTo(Order::class);
     }
-    // In Delivery.php
+
     public function seller()
     {
         return $this->belongsTo(Seller::class, 'seller_id');

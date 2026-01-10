@@ -95,18 +95,24 @@ class TransactionController extends Controller
     {
         abort_if($order->buyer_id !== Auth::id(), 403);
 
-        // Load items + product + seller via product
-        $order->load('items.product.seller');
+        // Get seller ID from query parameter
+        $sellerId = request()->query('seller');
 
-        // Calculate subtotal
-        $subtotal = $order->items->sum(fn($item) => $item->price * $item->quantity);
+        // If no seller ID, show all items or redirect
+        if (!$sellerId) {
+            return redirect()->route('buyer.order-details', ['order' => $order->id]);
+        }
 
-        // Shipping
+        // Filter items by seller
+        $items = $order->items->filter(fn($item) => $item->product->seller_id == $sellerId);
+
+        $subtotal = $items->sum(fn($item) => $item->price * $item->quantity);
         $shipping = 10.60;
-
-        // Total
         $total = $subtotal + $shipping;
 
-        return view('buyer.transactions.show', compact('order', 'subtotal', 'shipping', 'total'));
+        $transaction = $order->transaction;
+
+        return view('buyer.transactions.show', compact('order', 'items', 'subtotal', 'shipping', 'total', 'transaction'));
     }
+
 }

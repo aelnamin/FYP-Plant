@@ -89,43 +89,43 @@
                                     </p>
 
                                     @php
-                                        // Collect possible tracking sources (priority order)
-                                        $delivery = collect([
-                                            $order->delivery,
-                                            ...$order->items->pluck('delivery')
-                                        ])->first(fn($d) => optional($d)->tracking_number);
-
-                                        $trackingNumber = $delivery?->tracking_number;
-                                        $courierName = $delivery?->courier_name ?? 'Courier';
-
-                                        $shippedAt = $order->shipped_at ?? $delivery?->shipped_at;
-                                        $deliveredAt = $order->delivered_at ?? $delivery?->delivered_at;
-                                    @endphp
+    /**
+     * Get delivery strictly by order_id
+     * Filter by seller_id ONLY if seller is selected
+     */
+    $delivery = $sellerId
+        ? $order->deliveries->where('seller_id', $sellerId)->first()
+        : $order->deliveries->first();
+@endphp
 
 
-                                    @if($delivery)
-                                        <p class="text-secondary small mb-1">
-                                            <i class="fas fa-truck me-1"></i>
-                                            {{ $delivery->courier_name ?? 'Courier not specified' }} •
-                                            <strong>#{{ $delivery->tracking_number ?? 'N/A' }}</strong>
-                                        </p>
 
-                                        @if($delivery->shipped_at)
-                                            <p class="text-secondary small mb-0">
-                                                <i class="fas fa-calendar-alt me-1"></i>
-                                                Shipped on {{ $delivery->shipped_at->format('M d, Y') }}
-                                            </p>
-                                        @endif
+@if($delivery && $delivery->tracking_number)
+    <p class="text-secondary small mb-1">
+        <i class="fas fa-truck me-1"></i>
+        {{ $delivery->courier_name ?? 'Courier not specified' }} •
+        <strong>#{{ $delivery->tracking_number }}</strong>
+    </p>
 
-                                        @if($delivery->delivered_at)
-                                            <p class="text-success small mb-0 mt-1">
-                                                <i class="fas fa-check-circle me-1"></i>
-                                                Delivered on {{ $delivery->delivered_at->format('M d, Y') }}
-                                            </p>
-                                        @endif
-                                    @else
-                                        <p class="text-muted small mb-0">Your order has not been shipped yet.</p>
-                                    @endif
+    @if($delivery->shipped_at)
+        <p class="text-secondary small mb-0">
+            <i class="fas fa-calendar-alt me-1"></i>
+            Shipped on {{ $delivery->shipped_at->format('M d, Y') }}
+        </p>
+    @endif
+
+    @if($delivery->delivered_at)
+        <p class="text-success small mt-1">
+            <i class="fas fa-check-circle me-1"></i>
+            Delivered on {{ $delivery->delivered_at->format('M d, Y') }}
+        </p>
+    @endif
+@else
+    <p class="text-muted small mb-0">
+        Your order has not been shipped yet.
+    </p>
+@endif
+
                                 </div>
                             </div>
                         </div>

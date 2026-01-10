@@ -16,8 +16,8 @@
                 <!-- Steps -->
                 <div class="d-flex justify-content-between w-100 position-relative" style="z-index: 2;">
                     <div class="text-center">
-                       <div class="rounded-circle text-white d-flex align-items-center justify-content-center mx-auto mb-2"
-                        style="width: 40px; height: 40px; background-color: #8a9c6a;">
+                        <div class="rounded-circle text-white d-flex align-items-center justify-content-center mx-auto mb-2"
+                            style="width: 40px; height: 40px; background-color: #8a9c6a;">
                             <i class="fas fa-check"></i>
                         </div>
                         <span class="small text-muted">Cart</span>
@@ -46,7 +46,7 @@
             <p class="text-secondary">Review items and confirm details</p>
         </div>
 
-        <form action="{{ route('buyer.place.order') }}" method="POST" id="checkoutForm">
+        <form action="{{ route('checkout.placeOrder') }}" method="POST" id="checkoutForm">
             @csrf
 
             <div class="row g-4">
@@ -101,7 +101,8 @@
                         </div>
                         <div class="card-body p-4">
                             <!-- COD Option -->
-                            <div class="payment-option active mb-3" onclick="selectPayment('cod')">
+                            <div class="payment-option active mb-3" onclick="selectPayment('cod', event)">
+
                                 <div class="d-flex align-items-center">
                                     <div class="rounded-3 p-2 me-3" style="background-color: #e8f0e8;">
                                         <i class="fas fa-money-bill-wave" style="color: #8a9c6a;"></i>
@@ -118,10 +119,10 @@
                             </div>
 
                             <!-- Online Payment Option -->
-                            <div class="payment-option" onclick="selectPayment('online')">
+                            <div class="payment-option" onclick="selectPayment('online', event)">
                                 <div class="d-flex align-items-center">
                                     <div class="rounded-3 p-2 me-3" style="background-color: #e8f0e8;">
-                                    <img src="{{ asset('images/visa-logo.jpg') }}" width="35" class="img-fluid">
+                                        <img src="{{ asset('images/visa-logo.jpg') }}" width="35" class="img-fluid">
                                     </div>
                                     <div class="flex-grow-1">
                                         <h6 class="fw-bold text-dark mb-1">Online Payment</h6>
@@ -134,53 +135,53 @@
                                 </div>
                             </div>
 
-                             <!-- Touch n Go Payment Option -->
-                             <div class="payment-option" onclick="selectPayment('touch n go')">
+                            <!-- Touch n Go Payment Option -->
+                            <div class="payment-option" onclick="selectPayment('touch_n_go', event)">
                                 <div class="d-flex align-items-center">
                                     <div class="rounded-3 p-2 me-3" style="background-color: #e8f0e8;">
-                                    <img src="{{ asset('images/tng-logo.jpg') }}" width="35" class="img-fluid">
+                                        <img src="{{ asset('images/tng-logo.jpg') }}" width="35" class="img-fluid">
                                     </div>
                                     <div class="flex-grow-1">
                                         <h6 class="fw-bold text-dark mb-1">Touch n Go</h6>
                                         <p class="text-secondary small mb-0">Pay with e-wallet</p>
                                     </div>
                                     <div class="form-check">
-                                        <input class="form-check-input" type="radio" name="payment_method" value="touch n go"
-                                            id="touch n go">
+                                        <input class="form-check-input" type="radio" name="payment_method"
+                                            value="touch_n_go" id="touch_n_go">
                                     </div>
                                 </div>
                             </div>
 
-                              <!-- Apple Pay Payment Option -->
-                            <div class="payment-option" onclick="selectPayment('apple pay')">
+                            <!-- Apple Pay Payment Option -->
+                            <div class="payment-option" onclick="selectPayment('apple_pay', event)">
                                 <div class="d-flex align-items-center">
                                     <div class="rounded-3 p-2 me-3" style="background-color: #e8f0e8;">
-                                    <img src="{{ asset('images/apple-logo.jpg') }}" width="35" class="img-fluid">
+                                        <img src="{{ asset('images/apple-logo.jpg') }}" width="35" class="img-fluid">
                                     </div>
                                     <div class="flex-grow-1">
                                         <h6 class="fw-bold text-dark mb-1">Apple Pay</h6>
                                         <p class="text-secondary small mb-0">Pay with apple pay</p>
                                     </div>
                                     <div class="form-check">
-                                        <input class="form-check-input" type="radio" name="payment_method" value="apple pay"
-                                            id="apple pay">
+                                        <input class="form-check-input" type="radio" name="payment_method" value="apple_pay"
+                                            id="apple_pay">
                                     </div>
                                 </div>
                             </div>
 
-                              <!-- Grab Pay Payment Option -->
-                              <div class="payment-option" onclick="selectPayment('grab pay')">
+                            <!-- Grab Pay Payment Option -->
+                            <div class="payment-option" onclick="selectPayment('grab_pay', event)">
                                 <div class="d-flex align-items-center">
                                     <div class="rounded-3 p-2 me-3" style="background-color: #e8f0e8;">
-                                    <img src="{{ asset('images/grab-pay-logo.png') }}" width="35" class="img-fluid">
+                                        <img src="{{ asset('images/grab-pay-logo.png') }}" width="35" class="img-fluid">
                                     </div>
                                     <div class="flex-grow-1">
                                         <h6 class="fw-bold text-dark mb-1">Grab Pay</h6>
                                         <p class="text-secondary small mb-0">Pay with grab pay</p>
                                     </div>
                                     <div class="form-check">
-                                        <input class="form-check-input" type="radio" name="payment_method" value="grab pay"
-                                            id="grab pay">
+                                        <input class="form-check-input" type="radio" name="payment_method" value="grab_pay"
+                                            id="grab_pay">
                                     </div>
                                 </div>
                             </div>
@@ -293,6 +294,15 @@
             </div>
         </form>
     </div>
+    @if ($errors->any())
+        <div class="alert alert-danger mb-4">
+            <ul class="mb-0">
+                @foreach ($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+        </div>
+    @endif
 
     <!-- Custom Styles -->
     <style>
@@ -407,16 +417,16 @@
     </style>
 
     <script>
-        function selectPayment(method) {
-            // Set the radio button as checked
+        function selectPayment(method, event) {
             document.getElementById(method).checked = true;
 
-            // Update UI
             document.querySelectorAll('.payment-option').forEach(option => {
                 option.classList.remove('active');
             });
+
             event.currentTarget.classList.add('active');
         }
+
 
         document.getElementById('checkoutForm').addEventListener('submit', function () {
             const btn = document.getElementById('placeOrderBtn');

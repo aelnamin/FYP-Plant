@@ -258,10 +258,6 @@ Route::middleware(['auth', 'role:buyer'])->group(function () {
    Route::put('/profile/update', [BuyerProfileController::class, 'update'])
       ->name('buyer.profile.update');
 
-   Route::post(
-      '/place-order',
-      [TransactionController::class, 'store']
-   )->name('buyer.place.order');
 
    Route::get('/buyer/orders/{order}', [OrderController::class, 'show'])
       ->name('buyer.orders.details');
@@ -271,10 +267,9 @@ Route::middleware(['auth', 'role:buyer'])->group(function () {
       [TransactionController::class, 'index']
    )->name('buyer.transactions.index');
 
-   Route::get(
-      '/transactions/{order}',
-      [TransactionController::class, 'show']
-   )->name('buyer.transactions.show');
+   Route::get('/buyer/transactions/{order}', [TransactionController::class, 'show'])
+      ->name('buyer.transactions.show');
+
 
    // Review routes (per product)
    Route::get('reviews', [ReviewController::class, 'index'])->name('buyer.reviews.index'); // My Reviews page
@@ -328,9 +323,7 @@ Route::middleware(['auth', 'role:buyer'])->group(function () {
    // NEW: start chat (redirect to show page)
    Route::get('/chats/start/{seller}', [\App\Http\Controllers\Buyer\ChatController::class, 'startChat'])->name('buyer.chats.start');
 
-   //transaction
-   Route::get('buyer/transactions/{order}', [TransactionController::class, 'show'])
-      ->name('buyer.transactions.show');
+
 
 
    Route::get('/help-center', [HelpCenterController::class, 'index'])

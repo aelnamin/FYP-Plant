@@ -34,4 +34,10 @@ class Seller extends Model
     {
         return $this->hasMany(Order::class);
     }
+
+    public function deliveries()
+    {
+        return $this->hasMany(Delivery::class);
+    }
+
 }

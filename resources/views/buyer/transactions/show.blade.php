@@ -1,14 +1,14 @@
 @extends('layouts.main')
 
-@section('title', 'Order Details')
+@section('title', 'Transaction Details')
 
 @section('content')
     <div class="container py-5">
 
-        {{-- Order Header --}}
+        {{-- Transaction Header --}}
         <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap">
             <div>
-                <h1 class="fw-bold text-gradient-success mb-2">Order Details</h1>
+                <h1 class="fw-bold text-gradient-success mb-2">Transaction Details</h1>
                 <div class="d-flex align-items-center gap-3 flex-wrap">
                     <span class="badge bg-light text-dark border px-3 py-2 rounded-pill">
                         #{{ str_pad($order->id, 6, '0', STR_PAD_LEFT) }}
@@ -26,41 +26,50 @@
             </div>
         </div>
 
- {{-- Order Status Timeline --}}
-<div class="card shadow-sm rounded-4 mb-4 border-0">
-    <div class="card-body">
-        <h5 class="fw-bold mb-4">Order Status</h5>
-        <div class="row text-center">
-            @php
+        {{-- Order Status Timeline --}}
+        <div class="card shadow-sm rounded-4 mb-4 border-0">
+            <div class="card-body">
+                <h5 class="fw-bold mb-4">Order Status</h5>
+                <div class="row text-center">
+                @php
                 // Define stages and icons
                 $statusStages = [
                     'Placed' => 'check-lg',
                     'Paid' => 'credit-card',
                     'Shipped' => 'truck',
-                    'Delivered' => 'check2-circle', // new stage
+                    'Delivered' => 'check2-circle',
                 ];
 
-                // Current order status in uppercase
-                $currentStatus = strtoupper($order->status);
+                // Determine the current status based on the seller items
+                $itemStatuses = $items->pluck('seller_status')->map(fn($s) => strtoupper($s));
+
+                // Priority order: Delivered > Shipped > Paid > Placed
+                if ($itemStatuses->contains('DELIVERED')) {
+                    $currentStatus = 'DELIVERED';
+                } elseif ($itemStatuses->contains('SHIPPED')) {
+                    $currentStatus = 'SHIPPED';
+                } elseif ($itemStatuses->contains('PAID')) {
+                    $currentStatus = 'PAID';
+                } else {
+                    $currentStatus = 'PLACED';
+                }
             @endphp
 
             @foreach($statusStages as $stage => $icon)
                 @php
-                    // Determine if this stage is active
                     $active = match ($stage) {
                         'Placed' => true,
-                        'Paid' => in_array($currentStatus, ['PAID','SHIPPED','DELIVERED','COMPLETED']),
-                        'Shipped' => in_array($currentStatus, ['SHIPPED','DELIVERED','COMPLETED']),
-                        'Delivered' => in_array($currentStatus, ['DELIVERED','COMPLETED']),
+                        'Paid' => in_array($currentStatus, ['PAID','SHIPPED','DELIVERED']),
+                        'Shipped' => in_array($currentStatus, ['SHIPPED','DELIVERED']),
+                        'Delivered' => in_array($currentStatus, ['DELIVERED']),
                         default => false,
                     };
 
-                    // Determine stage timestamp
                     $stageTime = match ($stage) {
                         'Placed' => $order->placed_at ?? $order->created_at,
-                        'Paid' => $order->paid_at ?? null,
-                        'Shipped' => $order->shipped_at ?? null,
-                        'Delivered' => $order->delivered_at ?? null,
+                        'Paid' => $items->firstWhere('seller_status', 'paid')?->updated_at ?? null,
+                        'Shipped' => $items->firstWhere('seller_status', 'shipped')?->updated_at ?? null,
+                        'Delivered' => $items->firstWhere('seller_status', 'delivered')?->updated_at ?? null,
                         default => null,
                     };
                 @endphp
@@ -69,7 +78,7 @@
                     <div class="d-flex flex-column align-items-center">
                         <div class="mb-2">
                             <div class="rounded-circle d-inline-flex align-items-center justify-content-center 
-                                        {{ $active ? 'bg-success text-white' : 'bg-light text-dark border' }}"
+                                                {{ $active ? 'bg-success text-white' : 'bg-light text-dark border' }}"
                                 style="width:50px;height:50px;">
                                 <i class="bi bi-{{ $icon }} fs-5"></i>
                             </div>
@@ -85,62 +94,44 @@
                     </div>
                 </div>
             @endforeach
+
         </div>
     </div>
 </div>
 
-
-
+        {{-- Transaction Items --}}
         <div class="row g-4">
-            {{-- Order Items --}}
             <div class="col-lg-8">
                 <div class="card shadow-sm rounded-4 border-0 h-100">
                     <div class="card-header bg-light border-0 py-3">
                         <h5 class="fw-bold mb-0">
                             <i class="bi bi-cart3 text-me-2" style="color: #8a9c6a;"></i>
-                            Order Items ({{ $order->items->count() }})
+                            Products from {{ $items->first()?->product?->seller->business_name ?? 'Seller' }}
+                            ({{ $items->count() }})
                         </h5>
                     </div>
                     <div class="card-body">
                         <div class="list-group list-group-flush">
-                            @php
-                                // Group items by seller
-                                $groupedItems = $order->items->groupBy(fn($item) => $item->product->seller_id ?? 0);
-                            @endphp
-                            @foreach($groupedItems as $sellerId => $items)
-                                @if($items->first()?->product?->seller)
-                                    <div class="seller-section mb-3">
-                                        <div class="seller-header d-flex align-items-center mb-2 p-2 rounded"
-                                            style="background-color: #f8f9fa; border: 1px solid #e9ecef;">
-                                            <i class="fas fa-store me-2" style="color: #8a9c6a;"></i>
-                                            <h6 class="fw-semibold mb-0" style="font-size: 0.9rem;">
-                                                {{ $items->first()->product->seller->business_name ?? $items->first()->product->seller->name }}
+                            @foreach($items as $item)
+                                @if($item->product)
+                                    <div class="d-flex align-items-start mb-3 pb-3 border-bottom"
+                                        style="border-color: #e9ecef !important;">
+                                        <img src="{{ $item->product->images->first() ? asset('images/' . $item->product->images->first()->image_path) : asset('images/default.jpg') }}"
+                                            class="rounded-3 me-3"
+                                            style="width: 60px; height: 60px; object-fit: cover; border: 1px solid #e9ecef;">
+                                        <div class="flex-grow-1">
+                                            <h6 class="fw-semibold text-dark mb-1" style="font-size: 0.95rem;">
+                                                {{ $item->product->product_name }}
                                             </h6>
+                                            <p class="text-secondary small mb-1">Qty: {{ $item->quantity }}</p>
+                                            <div class="text-secondary small mb-1">
+                                                <i class="fas fa-tag me-1"></i>
+                                                {{ $item->variant && $item->variant !== '' ? $item->variant : 'Standard' }}
+                                            </div>
+                                            <p class="fw-bold mb-0" style="color: #8a9c6a; font-size: 0.95rem;">
+                                                RM {{ number_format($item->price * $item->quantity, 2) }}
+                                            </p>
                                         </div>
-
-                                        @foreach($items as $item)
-                                            @if($item->product)
-                                                <div class="d-flex align-items-start mb-3 pb-3 border-bottom"
-                                                    style="border-color: #e9ecef !important;">
-                                                    <img src="{{ $item->product->images->first() ? asset('images/' . $item->product->images->first()->image_path) : asset('images/default.jpg') }}"
-                                                        class="rounded-3 me-3"
-                                                        style="width: 60px; height: 60px; object-fit: cover; border: 1px solid #e9ecef;">
-                                                    <div class="flex-grow-1">
-                                                        <h6 class="fw-semibold text-dark mb-1" style="font-size: 0.95rem;">
-                                                            {{ $item->product->product_name }}
-                                                        </h6>
-                                                        <p class="text-secondary small mb-1">Qty: {{ $item->quantity }}</p>
-                                                        <div class="text-secondary small mb-1">
-                                                            <i class="fas fa-tag me-1"></i>
-                                                            {{ $item->variant && $item->variant !== '' ? $item->variant : 'Standard' }}
-                                                        </div>
-                                                        <p class="fw-bold mb-0" style="color: #8a9c6a; font-size: 0.95rem;">
-                                                            RM {{ number_format($item->price * $item->quantity, 2) }}
-                                                        </p>
-                                                    </div>
-                                                </div>
-                                            @endif
-                                        @endforeach
                                     </div>
                                 @endif
                             @endforeach
@@ -149,39 +140,33 @@
                 </div>
             </div>
 
-            {{-- Order Summary & Support --}}
+            {{-- Transaction Summary --}}
             <div class="col-lg-4">
                 <div class="card shadow-sm rounded-4 border-0 sticky-top" style="top:20px;">
                     <div class="card-header bg-light border-0 py-3">
-                        <h5 class="fw-bold mb-0">Order Summary</h5>
+                        <h5 class="fw-bold mb-0">Transaction Summary</h5>
                     </div>
                     <div class="card-body">
 
                         {{-- Calculate subtotal, shipping, and total --}}
                         @php
-    $subtotal = $order->items->sum(fn($item) => $item->price * $item->quantity);
+                            $subtotal = $items->sum(fn($item) => $item->price * $item->quantity);
+                            $delivery = 10.60; // flat per seller
+                            $total = $subtotal + $delivery;
+                        @endphp
 
-    // Flat shipping per seller
-    $numSellers = $groupedItems->count();
-    $shippingPerSeller = 10.60;
-    $delivery = $numSellers * $shippingPerSeller; // total delivery for all sellers
+                        <div class="d-flex justify-content-between mb-2">
+                            <span class="text-secondary">Subtotal</span>
+                            <span class="fw-semibold text-dark">RM {{ number_format($subtotal, 2) }}</span>
+                        </div>
 
-    $total = $subtotal + $delivery;
-@endphp
-
-<div class="d-flex justify-content-between mb-2">
-    <span class="text-secondary">Subtotal</span>
-    <span class="fw-semibold text-dark">RM {{ number_format($subtotal, 2) }}</span>
-</div>
-
-<div class="d-flex justify-content-between mb-2">
-    <span class="text-secondary">Delivery (inc. 6% SST)</span>
-    <span class="fw-semibold text-dark">RM {{ number_format($delivery, 2) }}</span>
-</div>
+                        <div class="d-flex justify-content-between mb-2">
+                            <span class="text-secondary">Delivery (inc. 6% SST)</span>
+                            <span class="fw-semibold text-dark">RM {{ number_format($delivery, 2) }}</span>
+                        </div>
 
                         <hr class="my-3" style="border-color: #e9ecef;">
 
-                        {{-- Total --}}
                         <div class="d-flex justify-content-between align-items-center">
                             <div>
                                 <h6 class="fw-bold text-dark mb-1">Total</h6>
@@ -196,13 +181,13 @@
                         <div class="mt-4">
                             <h6 class="fw-bold mb-3">Payment Information</h6>
                             <div class="d-flex justify-content-between mb-2">
-                                <span class="text-secondary">Payment Method</span>
-                                {{ $order->transaction?->payment_method ?? 'Online Payment' }}
+    <span class="text-secondary">Payment Method</span>
+    <span>{{ $transaction?->payment_method ?? 'Online Payment' }}</span>
+</div>
 
-                            </div>
                             <div class="d-flex justify-content-between mb-2">
                                 <span class="text-secondary">Status</span>
-                                <span class="badge bg-success">{{ $order->status }}</span>
+                                <span class="badge bg-success">{{ $transaction->status ?? 'Pending' }}</span>
                             </div>
                         </div>
 
