@@ -169,7 +169,7 @@
                                                             : asset('images/default.png') }}"
                                                             alt="{{ $product->product_name }}"
                                                             class="rounded"
-                                                            style="width: 60px; height: 60px; object-fit: cover;">
+                                                            style="width: 120px; height: 120px; object-fit: cover;">
                                                     </div>
                                                     <div class="flex-grow-1">
                                                         <div class="fw-semibold">{{ $product->product_name }}</div>

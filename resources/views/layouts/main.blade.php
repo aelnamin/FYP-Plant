@@ -342,11 +342,12 @@
                 <div class="col-lg-2 col-md-6 mb-4">
                     <h5>Categories</h5>
                     <ul class="list-unstyled">
-                        <li class="mb-2"><a href="#">Indoor Plants</a></li>
-                        <li class="mb-2"><a href="#">Outdoor Plants</a></li>
-                        <li class="mb-2"><a href="#">Succulents</a></li>
-                        <li class="mb-2"><a href="#">Plant Care</a></li>
-                        <li class="mb-2"><a href="#">Pots & Planters</a></li>
+                    <li class="mb-2">Indoor Plants</li>
+        <li class="mb-2">Herbs</li>
+        <li class="mb-2">Outdoor Plants</li>
+        <li class="mb-2">Seeds</li>
+        <li class="mb-2">Flowering</li>
+        <li class="mb-2">Tools</li>
                     </ul>
                 </div>
 
@@ -356,30 +357,33 @@
                     <div class="contact-info mb-4">
                         <p class="mb-2"><i class="fas fa-map-marker-alt"></i> 1016, Jalan Sultan Ismail, 50250 Kuala Lumpur</p>
                         <p class="mb-2"><i class="fas fa-phone"></i> +60 17-274 3933</p>
-                        <p class="mb-2"><i class="fas fa-envelope"></i> aetherleaf@.co.com</p>
+                        <p class="mb-2"><i class="fas fa-envelope"></i> aether&leaf@.com</p>
                     </div>
-                    
-                    <h5>Newsletter</h5>
-                    <p>Subscribe to get updates on new arrivals & offers</p>
-                    <form class="newsletter-form">
-                        <input type="email" placeholder="Your email address" required>
-                        <button type="submit"><i class="fas fa-paper-plane"></i></button>
-                    </form>
-                </div>
+
+                    <div class="col-lg-8 col-md-6 mb-4">
+    <h5>Help Center</h5>
+    <ul class="list-unstyled">
+        <li class="mb-2">
+            <a href="{{ route('buyer.help-center') }}">
+            <i class="bi bi-question-circle me-2 "></i>Help Center
+            </a>
+        </li>
+    </ul>
+</div>
             </div>
 
-            <div class="footer-bottom text-center">
-                <div class="row align-items-center">
-                    <div class="col-md-6 text-md-start mb-3 mb-md-0">
-                        <p class="mb-0">&copy; 2024 Aether & Leaf.Co. All rights reserved.</p>
-                    </div>
-                    <div class="col-md-6 text-md-end">
+            <div class="container">
+            <div class="row align-items-center">
+                <div class="col-md-6 text-md-start mb-3 mb-md-0">
+                    <p class="mb-0">&copy; 2024 Aether & Leaf.Co. All rights reserved.</p>
+                </div>
+                <div class="col-md-6 text-md-end">
                     <a href="{{ route('privacy.policy') }}">Privacy Policy</a>
-                        <a href="#" class="me-3">Terms of Service</a>
-                        <a href="#">Cookie Policy</a>
-                    </div>
+                    <a href="#" class="ms-3">Terms of Service</a>
+                    <a href="#" class="ms-3">Cookie Policy</a>
                 </div>
             </div>
+        </div>
         </div>
     </footer>
 

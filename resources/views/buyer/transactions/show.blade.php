@@ -26,72 +26,78 @@
             </div>
         </div>
 
-        {{-- Order Status Timeline --}}
-        <div class="card shadow-sm rounded-4 mb-4 border-0">
-            <div class="card-body">
-                <h5 class="fw-bold mb-4">Order Status</h5>
-                <div class="row text-center">
-                @php
-                // Define stages and icons
+ {{-- Order Status Timeline --}}
+<div class="card shadow-sm rounded-4 mb-4 border-0">
+    <div class="card-body">
+        <h5 class="fw-bold mb-4">Order Status</h5>
+
+        <div class="d-flex justify-content-between align-items-center position-relative timeline-container">
+
+            @php
                 $statusStages = [
-                    'Placed' => 'check-lg',
-                    'Paid' => 'credit-card',
-                    'Shipped' => 'truck',
-                    'Delivered' => 'check2-circle',
+                    'placed' => 'check-lg',
+                    'paid' => 'credit-card',
+                    'shipped' => 'truck',
+                    'delivered' => 'box-seam',
+                    'completed' => 'check2-circle',
                 ];
 
-                // Determine the current status based on the seller items
-                $itemStatuses = $items->pluck('seller_status')->map(fn($s) => strtoupper($s));
+                $itemStatuses = $items->pluck('seller_status')
+                    ->filter()
+                    ->map(fn($s) => strtolower(trim($s)));
 
-                // Priority order: Delivered > Shipped > Paid > Placed
-                if ($itemStatuses->contains('DELIVERED')) {
-                    $currentStatus = 'DELIVERED';
-                } elseif ($itemStatuses->contains('SHIPPED')) {
-                    $currentStatus = 'SHIPPED';
-                } elseif ($itemStatuses->contains('PAID')) {
-                    $currentStatus = 'PAID';
+                if ($itemStatuses->contains('completed')) {
+                    $currentStatus = 'completed';
+                } elseif ($itemStatuses->contains('delivered')) {
+                    $currentStatus = 'delivered';
+                } elseif ($itemStatuses->contains('shipped')) {
+                    $currentStatus = 'shipped';
+                } elseif ($itemStatuses->contains('paid')) {
+                    $currentStatus = 'paid';
                 } else {
-                    $currentStatus = 'PLACED';
+                    $currentStatus = 'placed';
                 }
             @endphp
 
             @foreach($statusStages as $stage => $icon)
                 @php
                     $active = match ($stage) {
-                        'Placed' => true,
-                        'Paid' => in_array($currentStatus, ['PAID','SHIPPED','DELIVERED']),
-                        'Shipped' => in_array($currentStatus, ['SHIPPED','DELIVERED']),
-                        'Delivered' => in_array($currentStatus, ['DELIVERED']),
+                        'placed' => true,
+                        'paid' => in_array($currentStatus, ['paid', 'shipped', 'delivered', 'completed']),
+                        'shipped' => in_array($currentStatus, ['shipped', 'delivered', 'completed']),
+                        'delivered' => in_array($currentStatus, ['delivered', 'completed']),
+                        'completed' => $currentStatus === 'completed',
                         default => false,
                     };
 
                     $stageTime = match ($stage) {
-                        'Placed' => $order->placed_at ?? $order->created_at,
-                        'Paid' => $items->firstWhere('seller_status', 'paid')?->updated_at ?? null,
-                        'Shipped' => $items->firstWhere('seller_status', 'shipped')?->updated_at ?? null,
-                        'Delivered' => $items->firstWhere('seller_status', 'delivered')?->updated_at ?? null,
+                        'placed' => $order->created_at,
+                        'paid' => $items->filter(fn($i) => strtolower($i->seller_status) === 'paid')
+                            ->max('updated_at'),
+                        'shipped' => $items->filter(fn($i) => strtolower($i->seller_status) === 'shipped')
+                            ->max('updated_at'),
+                        'delivered' => $items->filter(fn($i) => strtolower($i->seller_status) === 'delivered')
+                            ->max('updated_at'),
+                        'completed' => $items->filter(fn($i) => strtolower($i->seller_status) === 'completed')
+                            ->max('updated_at'),
                         default => null,
                     };
                 @endphp
 
-                <div class="col-md-3 mb-3 mb-md-0">
-                    <div class="d-flex flex-column align-items-center">
-                        <div class="mb-2">
-                            <div class="rounded-circle d-inline-flex align-items-center justify-content-center 
-                                                {{ $active ? 'bg-success text-white' : 'bg-light text-dark border' }}"
-                                style="width:50px;height:50px;">
-                                <i class="bi bi-{{ $icon }} fs-5"></i>
-                            </div>
-                        </div>
-                        <h6 class="fw-bold">{{ $stage }}</h6>
-                        <small class="text-muted">
-                            @if($stageTime)
-                                {{ \Carbon\Carbon::parse($stageTime)->format('d M, h:i A') }}
-                            @else
-                                {{ $active ? 'Completed' : 'Pending' }}
-                            @endif
-                        </small>
+                <div class="d-flex flex-column align-items-center timeline-stage">
+                    <div class="timeline-circle {{ $active ? 'active' : '' }}">
+                        <i class="bi bi-{{ $icon }} fs-5"></i>
                     </div>
+                    <h6 class="fw-bold mt-2 text-capitalize">{{ $stage }}</h6>
+                    <small class="text-muted text-center">
+                        @if($stage === 'placed')
+                            {{ $order->created_at->timezone('Asia/Kuala_Lumpur')->format('d M, h:i A') }}
+                        @elseif($stageTime)
+                            {{ \Carbon\Carbon::parse($stageTime)->timezone('Asia/Kuala_Lumpur')->format('d M, h:i A') }}
+                        @else
+                            {{ $active ? 'Completed' : 'Pending' }}
+                        @endif
+                    </small>
                 </div>
             @endforeach
 
@@ -181,9 +187,9 @@
                         <div class="mt-4">
                             <h6 class="fw-bold mb-3">Payment Information</h6>
                             <div class="d-flex justify-content-between mb-2">
-    <span class="text-secondary">Payment Method</span>
-    <span>{{ $transaction?->payment_method ?? 'Online Payment' }}</span>
-</div>
+                                <span class="text-secondary">Payment Method</span>
+                                <span>{{ $transaction?->payment_method ?? 'Online Payment' }}</span>
+                            </div>
 
                             <div class="d-flex justify-content-between mb-2">
                                 <span class="text-secondary">Status</span>
@@ -226,6 +232,46 @@
                 border-radius: 0.5rem;
                 margin-bottom: 0.5rem;
             }
+
+            /* Timeline container and connecting lines */
+.timeline-container {
+    gap: 0; /* spacing controlled by flex */
+}
+
+.timeline-stage {
+    position: relative;
+    flex: 1; /* spread evenly */
+}
+
+.timeline-stage:not(:last-child)::after {
+    content: '';
+    position: absolute;
+    top: 25px; /* half of circle height */
+    right: -50%;
+    width: 100%;
+    height: 4px;
+    background-color: #e9ecef;
+    z-index: 0;
+}
+
+.timeline-stage .timeline-circle {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background-color: #f8f9fa;
+    color: #6c757d;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1;
+    border: 2px solid #e9ecef;
+}
+
+.timeline-stage .timeline-circle.active {
+    background-color:rgb(224, 221, 120);
+    color: #fff;
+    border-color:rgb(225, 223, 111);
+}
         </style>
 
     </div>

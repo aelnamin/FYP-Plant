@@ -98,17 +98,7 @@
                                                 <i class="far fa-calendar me-1"></i>
                                                 {{ $review->created_at->format('M d, Y') }}
                                             </small>
-                                            @if(!$review->updated_at->eq($review->created_at))
-                                                <small class="text-muted ms-2">
-                                                    <i class="fas fa-edit me-1"></i>Edited
-                                                </small>
-                                            @endif
                                         </div>
-                                        <a href="{{ route('buyer.reviews.create', $review->product_id) }}"
-                                            class="btn btn-sm px-3 rounded-pill border-0"
-                                            style="background: linear-gradient(135deg, #8a9c6a, #7a8b5a); color: white;">
-                                            <i class="fas fa-edit me-1"></i>Edit
-                                        </a>
                                     </div>
                                 </div>
                             </div>

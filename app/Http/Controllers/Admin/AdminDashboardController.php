@@ -18,7 +18,8 @@ class AdminDashboardController extends Controller
          | BASIC METRICS
          ====================== */
         $totalUsers = User::count();
-        $totalSellers = Seller::count();
+        $totalSellers = Seller::where('verification_status', 'Approved')->count();
+
 
         // Only approved products from approved sellers
         $totalProducts = Product::where('approval_status', 'Approved')

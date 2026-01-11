@@ -11,96 +11,129 @@
         </head>
 
         <style>
-            .icon-circle {
-                width: 50px;
-                height: 50px;
-                background: #e9f5ec;
-                color: #5C7F51;
-                border-radius: 50%;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                font-size: 24px;
-            }
+        .search-container {
+            position: relative;
+            max-width: 600px;
+            margin: 0 auto;
+        }
 
-            .search-container {
-                position: relative;
-                max-width: 600px;
-                margin: 0 auto;
-            }
+        .search-input {
+            border: 2px solid #e9ecef;
+            border-radius: 50px;
+            padding: 1rem 1.5rem;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
 
-            .search-input {
-                border: 2px solid #e9ecef;
-                border-radius: 50px;
-                padding: 1rem 1.5rem;
-                font-size: 1rem;
-                transition: all 0.3s ease;
-            }
+        .search-input:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(75, 174, 127, 0.2);
+        }
 
-            .search-input:focus {
-                border-color: var(--primary);
-                box-shadow: 0 0 0 3px rgba(75, 174, 127, 0.2);
-            }
+        .search-btn {
+            position: absolute;
+            right: 5px;
+            top: 5px;
+            bottom: 5px;
+            background: var(--gradient);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            padding: 0 1.5rem;
+            font-weight: 600;
+            transition: transform 0.3s ease;
+        }
 
-            .search-btn {
-                position: absolute;
-                right: 5px;
-                top: 5px;
-                bottom: 5px;
-                background: var(--gradient);
-                color: white;
-                border: none;
-                border-radius: 50px;
-                padding: 0 1.5rem;
-                font-weight: 600;
-                transition: transform 0.3s ease;
-            }
+        .search-btn:hover {
+            transform: scale(1.05);
+        }
 
-            .search-btn:hover {
-                transform: scale(1.05);
-            }
+        .category-card {
+            width: 120px;
+            background: #f9f9f9;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
 
-            .feature-section {
-                background: linear-gradient(135deg, #f9f9f9 0%, rgb(241, 239, 218) 100%);
-            }
+        .category-card:hover {
+            background: #eaf7f1;
+            transform: translateY(-4px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+        }
 
-            .feature-icon {
-                width: 60px;
-                height: 60px;
-                border-radius: 16px;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                font-size: 28px;
-                color: rgb(87, 125, 85);
-                flex-shrink: 0;
-            }
+        .category-img {
+            width: 48px;
+            height: 48px;
+            display: block;
+            margin: 0 auto 8px;
+            object-fit: contain;
+            transition: transform 0.3s ease;
+        }
 
-            .about-section {
-                background: linear-gradient(135deg, #f9f9f9 0%, rgb(207, 201, 131) 100%);
-            }
+        .category-card:hover .category-img {
+            transform: scale(1.15);
+        }
 
-            .text-shadow {
-                text-shadow: 0px 2px 6px rgba(0, 0, 0, 0.6);
-            }
+        .cart-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
 
-            .product-card {
-                border-radius: 16px;
-                overflow: hidden;
-                transition: all 0.3s ease;
-                border: 1px solid rgba(0, 0, 0, 0.08);
-                box-shadow: 0 15px 30px rgba(92, 127, 81, 0.15);
-            }
+        .cart-header h1 {
+            font-size: 1.9rem;
+            font-weight: 800;
+            margin-bottom: 0.5rem;
+        }
 
-            .product-card .card-footer {
-                background: #fff;
-            }
+        .feature-section {
+            background: linear-gradient(135deg, #f9f9f9 0%, rgb(241, 239, 218) 100%);
+        }
 
-            .product-card:hover {
-                transform: translateY(-8px);
-                box-shadow: 0 15px 30px rgba(92, 127, 81, 0.15);
-            }
-        </style>
+        .feature-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            color: rgb(87, 125, 85);
+            flex-shrink: 0;
+        }
+
+        .about-section {
+            background: linear-gradient(135deg, #f9f9f9 0%, rgb(207, 201, 131) 100%);
+        }
+
+        .icon-circle {
+            width: 50px;
+            height: 50px;
+            background: #e9f5ec;
+            color: #5C7F51;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+        }
+
+        .product-card {
+            border-radius: 16px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(0, 0, 0, 0.08);
+            box-shadow: 0 15px 30px rgba(92, 127, 81, 0.15);
+        }
+
+        .product-card .card-footer {
+            background: #fff;
+        }
+
+        .product-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 15px 30px rgba(92, 127, 81, 0.15);
+        }
+    </style>
 
         <!-- BANNER SECTION WITH SEARCH BAR ON TOP -->
         <section style="position: relative;">
@@ -108,8 +141,8 @@
             <!-- SEARCH BAR OVERLAY -->
             <div
                 style="position: absolute; top: 50%; left: 50%;
-                                                                                                                                                                                                                                                                                                                                                                                                                                                transform: translate(-50%, -50%); z-index: 10; width: 100%; max-width: 700px;
-                                                                                                                                                                                                                                                                                                                                                                                                                                                text-align: center; color: white;">
+                                                                                                                                                                                                                                                                                                                                                                                                                                                        transform: translate(-50%, -50%); z-index: 10; width: 100%; max-width: 700px;
+                                                                                                                                                                                                                                                                                                                                                                                                                                                        text-align: center; color: white;">
 
                 <h1 class="fw-bold text-shadow">Welcome to Aether & Leaf Co.</h1>
                 <p class="text-shadow">Your trusted place for plants & gardening essentials</p>
@@ -154,26 +187,26 @@
 
     <!-- BEST SELLERS -->
     <div class="container mt-5">
-        <h2 class="fw-bold mb-3">Best Sellers</h2>
+        <h2 class="cart-header text-dark fw-bold mb-3">Best Sellers</h2>
 
         <div class="row g-4">
             @foreach ($bestSellers as $p)
                 <div class="col-6 col-md-3">
-                    <div class="card product-card border-0 rounded-4 h-100 overflow hidden">
+                    <div class="card shadow-sm product-card border-0 rounded-4 h-100">
 
                         <img src="{{ $p->images->first() ? asset('images/' . $p->images->first()->image_path) : asset('images/default.jpg') }}"
                             class="card-img-top rounded-top-4" style="height:280px; object-fit:cover;">
 
                         <div class="card-body">
                             <h6 class="fw-bold">{{ $p->product_name }}</h6>
-                            <div class="text-muted small"> <i
-                                    class="bi bi-shop me-1"></i>{{ $p->seller->business_name ?? 'Unknown Seller' }}</div>
+                            <div class="text-muted small"><i
+                                    class="bi bi-shop me-2"></i>{{ $p->seller->business_name ?? 'Unknown Seller' }}</div>
                             <div class="fw-bold text-success mt-2">RM {{ number_format($p->price, 2) }}</div>
                         </div>
 
                         <div class="card-footer bg-white rounder-bottom-4">
                             <a href="{{ route('products.show', $p->id) }}" class="btn btn-outline-success w-100 rounded-pill">
-                                View Details <i class="bi bi-arrow-right ms-1"></i>
+                                View Details<i class="bi bi-arrow-right ms-1"></i>
                             </a>
                         </div>
                     </div>
@@ -185,25 +218,26 @@
 
     <!-- Latest Products -->
     <div class="container mt-5">
-        <h2 class="fw-bold mb-3">Latest Products</h2>
+        <h2 class="cart-header text-dark fw-bold mb-3">Latest Products</h2>
 
         <div class="row g-4">
             @foreach ($latestProducts as $p)
                 <div class="col-6 col-md-3">
-                    <div class="card product-card border-0 rounded-4 h-100 overflow hidden">
+                    <div class="card shadow-sm product-card border-0 rounded-4 h-100">
 
                         <img src="{{ $p->images->first() ? asset('images/' . $p->images->first()->image_path) : asset('images/default.jpg') }}"
                             class="card-img-top rounded-top-4" style="height:280px; object-fit:cover;">
 
                         <div class="card-body">
                             <h6 class="fw-bold">{{ $p->product_name }}</h6>
-                            <div class="text-muted small">{{ $p->seller->business_name ?? 'Unknown Seller' }}</div>
+                            <div class="text-muted small"><i
+                                    class="bi bi-shop me-2"></i>{{ $p->seller->business_name ?? 'Unknown Seller' }}</div>
                             <div class="fw-bold text-success mt-2">RM {{ number_format($p->price, 2) }}</div>
                         </div>
 
                         <div class="card-footer bg-white rounder-bottom-4">
                             <a href="{{ route('products.show', $p->id) }}" class="btn btn-outline-success w-100 rounded-pill">
-                                View Details
+                                View Details<i class="bi bi-arrow-right ms-1"></i>
                             </a>
                         </div>
 
@@ -213,10 +247,9 @@
         </div>
     </div>
 
-
     <!-- Top Sellers -->
     <div class="container mt-5">
-        <h2 class="fw-bold mb-3">Top Sellers</h2>
+        <h2 class="cart-header text-dark fw-bold mb-3">Top Sellers</h2>
 
         <div class="row g-4">
             @foreach ($topSellers as $seller)

@@ -113,9 +113,10 @@ $statusInfo = $statusColors[$sellerStatusNormalized] ?? ['bg' => 'bg-secondary',
                                                     Order #{{ str_pad($order->id, 8, '0', STR_PAD_LEFT) }}
                                                 </h5>
                                                 <small class="text-muted">
-                                                    <i class="bi bi-calendar me-1"></i>
-                                                    {{ $order->created_at->format('d M Y, h:i A') }}
-                                                </small>
+    <i class="bi bi-calendar me-1"></i>
+    {{ $order->created_at->setTimezone('Asia/Kuala_Lumpur')->format('d M Y, h:i A') }}
+</small>
+
                                             </div>
                                         </div>
                                     </div>

@@ -48,34 +48,29 @@
         <div class="card shadow-sm mb-3 chat-box" id="chatMessages">
             <div class="card-body p-3">
                 @forelse($messages as $msg)
-                    <div class="mb-2 {{ $msg->sender_id === auth()->id() ? 'text-end' : 'text-start' }}">
+                    @php
+                        $isSeller = $msg->sender_id === auth()->id();
+                        // Show seller's business name if it's the seller, otherwise buyer's name
+                        $displayName = $isSeller
+                            ? optional(auth()->user()->seller)->business_name ?? auth()->user()->name
+                            : $msg->sender->name;
+                    @endphp
+
+                    <div class="mb-2 {{ $isSeller ? 'text-end' : 'text-start' }}">
                         <!-- Sender name badge -->
-                        <span class="badge bg-{{ $msg->sender_id === auth()->id() ? 'success' : 'secondary' }}">
-                            {{ $msg->sender->name }}
+                        <span class="badge bg-{{ $isSeller ? 'success' : 'secondary' }}">
+                            {{ $displayName }}
                         </span>
 
                         <!-- Chat bubble -->
-                        @if($msg->sender_id == auth()->id())
-                            <div class="d-flex justify-content-end mt-1">
-                                <div class="chat-bubble chat-bubble-right">
-                                    {{ $msg->message }}
-                                    <small class="d-block text-end text-muted mt-1">
-    {{ $msg->created_at->timezone('Asia/Kuala_Lumpur')->format('d/m/Y g:i A') }}
-</small>
-
-                                </div>
+                        <div class="d-flex {{ $isSeller ? 'justify-content-end' : 'justify-content-start' }} mt-1">
+                            <div class="chat-bubble {{ $isSeller ? 'chat-bubble-right' : 'chat-bubble-left' }}">
+                                {{ $msg->message }}
+                                <small class="d-block text-{{ $isSeller ? 'end' : 'start' }} text-muted mt-1">
+                                    {{ $msg->created_at->timezone('Asia/Kuala_Lumpur')->format('d/m/Y g:i A') }}
+                                </small>
                             </div>
-                        @else
-                            <div class="d-flex justify-content-start mt-1">
-                                <div class="chat-bubble chat-bubble-left">
-                                    {{ $msg->message }}
-                                    <small class="d-block text-start text-muted mt-1">
-    {{ $msg->created_at->timezone('Asia/Kuala_Lumpur')->format('d/m/Y g:i A') }}
-</small>
-
-                                </div>
-                            </div>
-                        @endif
+                        </div>
                     </div>
                 @empty
                     <p class="text-center text-muted mt-3">No messages yet. Say hello!</p>
@@ -98,22 +93,20 @@
         const chatBox = document.getElementById('chatMessages');
         chatBox.scrollTop = chatBox.scrollHeight;
 
-        // Update chat times in real-time
+        // Update chat times dynamically
         function updateChatTimes() {
             document.querySelectorAll('.chat-time').forEach(el => {
                 const time = new Date(el.dataset.time);
                 const now = new Date();
-                const diff = Math.floor((now - time) / 1000); // in seconds
+                const diff = Math.floor((now - time) / 1000);
 
                 if (diff < 60) el.textContent = diff + 's ago';
                 else if (diff < 3600) el.textContent = Math.floor(diff / 60) + 'm ago';
                 else if (diff < 86400) el.textContent = Math.floor(diff / 3600) + 'h ago';
-                else el.textContent = time.toLocaleString('en-US', {
-                    hour: 'numeric', minute: 'numeric', hour12: true, day: '2-digit', month: 'short'
-                });
+                else el.textContent = time.toLocaleString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true, day: '2-digit', month: 'short' });
             });
         }
-        setInterval(updateChatTimes, 60000); // update every minute
+        setInterval(updateChatTimes, 60000);
         updateChatTimes();
     </script>
 @endsection

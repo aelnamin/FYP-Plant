@@ -324,11 +324,6 @@ Route::middleware(['auth', 'role:buyer'])->group(function () {
    Route::get('/chats/start/{seller}', [\App\Http\Controllers\Buyer\ChatController::class, 'startChat'])->name('buyer.chats.start');
 
 
-
-
-   Route::get('/help-center', [HelpCenterController::class, 'index'])
-      ->name('buyer.help-center');
-
    Route::resource('complaints', ComplaintController::class);
    Route::get('/complaints/create/{order_id?}', [ComplaintController::class, 'create'])
       ->name('complaints.create.with-order');
@@ -341,10 +336,11 @@ Route::middleware(['auth', 'role:buyer'])->group(function () {
 });
 
 Route::get('/privacy-policy', function () {
-   return view('privacy-policy');
+   return view('privacy-policy'); // make sure the blade file is resources/views/privacy-policy.blade.php
 })->name('privacy.policy');
 
 
-
+Route::get('/help-center', [HelpCenterController::class, 'index'])
+   ->name('buyer.help-center');
 
 

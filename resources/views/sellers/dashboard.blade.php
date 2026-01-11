@@ -282,9 +282,10 @@
                                                     </div>
                                                 </td>
                                                 <td>
-                                                    <div>{{ $order->created_at->format('M j') }}</div>
-                                                    <small class="text-muted">{{ $order->created_at->format('g:i A') }}</small>
-                                                </td>
+    <div>{{ $order->created_at->setTimezone('Asia/Kuala_Lumpur')->format('d M Y') }}</div>
+    <small class="text-muted">{{ $order->created_at->setTimezone('Asia/Kuala_Lumpur')->format('g:i A') }}</small>
+</td>
+
                                                 <td>
                                                 @php
     $itemStatuses = $order->orderItems->pluck('seller_status')->unique();

@@ -94,23 +94,102 @@ class ProductController extends Controller
     ------------------------------------------------------- */
     public function browse(Request $request)
     {
-        $query = Product::with(['images', 'seller'])
+        $query = Product::with(['images', 'seller', 'category'])
             ->where('approval_status', 'Approved');
 
+        // Category filter
         if ($request->filled('category')) {
             $query->where('category_id', $request->category);
         }
 
+        // Search filter (including plant care fields)
         if ($request->filled('search')) {
-            $query->where('product_name', 'like', '%' . $request->search . '%');
+            $query->where(function ($q) use ($request) {
+                $q->where('product_name', 'like', '%' . $request->search . '%')
+                    ->orWhere('description', 'like', '%' . $request->search . '%')
+                    ->orWhere('sunlight_requirement', 'like', '%' . $request->search . '%')
+                    ->orWhere('difficulty_level', 'like', '%' . $request->search . '%')
+                    ->orWhere('growth_stage', 'like', '%' . $request->search . '%');
+            });
+        }
+
+        // Price range filter
+        if ($request->filled('min_price')) {
+            $query->where('price', '>=', $request->min_price);
+        }
+
+        if ($request->filled('max_price')) {
+            $query->where('price', '<=', $request->max_price);
+        }
+
+        // Difficulty level filter
+        if ($request->filled('difficulty')) {
+            $query->where('difficulty_level', $request->difficulty);
+        }
+
+        // Sunlight requirement filter
+        if ($request->filled('sunlight')) {
+            $query->where('sunlight_requirement', $request->sunlight);
+        }
+
+        // Growth stage filter
+        if ($request->filled('growth_stage')) {
+            $query->where('growth_stage', $request->growth_stage);
+        }
+
+        // Sort by
+        $sortBy = $request->get('sort_by', 'latest');
+        switch ($sortBy) {
+            case 'price_low_high':
+                $query->orderBy('price', 'asc');
+                break;
+            case 'price_high_low':
+                $query->orderBy('price', 'desc');
+                break;
+            case 'name':
+                $query->orderBy('product_name', 'asc');
+                break;
+            case 'difficulty':
+                $query->orderBy('difficulty_level', 'asc');
+                break;
+            default: // 'latest'
+                $query->orderBy('created_at', 'desc');
         }
 
         $products = $query->paginate(12);
-        $products->appends($request->only('search', 'category'));
+        $products->appends($request->all());
 
         $categories = Category::all();
 
-        return view('products.browse', compact('products', 'categories'));
+        // Get unique values for filter dropdowns
+        $difficultyLevels = Product::where('approval_status', 'Approved')
+            ->select('difficulty_level')
+            ->distinct()
+            ->whereNotNull('difficulty_level')
+            ->orderBy('difficulty_level')
+            ->pluck('difficulty_level');
+
+        $sunlightOptions = Product::where('approval_status', 'Approved')
+            ->select('sunlight_requirement')
+            ->distinct()
+            ->whereNotNull('sunlight_requirement')
+            ->orderBy('sunlight_requirement')
+            ->pluck('sunlight_requirement');
+
+        $growthStages = Product::where('approval_status', 'Approved')
+            ->select('growth_stage')
+            ->distinct()
+            ->whereNotNull('growth_stage')
+            ->orderBy('growth_stage')
+            ->pluck('growth_stage');
+
+        return view('products.browse', compact(
+            'products',
+            'categories',
+            'difficultyLevels',
+            'sunlightOptions',
+            'growthStages'
+        ));
     }
 
     /* -------------------------------------------------------

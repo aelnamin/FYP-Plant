@@ -35,11 +35,7 @@
                                 <div class="d-flex align-items-center">
                                     <span class="badge bg-primary-100 text-primary-700 px-2 py-1 me-2">
                                         <i class="fas fa-user-check me-1"></i>
-                                        {{ $activeUsers ?? '0' }} Active
-                                    </span>
-                                    <span class="badge bg-warning-100 text-warning-700 px-2 py-1">
-                                        <i class="fas fa-user-clock me-1"></i>
-                                        {{ $newUsersToday ?? '0' }} Today
+                                        Custumers & Sellers
                                     </span>
                                 </div>
                             </div>
@@ -61,7 +57,7 @@
                                 <h2 class="fw-bold mb-2">{{ $totalSellers ?? '0' }}</h2>
                                 <div class="text-success">
                                     <i class="fas fa-user-check me-1"></i>
-                                    {{ $activeSellers ?? '0' }} active
+                                    Approved seller
                                 </div>
                             </div>
                             <div class="bg-success-50 rounded-circle p-3">
@@ -155,6 +151,14 @@
                                 </div>
                             </div>
                             <div class="col-md-3 col-6">
+    <div class="text-center p-4 bg-delivered-soft rounded-3">
+        <i class="fas fa-box-open text-delivered-600 fs-3 mb-2"></i>
+        <div class="h4 fw-bold text-delivered-600 mb-1">{{ $deliveredOrders ?? '0' }}</div>
+        <div class="text-gray-700">Delivered</div>
+    </div>
+</div>
+
+                            <div class="col-md-3 col-6">
                                 <div class="text-center p-4 bg-danger-soft rounded-3">
                                     <i class="fas fa-times-circle text-danger fs-3 mb-2"></i>
                                     <div class="h4 fw-bold text-danger mb-1">{{ $cancelledOrders ?? '0' }}</div>
@@ -169,8 +173,8 @@
             <!-- Pending Actions -->
             <div class="col-lg-4">
                 <div class="card border-0 shadow-sm">
-                    <div class="card-header bg-transparent border-0 p-4">
-                        <h5 class="fw-semibold mb-1">Pending Actions</h5>
+                    <div class="card-header bg-transparent border-0 p-3">
+                        <h5 class="fw-semibold mb-1">Actions</h5>
                     </div>
                     <div class="card-body p-4 pt-0">
                         <div class="list-group list-group-flush">
@@ -197,14 +201,6 @@
                                     <span>Open Complaints</span>
                                 </div>
                                 <span class="badge bg-danger rounded-pill">{{ $openComplaints }}</span>
-                            </a>
-                            <a href="{{ route('admin.orders.index', ['status' => 'pending']) }}"
-                                class="list-group-item list-group-item-action border-0 px-0 py-3 d-flex justify-content-between align-items-center">
-                                <div>
-                                    <i class="fas fa-shopping-cart text-primary me-2"></i>
-                                    <span>Pending Orders</span>
-                                </div>
-                                <span class="badge bg-primary-600 rounded-pill">{{ $pendingOrders ?? '0' }}</span>
                             </a>
                         </div>
                     </div>
@@ -288,6 +284,14 @@
             --color-warning-soft: #fff4e0;
             --color-warning-700: #9c6c1a;
 
+    
+            --color-delivered-50: #f5f0ff;
+    --color-delivered-soft:rgb(219, 228, 246);
+    --color-delivered-600:rgb(51, 44, 108);
+    --color-delivered-700:rgb(34, 50, 120);
+
+
+
             --color-info-50: #f0f7fc;
             --color-info-100: #dcedf9;
             --color-info-soft: #e3f2fd;
@@ -355,6 +359,22 @@
         .text-warning-700 {
             color: var(--color-warning-700) !important;
         }
+
+        .bg-delivered-50 {
+    background-color: var(--color-delivered-50) !important;
+}
+
+.bg-delivered-soft {
+    background-color: var(--color-delivered-soft) !important;
+}
+
+.text-delivered-600 {
+    color: var(--color-delivered-600) !important;
+}
+
+.text-delivered-700 {
+    color: var(--color-delivered-700) !important;
+}
 
         .bg-info-50 {
             background-color: var(--color-info-50) !important;
