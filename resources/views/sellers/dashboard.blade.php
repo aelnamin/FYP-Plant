@@ -366,7 +366,7 @@
                 </div>
                 <div class="card-body p-4 pt-0">
                     <div class="d-grid gap-2">
-                        <a href="{{ route('sellers.inventory.create') }}" class="btn btn-success">
+                        <a href="{{ route('sellers.inventory.create') }}" class="btn btn-outline-primary">
                             <i class="fas fa-plus-circle me-2"></i> View Complaints
                         </a>
                         <a href="{{ route('sellers.orders.index') }}" class="btn btn-outline-success">
@@ -375,7 +375,7 @@
                         <a href="{{ route('sellers.chats.index') }}" class="btn btn-outline-info">
                             <i class="fas fa-comments me-2"></i> Customer Messages
                         </a>
-                        <a href="{{ route('sellers.orders.index') }}" class="btn btn-outline-warning">
+                        <a href="{{ route('sellers.returns.index') }}" class="btn btn-outline-warning">
                             <i class="fas fa-exchange-alt me-2"></i> Returns & Refunds
                         </a>
                     </div>

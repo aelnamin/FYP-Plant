@@ -20,17 +20,16 @@
                 ? $order->items->firstWhere('product.seller_id', $sellerId)->seller_status ?? 'Pending'
                 : $order->status ?? 'Pending';
 
-                $statusInfo = match (strtoupper($status)) {
-    'PENDING' => ['bg' => 'bg-warning', 'textColor' => 'text-dark', 'text' => 'Pending', 'icon' => 'clock'],
-    'PAID' => ['bg' => 'bg-info', 'textColor' => 'text-white', 'text' => 'Paid', 'icon' => 'check-circle'],
-    'SHIPPED' => ['bg' => 'bg-light', 'textColor' => 'text-dark', 'text' => 'Your order has been shipped by seller', 'icon' => 'truck'],
-    'DELIVERED' => ['bg' => 'bg-light', 'textColor' => 'text-dark', 'text' => 'Your product has arrived', 'icon' => 'truck'],
-    'COMPLETED' => ['bg' => 'bg-success', 'textColor' => 'text-white', 'text' => 'Order has been completed', 'icon' => 'check-circle'],
-    'CANCELLED' => ['bg' => 'bg-danger', 'textColor' => 'text-white', 'text' => 'Cancelled', 'icon' => 'x-circle'],
-    default => ['bg' => 'bg-secondary', 'textColor' => 'text-white', 'text' => 'Unknown', 'icon' => 'question-circle'],
-};
+            $statusInfo = match (strtoupper($status)) {
+                'PENDING' => ['bg' => 'bg-warning', 'textColor' => 'text-dark', 'text' => 'Pending', 'icon' => 'clock'],
+                'PAID' => ['bg' => 'bg-info', 'textColor' => 'text-white', 'text' => 'Paid', 'icon' => 'check-circle'],
+                'SHIPPED' => ['bg' => 'bg-light', 'textColor' => 'text-dark', 'text' => 'Your order has been shipped by seller', 'icon' => 'truck'],
+                'DELIVERED' => ['bg' => 'bg-light', 'textColor' => 'text-dark', 'text' => 'Your product has arrived', 'icon' => 'truck'],
+                'COMPLETED' => ['bg' => 'bg-success', 'textColor' => 'text-white', 'text' => 'Order has been completed', 'icon' => 'check-circle'],
+                'CANCELLED' => ['bg' => 'bg-danger', 'textColor' => 'text-white', 'text' => 'Cancelled', 'icon' => 'x-circle'],
+                default => ['bg' => 'bg-secondary', 'textColor' => 'text-white', 'text' => 'Refunded', 'icon' => 'bi bi-arrow-return-left'],
+            };
         @endphp
-
 
         <div class="row g-4">
             <!-- Left Column -->
@@ -84,46 +83,41 @@
                                     <h6 class="fw-bold text-dark mb-0">Shipping Information</h6>
                                 </div>
                                 <div class="ps-4">
-                                    <!-- Shipping Method -->
                                     <p class="fw-semibold text-dark mb-1">
                                         {{ $order->shipping_method ?? 'Standard Shipping' }}
                                     </p>
 
                                     @php
-    
-    $delivery = $sellerId
-        ? $order->deliveries->where('seller_id', $sellerId)->first()
-        : $order->deliveries->first();
-@endphp
+                                        $delivery = $sellerId
+                                            ? $order->deliveries->where('seller_id', $sellerId)->first()
+                                            : $order->deliveries->first();
+                                    @endphp
 
+                                    @if($delivery && $delivery->tracking_number)
+                                        <p class="text-secondary small mb-1">
+                                            <i class="fas fa-truck me-1"></i>
+                                            {{ $delivery->courier_name ?? 'Courier not specified' }} •
+                                            <strong>#{{ $delivery->tracking_number }}</strong>
+                                        </p>
 
+                                        @if($delivery->shipped_at)
+                                            <p class="text-secondary small mb-0">
+                                                <i class="fas fa-calendar-alt me-1"></i>
+                                                Shipped on {{ $delivery->shipped_at->format('M d, Y') }}
+                                            </p>
+                                        @endif
 
-@if($delivery && $delivery->tracking_number)
-    <p class="text-secondary small mb-1">
-        <i class="fas fa-truck me-1"></i>
-        {{ $delivery->courier_name ?? 'Courier not specified' }} •
-        <strong>#{{ $delivery->tracking_number }}</strong>
-    </p>
-
-    @if($delivery->shipped_at)
-        <p class="text-secondary small mb-0">
-            <i class="fas fa-calendar-alt me-1"></i>
-            Shipped on {{ $delivery->shipped_at->format('M d, Y') }}
-        </p>
-    @endif
-
-    @if($delivery->delivered_at)
-        <p class="text-success small mt-1">
-            <i class="fas fa-check-circle me-1"></i>
-            Delivered on {{ $delivery->delivered_at->format('M d, Y') }}
-        </p>
-    @endif
-@else
-    <p class="text-muted small mb-0">
-        Your order has not been shipped yet.
-    </p>
-@endif
-
+                                        @if($delivery->delivered_at)
+                                            <p class="text-success small mt-1">
+                                                <i class="fas fa-check-circle me-1"></i>
+                                                Delivered on {{ $delivery->delivered_at->format('M d, Y') }}
+                                            </p>
+                                        @endif
+                                    @else
+                                        <p class="text-muted small mb-0">
+                                            Your order has not been shipped yet.
+                                        </p>
+                                    @endif
                                 </div>
                             </div>
                         </div>
@@ -140,6 +134,7 @@
                             <h6 class="fw-bold text-dark mb-0">Order Items</h6>
                         </div>
                         <hr>
+
                         <!-- Group by seller if not filtered -->
                         @if(!$sellerId)
                             @foreach($items->groupBy(fn($item) => $item->product->seller_id) as $sellerId => $sellerItems)
@@ -250,9 +245,7 @@
                     </div>
                 </div>
 
-                <!-- Actions -->
                 @php
-                    // Normalize status for comparison
                     $normalizedStatus = strtoupper(trim($status));
                     $showActions = in_array($normalizedStatus, ['SHIPPED', 'DELIVERED', 'PAID', 'COMPLETED']);
                 @endphp
@@ -260,45 +253,37 @@
                 @if($showActions)
                     <div class="card border-light shadow-sm rounded-3">
                         <div class="card-body p-4">
-                        @if($normalizedStatus === 'SHIPPED' || $normalizedStatus === 'DELIVERED')
-    <!-- Mark as Received Button -->
-    <div class="d-grid gap-2 mb-4">
-    <button id="btn-received" 
-            class="btn btn-outline-success rounded-pill py-2"
-            data-order-id="{{ $order->id }}"
-            data-seller-id="{{ $sellerId ?? '' }}">
-        Order Received
-    </button>
-</div>
-
-@endif
-
-
-                            @if(in_array($normalizedStatus, ['SHIPPED', 'DELIVERED', 'COMPLETED']))
+                            @if($normalizedStatus === 'SHIPPED' || $normalizedStatus === 'DELIVERED')
                                 <div class="d-grid gap-2 mb-4">
-                                    @if($sellerId)
-                                        <!-- Return/Refund for specific seller -->
-                                        <a href="#" class="btn btn-outline-dark rounded-pill py-2">
-                                            <i class="fas fa-undo me-2"></i> Return/Refund for
-                                            {{ $selectedSeller->business_name ?? 'Seller' }}
-                                        </a>
-                                    @else
-                                        <a href="#" class="btn btn-outline-dark rounded-pill py-2">
-                                            <i class="fas fa-undo me-2"></i> Request Return/Refund
-                                        </a>
-                                    @endif
-
-                                    @foreach($items as $item)
-                                        @php $product = $item->product; @endphp
-                                        <a href="{{ route('buyer.reviews.create', ['order' => $order->id, 'product' => $product->id]) }}{{ $sellerId ? '?seller=' . $sellerId : '' }}"
-                                            class="btn rounded-pill py-2 border-0" style="background-color: #8a9c6a; color: white;">
-                                            <i class="bi bi-star me-2"></i> Rate {{ $product->product_name }}
-                                        </a>
-                                    @endforeach
+                                    <button id="btn-received" class="btn btn-outline-dark rounded-pill py-2"
+                                        data-order-id="{{ $order->id }}" data-seller-id="{{ $sellerId ?? '' }}">
+                                        Order Received
+                                    </button>
                                 </div>
                             @endif
 
-                            <!-- Support Center - ALWAYS SHOW FOR DELIVERED/COMPLETED ORDERS -->
+                            {{-- Return / Refund --}}
+                            @if(in_array($normalizedStatus, ['SHIPPED', 'DELIVERED', 'COMPLETED']))
+                                <div class="d-grid gap-2 mb-4">
+                                    <a href="{{ route('buyer.returns.create', $order->id) }}"
+                                        class="btn btn-outline-dark rounded-pill py-2">
+                                        <i class="fas fa-undo me-2"></i>
+                                        {{ $sellerId ? 'Return/Refund for ' . $selectedSeller->business_name : 'Request Return/Refund' }}
+                                    </a>
+                                </div>
+                            @endif
+
+                            <div class="d-grid gap-2 mb-4">
+                                @foreach($items as $item)
+                                    @php $product = $item->product; @endphp
+                                    <a href="{{ route('buyer.reviews.create', ['order' => $order->id, 'product' => $product->id]) }}{{ $sellerId ? '?seller=' . $sellerId : '' }}"
+                                        class="btn rounded-pill py-2 border-0" style="background-color: #8a9c6a; color: white;">
+                                        <i class="bi bi-star me-2"></i> Rate {{ $product->product_name }}
+                                    </a>
+                                @endforeach
+                            </div>
+
+                            {{-- Support Center --}}
                             @if(in_array($normalizedStatus, ['DELIVERED', 'COMPLETED', 'SHIPPED', 'PAID']))
                                 <div>
                                     <div class="d-flex align-items-center mb-3">
@@ -307,7 +292,7 @@
                                         </div>
                                         <h6 class="fw-bold text-dark mb-0">Support Center</h6>
                                     </div>
-                                    <div class="d-grid gap-2">
+                                    <div class="d-grid gap-2 mb-3">
                                         @if($sellerId && $selectedSeller)
                                             <form action="{{ route('buyer.chats.start', $selectedSeller->user_id) }}" method="GET">
                                                 <button type="submit" class="btn btn-outline-secondary rounded-pill w-100">
@@ -338,77 +323,79 @@
                         </div>
                     </div>
                 @endif
+            </div>
+        </div>
 
-                <style>
-                    .card {
-                        transition: all 0.3s ease;
-                        border: 1px solid #e9ecef !important;
-                    }
+        <style>
+            .card {
+                transition: all 0.3s ease;
+                border: 1px solid #e9ecef !important;
+            }
 
-                    .card:hover {
-                        transform: translateY(-2px);
-                        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05) !important;
-                    }
+            .card:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05) !important;
+            }
 
-                    .rounded-3 {
-                        border-radius: 0.75rem !important;
-                    }
+            .rounded-3 {
+                border-radius: 0.75rem !important;
+            }
 
-                    .btn:hover {
-                        transform: translateY(-2px);
-                        transition: all 0.3s ease;
-                    }
+            .btn:hover {
+                transform: translateY(-2px);
+                transition: all 0.3s ease;
+            }
 
-                    .btn[style*="background-color: #8a9c6a"]:hover {
-                        background-color: #7a8b5a !important;
-                        box-shadow: 0 4px 12px rgba(138, 156, 106, 0.2);
-                    }
+            .btn[style*="background-color: #8a9c6a"]:hover {
+                background-color: #7a8b5a !important;
+                box-shadow: 0 4px 12px rgba(138, 156, 106, 0.2);
+            }
 
-                    .btn-outline-dark:hover {
-                        background-color: #212529;
-                        color: white;
-                    }
+            .btn-outline-dark:hover {
+                background-color: #212529;
+                color: white;
+            }
 
-                    .btn-outline-secondary:hover {
-                        background-color: #6c757d;
-                        color: white;
-                    }
-                </style>
+            .btn-outline-secondary:hover {
+                background-color: #6c757d;
+                color: white;
+            }
+        </style>
 @endsection
 
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script>
-$(document).ready(function() {
-    $('#btn-received').click(function(e) {
-        e.preventDefault();
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            $('#btn-received').click(function (e) {
+                e.preventDefault();
 
-        let button = $(this);
-        let orderId = button.data('order-id');
-        let sellerId = button.data('seller-id');
-        let url = `/buyer/orders/${orderId}/received`;
-        if(sellerId) url += '?seller=' + sellerId;
+                let button = $(this);
+                let orderId = button.data('order-id');
+                let sellerId = button.data('seller-id');
+                let url = `/buyer/orders/${orderId}/received`;
+                if (sellerId) url += '?seller=' + sellerId;
 
-        $.ajax({
-            url: url,
-            type: 'PATCH',
-            data: {
-                _token: '{{ csrf_token() }}'
-            },
-            success: function(response) {
-                // Disable button and change text
-                button.prop('disabled', true).text('Received').removeClass('btn-outline-success').addClass('btn-success');
+                $.ajax({
+                    url: url,
+                    type: 'PATCH',
+                    data: {
+                        _token: '{{ csrf_token() }}'
+                    },
+                    success: function (response) {
+                        // Disable button and change text
+                        button.prop('disabled', true).text('Received').removeClass('btn-outline-success').addClass('btn-success');
 
-                // Update status badge dynamically
-                const statusBadge = $('.card-body .rounded-circle i.fas').closest('.rounded-circle');
-                statusBadge.removeClass().addClass('rounded-circle d-inline-flex align-items-center justify-content-center p-3 mb-3 bg-success');
-                statusBadge.find('i').removeClass().addClass('fas fa-check-circle text-white');
+                        // Update status badge dynamically
+                        const statusBadge = $('.card-body .rounded-circle i.fas').closest('.rounded-circle');
+                        statusBadge.removeClass().addClass('rounded-circle d-inline-flex align-items-center justify-content-center p-3 mb-3 bg-success');
+                        statusBadge.find('i').removeClass().addClass('fas fa-check-circle text-white');
 
-                $('.card-body h4.fw-bold').text(response.statusInfo.text);
-            },
-            error: function(xhr) {
-                alert(xhr.responseJSON?.error || 'Something went wrong');
-            }
+                        $('.card-body h4.fw-bold').text(response.statusInfo.text);
+                    },
+                    error: function (xhr) {
+                        alert(xhr.responseJSON?.error || 'Something went wrong');
+                    }
+                });
+            });
         });
-    });
-});
-</script>
+    </script>

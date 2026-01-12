@@ -229,7 +229,7 @@
                                                         style="border-color: #e9ecef !important;">
                                                         <img src="{{ $item->product->images->first() ? asset('images/' . $item->product->images->first()->image_path) : asset('images/default.jpg') }}"
                                                             class="rounded-3 me-3"
-                                                            style="width: 60px; height: 60px; object-fit: cover; border: 1px solid #e9ecef;">
+                                                            style="width: 100px; height: 100px; object-fit: cover; border: 1px solid #e9ecef;">
                                                         <div class="flex-grow-1">
                                                             <h6 class="fw-semibold text-dark mb-1" style="font-size: 0.95rem;">
                                                                 {{ $item->product->product_name }}

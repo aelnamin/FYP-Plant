@@ -33,6 +33,8 @@ use App\Http\Controllers\Admin\AdminProductController;
 use App\Http\Controllers\Admin\SellerManagementController;
 use App\Http\Controllers\Admin\ProductApprovalController;
 use App\Http\Controllers\Seller\InventoryController;
+use App\Http\Controllers\Buyer\ReturnController as BuyerReturnController;
+use App\Http\Controllers\Seller\ReturnController as SellerReturnController;
 use App\Http\Controllers\CheckoutController;
 
 /*
@@ -236,6 +238,11 @@ Route::middleware(['auth', 'role:seller'])
       Route::post('orders/{order}/paid', [SellerOrderController::class, 'markAsPaid'])->name('orders.paid');
       Route::post('orders/{order}/shipped', [SellerOrderController::class, 'markAsShipped'])->name('orders.shipped');
 
+
+      Route::get('/returns', [SellerReturnController::class, 'index'])->name('returns.index');
+
+      Route::post('/returns/{id}/status', [SellerReturnController::class, 'updateStatus'])->name('returns.updateStatus');
+
    });
 
 
@@ -305,23 +312,25 @@ Route::middleware(['auth', 'role:buyer'])->group(function () {
    Route::get('/reviews/create/{product}', [ReviewController::class, 'create'])
       ->name('buyer.reviews.create');
 
-   //Chat routes
 
-   Route::get('/chats', [BuyerChatController::class, 'index'])
-      ->name('buyer.chats.index');
+   // Chat sidebar routes
 
-   Route::get('/chats/{seller}', [BuyerChatController::class, 'show'])
-      ->name('buyer.chats.show');
 
-   Route::post('/chats/{seller}/send', [BuyerChatController::class, 'send'])
-      ->name('buyer.chats.send');
+   Route::get('/chats', [BuyerChatController::class, 'index'])->name('buyer.chats.index');
 
-   Route::get('/buyer/chats/{seller}/fetch', [BuyerChatController::class, 'fetchNewMessages'])
-      ->name('buyer.chats.fetch');
+   // Show chat with specific seller (index can handle active seller)
+   Route::get('/chats/{sellerId}', [BuyerChatController::class, 'index'])->name('buyer.chats.show');
+
+   // Send message to seller
+   Route::post('/chats/{sellerId}/send', [BuyerChatController::class, 'send'])->name('buyer.chats.send');
+
+   // Optional: fetch new messages via AJAX
+   Route::get('/chats/{sellerId}/fetch', [BuyerChatController::class, 'fetchNewMessages'])->name('buyer.chats.fetch');
+
 
 
    // NEW: start chat (redirect to show page)
-   Route::get('/chats/start/{seller}', [\App\Http\Controllers\Buyer\ChatController::class, 'startChat'])->name('buyer.chats.start');
+   Route::get('/chats/start/{seller}', [BuyerChatController::class, 'startChat'])->name('buyer.chats.start');
 
 
    Route::resource('complaints', ComplaintController::class);
@@ -332,6 +341,13 @@ Route::middleware(['auth', 'role:buyer'])->group(function () {
 
    Route::patch('/buyer/orders/{order}/received', [OrderController::class, 'received'])
       ->name('buyer.orders.received');
+
+   Route::get('/returns', [BuyerReturnController::class, 'index'])->name('buyer.returns.index');
+
+   Route::get('/buyer/returns/create/{order}', [BuyerReturnController::class, 'create'])->name('buyer.returns.create');
+
+   Route::post('/returns', [BuyerReturnController::class, 'store'])->name('buyer.returns.store');
+
 
 });
 

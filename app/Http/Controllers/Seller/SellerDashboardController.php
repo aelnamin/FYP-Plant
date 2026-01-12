@@ -87,6 +87,14 @@ class SellerDashboardController extends Controller
 
 
         /* ======================
+    DEDUCT REVENUE
+ ====================== */
+        $total_revenue = OrderItem::whereIn('product_id', $sellerProductIds)
+            ->whereNotIn('seller_status', ['refunded', 'cancelled'])
+            ->sum(DB::raw('quantity * price'));
+
+
+        /* ======================
       SALES LAST 7 DAYS FOR ANALYTICS
    ====================== */
         $sales_last_7_days = OrderItem::whereIn('product_id', $sellerProductIds)
