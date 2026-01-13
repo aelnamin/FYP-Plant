@@ -40,4 +40,17 @@ class Seller extends Model
         return $this->hasMany(Delivery::class);
     }
 
+    // Seller.php
+    public function reviews()
+    {
+        return $this->hasManyThrough(
+            \App\Models\Review::class, // Target model
+            \App\Models\Product::class, // Intermediate model
+            'seller_id',               // Foreign key on Product (products.seller_id)
+            'product_id',              // Foreign key on Review (reviews.product_id)
+            'id',                      // Local key on Seller (sellers.id)
+            'id'                       // Local key on Product (products.id)
+        );
+    }
+
 }

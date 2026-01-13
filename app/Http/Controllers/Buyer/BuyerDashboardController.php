@@ -7,6 +7,7 @@ use App\Models\Category;
 use App\Models\Product;
 use App\Models\Seller;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class BuyerDashboardController extends Controller
 {
@@ -25,10 +26,16 @@ class BuyerDashboardController extends Controller
     {
         $user = Auth::user();
 
-        // Best Sellers (example: latest approved products)
+        // Best Sellers (products that have sales)
         $bestSellers = Product::with(['images', 'seller'])
             ->where('approval_status', 'Approved')
-            ->latest()
+            ->whereHas('orderItems') // only products with at least 1 sale
+            ->withCount([
+                'orderItems as total_sold' => function ($query) {
+                    $query->select(DB::raw('SUM(quantity)'));
+                }
+            ])
+            ->orderByDesc('total_sold') // sort by sales
             ->take(8)
             ->get();
 
@@ -40,10 +47,13 @@ class BuyerDashboardController extends Controller
             ->get();
 
         // Top Sellers (approved sellers)
-        $topSellers = Seller::where('verification_status', 'Approved')
-            ->latest()
+        $topSellers = Seller::with('user')
+            ->withAvg('reviews', 'rating') // calculates average rating through products
+            ->where('verification_status', 'Approved')
+            ->orderByDesc('reviews_avg_rating') // order by average rating
             ->take(4)
             ->get();
+
 
         $categories = Category::all();
 

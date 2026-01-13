@@ -73,6 +73,12 @@ class CartController extends Controller
 
         $product = Product::findOrFail($id);
 
+        //  BLOCK if out of stock
+        if ($product->stock_quantity <= 0) {
+            return back()->with('error', 'This product is out of stock.');
+        }
+
+
         // Normalize variants
         $variants = is_array($product->variants)
             ? $product->variants
@@ -100,15 +106,36 @@ class CartController extends Controller
             ->where('variant', $variant)
             ->first();
 
+        $requestedQty = $validated['quantity'];
+
         if ($cartItem) {
-            $cartItem->increment('quantity', $validated['quantity']);
+            $newQty = $cartItem->quantity + $requestedQty;
+
+            if ($newQty > $product->stock_quantity) {
+                return back()->with(
+                    'error',
+                    'Only ' . $product->stock_quantity . ' item(s) available in stock.'
+                );
+            }
+
+            $cartItem->update([
+                'quantity' => $newQty
+            ]);
         } else {
+            if ($requestedQty > $product->stock_quantity) {
+                return back()->with(
+                    'error',
+                    'Only ' . $product->stock_quantity . ' item(s) available in stock.'
+                );
+            }
+
             $cart->items()->create([
                 'product_id' => $product->id,
-                'variant' => $variant, // This will now save the variant
-                'quantity' => $validated['quantity'],
+                'variant' => $variant,
+                'quantity' => $requestedQty,
             ]);
         }
+
 
         // Response handling
         if ($request->expectsJson()) {
@@ -146,8 +173,18 @@ class CartController extends Controller
         $cartItem = $cart->items()->where('id', $id)->first();
 
         if ($cartItem) {
+            $product = $cartItem->product;
+
+            if ($request->quantity > $product->stock_quantity) {
+                return back()->with(
+                    'error',
+                    'Only ' . $product->stock_quantity . ' item(s) available.'
+                );
+            }
+
             $cartItem->update(['quantity' => $request->quantity]);
         }
+
 
         return redirect()->back()->with('success', 'Cart updated!');
     }

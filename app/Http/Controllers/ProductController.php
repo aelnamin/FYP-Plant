@@ -42,18 +42,22 @@ class ProductController extends Controller
         $product = Product::with([
             'images',
             'seller',
-            'reviews.user'
         ])->findOrFail($id);
 
-        $sameSellerProducts = Product::with('images')
-            ->where('seller_id', $product->seller_id)
-            ->where('id', '!=', $product->id)
-            ->where('approval_status', 'Approved')
-            ->take(4)
-            ->get();
+        // ✅ PAGINATED REVIEWS
+        $reviews = $product->reviews()
+            ->orderBy('created_at', 'desc') // optional, newest first
+            ->paginate(2)
+            ->withQueryString(); // remove ->withFragment
 
-        $averageRating = round($product->reviews->avg('rating'), 1);
-        $totalReviews = $product->reviews->count();
+
+        // ✅ Rating summary (DO NOT use paginated data)
+        $averageRating = round(
+            $product->reviews()->avg('rating'),
+            1
+        );
+
+        $totalReviews = $product->reviews()->count();
 
         $hasPurchased = false;
         $hasReviewed = false;
@@ -71,6 +75,15 @@ class ProductController extends Controller
                 ->exists();
         }
 
+        $sameSellerProducts = Product::with('images')
+            ->where('seller_id', $product->seller_id)
+            ->where('id', '!=', $product->id)
+            ->where('approval_status', 'Approved')
+            ->take(4)
+            ->get();
+
+
+
         $variants = is_array($product->variants)
             ? $product->variants
             : json_decode($product->variants, true);
@@ -80,6 +93,7 @@ class ProductController extends Controller
 
         return view('products.show', compact(
             'product',
+            'reviews',
             'averageRating',
             'totalReviews',
             'hasPurchased',

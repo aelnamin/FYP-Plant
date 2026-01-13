@@ -10,6 +10,65 @@
     </head>
 
     <style>
+:root {
+    --primary-green: #5C7F51;  /* Your brand green */
+    --light-green: #8AA67E;    /* Lighter green */
+    --primary-gold: #FFD700;   /* Gold for Best Sellers */
+    --light-gold: #FFA500;     /* Orange gold */
+    --primary-blue: #4A90E2;   /* Blue for Latest Products */
+    --light-blue: #7B68EE;     /* Purple blue */
+}
+
+/* Section Title Styles */
+.section-title {
+    position: relative;
+    display: inline-block;
+    padding-bottom: 15px;
+    margin-bottom: 20px;
+    font-size: 2.2rem;
+    font-weight: 800;
+    letter-spacing: 0.5px;
+}
+
+.section-title:after {
+    content: '';
+    position: absolute;
+    left: 50%;
+    bottom: 0;
+    transform: translateX(-50%);
+    width: 100px;
+    height: 4px;
+    border-radius: 2px;
+}
+
+.section-subtitle {
+    font-size: 1.1rem;
+    color: #6c757d;
+    margin-top: 10px;
+}
+
+/* Color Variations */
+.section-title.best-sellers:after {
+    background: linear-gradient(90deg, var(--primary-gold), var(--light-green));
+}
+
+.section-title.latest-products:after {
+    background: linear-gradient(90deg, var(--primary-gold), var(--light-green));
+}
+
+.section-title.top-sellers:after {
+    background: linear-gradient(90deg, var(--primary-gold), var(--light-green));
+}
+
+/* Optional: Add animation on hover */
+.section-title {
+    transition: all 0.3s ease;
+}
+
+.section-title:hover:after {
+    width: 120px;
+    box-shadow: 0 0 15px rgba(92, 127, 81, 0.3);
+}
         .search-container {
             position: relative;
             max-width: 600px;
@@ -190,7 +249,16 @@
 
         <!-- BEST SELLERS -->
         <div class="container mt-5">
-            <h2 class="cart-header text-dark fw-bold mb-3">Best Sellers</h2>
+        <div class="text-center mb-5">
+        <h2 class="section-title best-sellers">
+            Best Sellers
+        </h2>
+        <div class="section-subtitle">
+            <i class="bi bi-star-fill text-warning me-2"></i>
+            Most loved by our customers
+            <i class="bi bi-star-fill text-warning ms-2"></i>
+        </div>
+    </div>
 
             <div class="row g-4">
                 @foreach ($bestSellers as $p)
@@ -222,7 +290,14 @@
 
         <!-- Latest Products -->
         <div class="container mt-5">
-            <h2 class="cart-header text-dark fw-bold mb-3">Latest Products</h2>
+        <div class="text-center mb-5">
+        <h2 class="section-title latest-products">
+            Latest Products
+        </h2>
+        <div class="section-subtitle">
+            Fresh arrivals just for you
+        </div>
+    </div>
 
             <div class="row g-4">
                 @foreach ($latestProducts as $p)
@@ -254,7 +329,16 @@
 
         <!-- Top Sellers -->
         <div class="container mt-5">
-            <h2 class="cart-header text-dark fw-bold mb-3">Top Sellers</h2>
+        <div class="text-center mb-5">
+        <h2 class="section-title top-sellers">
+            Top Sellers
+        </h2>
+        <div class="section-subtitle">
+            <i class="bi bi-award-fill text-warning me-2"></i>
+            Most trusted plant sellers
+            <i class="bi bi-award-fill text-warning ms-2"></i>
+        </div>
+    </div>
 
             <div class="row g-4">
                 @foreach ($topSellers as $seller)
@@ -271,6 +355,12 @@
                                 {{-- Seller Name --}}
                                 <h6 class="fw-bold">{{ $seller->business_name }}</h6>
                                 <p class="text-muted small"><i class="bi bi-patch-check"></i> Trusted Seller</p>
+
+                                {{-- Visit Shop Button --}}
+                                <a href="{{ route('seller-shop', $seller->id) }}"
+                                    class="btn btn-sm btn-outline-primary rounded-pill px-4 mt-2">
+                                    Visit Shop
+                                </a>
                             </div>
                         </div>
                 @endforeach

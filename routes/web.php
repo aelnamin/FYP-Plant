@@ -11,6 +11,7 @@ use App\Http\Controllers\Admin\AdminDashboardController;
 use App\Http\Controllers\Admin\UserManagementController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\LogoutController;
+use App\Http\Controllers\Buyer\BuyerController;
 use App\Http\Controllers\Seller\DeliveryController;
 use App\Http\Controllers\Buyer\ReviewController;
 use App\Http\Controllers\Buyer\TransactionController;
@@ -348,6 +349,8 @@ Route::middleware(['auth', 'role:buyer'])->group(function () {
 
    Route::post('/returns', [BuyerReturnController::class, 'store'])->name('buyer.returns.store');
 
+   // routes/web.php
+   Route::get('seller-shop/{seller}', [BuyerController::class, 'sellerShop'])->name('seller-shop');
 
 });
 

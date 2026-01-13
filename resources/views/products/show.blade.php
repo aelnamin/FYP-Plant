@@ -145,6 +145,15 @@
             min-width: 20px;
             text-align: center;
         }
+        .seller-clickable {
+    cursor: pointer;
+    transition: all 0.25s ease;
+}
+
+.seller-clickable:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 25px rgba(92, 127, 81, 0.25);
+}
     </style>
 
     <div class="container mt-4">
@@ -178,19 +187,37 @@
             <div class="col-md-6">
                 <h2 class="fw-bold">{{ $product->product_name }}</h2>
 
-                {{-- Seller Card --}}
-                <div class="seller-card">
-                    <div class="d-flex align-items-center mb-3">
-                        <img src="{{ $product->seller->user->profile_picture && file_exists(public_path($product->seller->user->profile_picture)) ? asset($product->seller->user->profile_picture) : asset('images/default.png') }}"
-                            class="seller-profile-img me-3" alt="{{ $product->seller->business_name }}">
-                        <div>
-                            <h5 class="fw-bold mb-1">{{ $product->seller->business_name }}</h5>
-                            <span class="verified-badge"><i class="bi bi-check-circle"></i>Verified Seller</span>
-                        </div>
-                    </div>
-                    <div class="seller-info-item"><i class="bi bi-geo-alt"></i><span><strong>Location:</strong>
-                            {{ $product->seller->business_address ?? 'N/A' }}</span></div>
-                </div>
+                <a href="{{ route('seller-shop', $product->seller->id) }}"
+   class="text-decoration-none text-dark">
+
+    <div class="seller-card seller-clickable">
+        <div class="d-flex align-items-center mb-3">
+            <img src="{{ $product->seller->user->profile_picture && file_exists(public_path($product->seller->user->profile_picture))
+                ? asset($product->seller->user->profile_picture)
+                : asset('images/default.png') }}"
+                class="seller-profile-img me-3"
+                alt="{{ $product->seller->business_name }}">
+
+            <div>
+                <h5 class="fw-bold mb-1">
+                    {{ $product->seller->business_name }}
+                </h5>
+                <span class="verified-badge">
+                    <i class="bi bi-check-circle"></i> Verified Seller
+                </span>
+            </div>
+        </div>
+
+        <div class="seller-info-item">
+            <i class="bi bi-geo-alt"></i>
+            <span>
+                <strong>Location:</strong>
+                {{ $product->seller->business_address ?? 'N/A' }}
+            </span>
+        </div>
+    </div>
+</a>
+
 
                 {{-- Rating --}}
                 @if ($totalReviews > 0)
@@ -247,10 +274,27 @@
 
                         <input type="hidden" name="quantity" id="quantityInput" value="1">
 
+                        @if ($product->stock_quantity <= 0)
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            document.getElementById('increment')?.setAttribute('disabled', true);
+            document.getElementById('decrement')?.setAttribute('disabled', true);
+        });
+    </script>
+@endif
+
+
                         {{-- Add to cart --}}
-                        <button type="submit" class="btn btn-matcha border-secondary text-dark shadow-sm">
-                            Add to Cart
-                        </button>
+                        @if ($product->stock_quantity > 0)
+    <button type="submit" class="btn btn-matcha border-secondary text-dark shadow-sm">
+        Add to Cart
+    </button>
+@else
+    <button type="button" class="btn btn-secondary shadow-sm" disabled>
+        Out of Stock
+    </button>
+@endif
+
                     </div>
                 </form>
 
@@ -274,8 +318,10 @@
 
         {{-- Product Description --}}
         <div class="mt-4">
-            <h4 class="fw-bold">Product Description</h4>
-            <p style="line-height: 1.6;">{!! nl2br(e($product->description)) !!}</p>
+    <h4 class="fw-bold">Product Description</h4>
+    <div class="col-6">
+        <p style="line-height: 1.6;">{!! nl2br(e($product->description)) !!}</p>
+    </div>
 
             {{-- Plant Information --}}
             <div class="mt-4">
@@ -290,33 +336,41 @@
                 </p>
             </div>
 
-            {{-- Reviews --}}
-            <div class="mt-5">
-                <h4 class="fw-bold mb-3">Customer Reviews</h4>
-                @if ($totalReviews > 0)
-                    @foreach ($product->reviews as $review)
-                        <div class="border rounded p-3 mb-3 bg-light">
-                            <div class="d-flex justify-content-between align-items-center mb-1">
-                                <strong>{{ $review->user->name }}</strong>
-                                <small class="text-muted">{{ $review->created_at->diffForHumans() }}</small>
-                            </div>
-                            <div class="text-warning mb-1">
-                                @for ($i = 1; $i <= 5; $i++)
-                                    @if ($i <= $review->rating) ★ @else ☆ @endif
-                                @endfor
-                            </div>
-                            <p class="mb-0 text-muted">{{ $review->comment }}</p>
-                        </div>
-                    @endforeach
-                @else
-                    <p class="text-muted">This product has no reviews yet</p>
-                @endif
+    {{-- Reviews --}}
+<div id="reviews" class="mt-5">
+    <h4 class="fw-bold mb-3">Customer Reviews</h4>
+
+    @if ($totalReviews > 0)
+        @foreach ($reviews as $review)
+            <div class="border rounded p-3 mb-3 bg-light">
+                <div class="d-flex justify-content-between align-items-center mb-1">
+                    <strong>{{ $review->user->name }}</strong>
+                    <small class="text-muted">{{ $review->created_at->diffForHumans() }}</small>
+                </div>
+                <div class="text-warning mb-1">
+                    @for ($i = 1; $i <= 5; $i++)
+                        @if ($i <= $review->rating) ★ @else ☆ @endif
+                    @endfor
+                </div>
+                <p class="mb-0 text-muted">{{ $review->comment }}</p>
             </div>
+        @endforeach
+
+        {{-- Pagination --}}
+        <div class="mt-3" id="reviews-pagination">
+            {{ $reviews->withQueryString()->fragment('reviews')->links() }}
+        </div>
+    @else
+        <p class="text-muted">This product has no reviews yet</p>
+    @endif
+</div>
+
 
             {{-- More from same seller --}}
             @if($sameSellerProducts->count())
                 <div class="container mt-5">
                     <h4 class="fw-bold">More from {{ $product->seller->business_name }}</h4>
+                    <br>
                     <div class="row g-4">
                         @foreach ($sameSellerProducts as $p)
                             <div class="col-6 col-md-3">
@@ -391,5 +445,6 @@
                     }
                 }
             });
+            
         </script>
 @endsection

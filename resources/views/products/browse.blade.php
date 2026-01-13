@@ -522,7 +522,7 @@
                         <div class="card product-card h-100">
                             <div class="position-relative">
                                 <img src="{{ $p->images->first() ? asset('images/' . $p->images->first()->image_path) : asset('images/default.jpg') }}" class="card-img-top" alt="{{ $p->product_name }}">
-                                <div class="position-absolute top-0 end-0 m-2"><span class="price-badge">RM {{ number_format($p->price, 2) }}</span></div>
+                                <div class="position-absolute top-0 end-0 m-2"><span class="price-badge bg-primary">RM {{ number_format($p->price, 2) }}</span></div>
                             </div>
                             <div class="card-body">
                                 <h6 class="fw-bold mb-2">{{ Str::limit($p->product_name, 30) }}</h6>

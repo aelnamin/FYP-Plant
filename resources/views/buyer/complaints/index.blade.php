@@ -4,13 +4,6 @@
 
 @section('content')
     <div class="container py-5">
-        <!-- Header Section -->
-        <div class="d-flex justify-content-between align-items-center mb-5">
-            <div>
-                <h1 class="fw-bold text-gray-900 mb-2">My Complaints</h1>
-                <p class="text-primary-600">Track and manage your submitted complaints</p>
-            </div>
-        </div>
 
         <!-- Success Message -->
         @if(session('success'))
@@ -84,7 +77,7 @@
                                                         ];
                                                         $config = $statusConfig[$complaint->status] ?? ['bg' => 'bg-gray-200', 'icon' => 'question-circle', 'text' => 'text-gray-700'];
                                                     @endphp
-                     <span
+                                                    <span
                                                         class="badge {{ $config['bg'] }} {{ $config['text'] }} rounded-pill px-3 py-2">
                                                         <i class="fas fa-{{ $config['icon'] }} me-1"></i>
                                                         {{ ucfirst(str_replace('_', ' ', $complaint->status)) }}
