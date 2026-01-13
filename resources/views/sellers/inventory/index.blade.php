@@ -74,7 +74,7 @@
 
                                             <div>
                                                 <div class="fw-semibold">{{ $product->product_name }}</div>
-                                                <small class="text-muted">ID: {{ $product->id }}</small>
+                                                
                                             </div>
                                         </div>
                                     </td>

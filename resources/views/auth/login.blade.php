@@ -288,26 +288,13 @@
                 <div class="login-links">
                     <a href="/register" class="link-item">
                         <i class="bi bi-person-plus me-2"></i>
-                        Create Buyer Account
+                        Create Account
                     </a>
 
                     <a href="{{ route('seller.register') }}" class="link-item">
                         <i class="bi bi-shop me-2"></i>
                         Register as Seller
                     </a>
-                </div>
-
-                <!-- Divider -->
-                <div class="divider">
-                    <span>or continue with</span>
-                </div>
-
-                <!-- Social Login -->
-                <div class="text-center">
-                    <button type="button" class="btn btn-outline-secondary rounded-pill me-2"
-                        style="border-color: #ddd; padding: 8px 20px; font-size: 14px;">
-                        <i class="bi bi-google me-1"></i> Google
-                    </button>
                 </div>
             </div>
         </div>

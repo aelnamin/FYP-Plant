@@ -366,7 +366,7 @@
                 </div>
                 <div class="card-body p-4 pt-0">
                     <div class="d-grid gap-2">
-                        <a href="{{ route('sellers.inventory.create') }}" class="btn btn-outline-primary">
+                        <a href="{{ route('sellers.complaints.index') }}" class="btn btn-outline-primary">
                             <i class="fas fa-plus-circle me-2"></i> View Complaints
                         </a>
                         <a href="{{ route('sellers.orders.index') }}" class="btn btn-outline-success">

@@ -4,39 +4,46 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\User;
+use App\Models\Order;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Complaint extends Model
 {
     use HasFactory;
 
-    protected $primaryKey = 'complaint_id'; // <-- important
-    public $incrementing = true;            // auto-increment
-    protected $keyType = 'int';             // integer primary key
+    protected $primaryKey = 'complaint_id';
+    public $incrementing = true;
+    protected $keyType = 'int';
 
     protected $fillable = [
         'user_id',
         'seller_id',
         'order_id',
-        'handled_by',
+        'problem_type',
         'complaint_message',
-        'admin_response',
+        'seller_response',
         'status',
-        'problem_type'
+        'handled_by',
     ];
 
     protected $casts = [
         'created_at' => 'datetime',
-        'updated_at' => 'datetime'
+        'updated_at' => 'datetime',
     ];
 
-    // Status constants
+    /* =====================
+     | Status constants
+     ===================== */
     const STATUS_PENDING = 'pending';
     const STATUS_IN_PROGRESS = 'in_progress';
     const STATUS_RESOLVED = 'resolved';
     const STATUS_CLOSED = 'closed';
+    const STATUS_REJECTED = 'rejected';
 
-    // Problem type constants
+    /* =====================
+     | Problem types
+     ===================== */
     const PROBLEM_MISSING_PARCEL = 'missing_parcel';
     const PROBLEM_DAMAGED_ITEM = 'damaged_item';
     const PROBLEM_WRONG_ITEM = 'wrong_item';
@@ -60,22 +67,23 @@ class Complaint extends Model
         ];
     }
 
-    public function getProblemTypeLabel(): string
+    /* Accessor */
+    public function getProblemTypeLabelAttribute(): string
     {
         return self::getProblemTypes()[$this->problem_type] ?? 'Unknown';
     }
+
+    /* =====================
+     | Relationships
+     ===================== */
 
     public function buyer(): BelongsTo
     {
         return $this->belongsTo(User::class, 'user_id');
     }
 
-    public function seller(): BelongsTo
-    {
-        return $this->belongsTo(User::class, 'seller_id');
-    }
-
-    public function admin(): BelongsTo
+    /* Seller who handled the complaint */
+    public function handler(): BelongsTo
     {
         return $this->belongsTo(User::class, 'handled_by');
     }
@@ -85,6 +93,9 @@ class Complaint extends Model
         return $this->belongsTo(Order::class, 'order_id');
     }
 
+    /* =====================
+     | Helpers
+     ===================== */
     public function isPending(): bool
     {
         return $this->status === self::STATUS_PENDING;
@@ -93,10 +104,5 @@ class Complaint extends Model
     public function isResolved(): bool
     {
         return $this->status === self::STATUS_RESOLVED;
-    }
-
-    public function handler(): BelongsTo
-    {
-        return $this->belongsTo(User::class, 'handled_by');
     }
 }

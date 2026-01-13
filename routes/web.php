@@ -18,6 +18,7 @@ use App\Http\Controllers\Buyer\TransactionController;
 use App\Http\Controllers\Seller\OrderManagementController;
 use App\Http\Controllers\Admin\AdminComplaintController;
 use App\Http\Controllers\ComplaintController;
+use App\Http\Controllers\Seller\ComplaintController as SellerComplaintController;
 use App\Http\Controllers\Admin\ReportController;
 use App\Http\Controllers\Seller\SellerOrderController;
 use App\Http\Controllers\OrderController;
@@ -243,6 +244,15 @@ Route::middleware(['auth', 'role:seller'])
       Route::get('/returns', [SellerReturnController::class, 'index'])->name('returns.index');
 
       Route::post('/returns/{id}/status', [SellerReturnController::class, 'updateStatus'])->name('returns.updateStatus');
+
+      // Complaints
+      Route::get('/complaints', [SellerComplaintController::class, 'index'])
+         ->name('complaints.index');
+      Route::get('/complaints/{complaint}', [SellerComplaintController::class, 'show'])
+         ->name('complaints.show');
+      Route::patch('/complaints/{complaint}/respond', [SellerComplaintController::class, 'respond'])
+         ->name('complaints.respond');
+
 
    });
 

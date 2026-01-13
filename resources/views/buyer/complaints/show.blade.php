@@ -18,18 +18,22 @@
                 <div class="d-flex justify-content-between align-items-center">
                     <div>
                         <h1 class="h3 fw-bold text-gray-900 mb-1">Complaint Details</h1>
-                        <p class="text-primary-700 mb-0">ID: #{{ $complaint->complaint_id }}</p>
+                        <p class="text-primary-700 mb-0">Complaint ID: #{{ $complaint->complaint_id }}</p>
+                        <small class="text-secondary">Submitted on
+                            {{ $complaint->created_at->format('M d, Y H:i') }}</small>
                     </div>
                     @php
                         $statusColors = [
-                            'pending' => ['bg' => 'bg-warning-soft', 'text' => 'text-warning-800'],
-                            'resolved' => ['bg' => 'bg-success-soft', 'text' => 'text-success-800'],
-                            'in_progress' => ['bg' => 'bg-info-soft', 'text' => 'text-info-800'],
-                            'cancelled' => ['bg' => 'bg-error-soft', 'text' => 'text-error-800']
+                            'pending' => ['bg' => 'bg-warning-soft', 'text' => 'text-warning-800', 'icon' => 'fas fa-clock'],
+                            'in_progress' => ['bg' => 'bg-info-soft', 'text' => 'text-info-800', 'icon' => 'fas fa-spinner'],
+                            'resolved' => ['bg' => 'bg-success-soft', 'text' => 'text-success-800', 'icon' => 'fas fa-check-circle'],
+                            'closed' => ['bg' => 'bg-gray-200', 'text' => 'text-gray-700', 'icon' => 'fas fa-lock'],
+                            'rejected' => ['bg' => 'bg-error-soft', 'text' => 'text-error-800', 'icon' => 'fas fa-times-circle']
                         ];
-                        $status = $statusColors[$complaint->status] ?? ['bg' => 'bg-gray-200', 'text' => 'text-gray-700'];
+                        $status = $statusColors[$complaint->status] ?? ['bg' => 'bg-gray-200', 'text' => 'text-gray-700', 'icon' => 'fas fa-question-circle'];
                     @endphp
                     <span class="badge {{ $status['bg'] }} {{ $status['text'] }} rounded-pill px-4 py-2 fs-6">
+                        <i class="{{ $status['icon'] }} me-2"></i>
                         {{ ucfirst(str_replace('_', ' ', $complaint->status)) }}
                     </span>
                 </div>
@@ -38,56 +42,100 @@
             <div class="card-body p-4 p-md-5">
                 <!-- Information Cards -->
                 <div class="row g-4 mb-5">
-                    <!-- Order Information -->
+                    <!-- Order & Problem Information -->
                     <div class="col-md-6">
                         <div class="card border-primary-200 border-2 rounded-4 h-100 hover-lift">
                             <div class="card-body p-4">
                                 <div class="d-flex align-items-center mb-3">
                                     <div class="bg-primary-100 rounded-3 p-3 me-3">
-                                        <i class="fas fa-shopping-basket text-primary-700 fs-5"></i>
+                                        <i class="fas fa-exclamation-triangle text-primary-700 fs-5"></i>
                                     </div>
-                                    <h5 class="fw-bold text-gray-900 mb-0">Order Information</h5>
+                                    <h5 class="fw-bold text-gray-900 mb-0">Complaint Information</h5>
                                 </div>
                                 <div class="ps-5">
                                     <div class="mb-3">
-                                        <span class="text-primary-700 d-block">Order ID</span>
-                                        <span class="fw-semibold fs-5 text-gray-900">#{{ $complaint->order_id }}</span>
-                                    </div>
-                                    <div>
-                                        <span class="text-primary-700 d-block">Submitted Date</span>
+                                        <span class="text-primary-700 d-block">Problem Type</span>
                                         <span
-                                            class="fw-medium text-gray-800">{{ $complaint->created_at->format('F d, Y') }}</span>
+                                            class="fw-semibold fs-6 text-gray-900">{{ $complaint->problem_type_label }}</span>
                                     </div>
+                                    @if($complaint->order)
+                                        <div class="mb-3">
+                                            <span class="text-primary-700 d-block">Order ID</span>
+                                            <span class="fw-medium text-gray-800">
+                                                #{{ $complaint->order->id }}
+                                                @if($complaint->order->seller)
+                                                    <span class="badge bg-primary-100 text-primary-700 ms-2">
+                                                        Seller: {{ $complaint->order->seller->name }}
+                                                    </span>
+                                                @endif
+                                            </span>
+                                        </div>
+                                        <div class="mb-3">
+                                            <span class="text-primary-700 d-block">Order Date</span>
+                                            <span class="fw-medium text-gray-800">
+                                                {{ $complaint->order->created_at->format('M d, Y') }}
+                                            </span>
+                                        </div>
+                                    @else
+                                        <div class="alert alert-warning border-0 bg-warning-50 rounded-3 p-3">
+                                            <i class="fas fa-info-circle me-2"></i>
+                                            Order information not available
+                                        </div>
+                                    @endif
                                 </div>
                             </div>
                         </div>
                     </div>
 
-                    <!-- Complaint Details -->
+                    <!-- Timeline & Seller Information -->
                     <div class="col-md-6">
                         <div class="card border-primary-200 border-2 rounded-4 h-100 hover-lift">
                             <div class="card-body p-4">
                                 <div class="d-flex align-items-center mb-3">
                                     <div class="bg-primary-100 rounded-3 p-3 me-3">
-                                        <i class="fas fa-clock text-primary-700 fs-5"></i>
+                                        <i class="fas fa-store-alt text-primary-700 fs-5"></i>
                                     </div>
-                                    <h5 class="fw-bold text-gray-900 mb-0">Timeline</h5>
+                                    <h5 class="fw-bold text-gray-900 mb-0">Seller & Timeline</h5>
                                 </div>
                                 <div class="ps-5">
+                                    @if($complaint->order && $complaint->order->seller)
+                                        <div class="mb-3">
+                                            <span class="text-primary-700 d-block">Seller</span>
+                                            <span class="fw-medium text-gray-800">
+                                                {{ $complaint->order->seller->name }}
+                                                @if($complaint->order->seller->email)
+                                                    <br><small
+                                                        class="text-primary-600">{{ $complaint->order->seller->email }}</small>
+                                                @endif
+                                            </span>
+                                        </div>
+                                    @endif
+
+                                    @if($complaint->handler)
+                                        <div class="mb-3">
+                                            <span class="text-primary-700 d-block">Complaint Handler</span>
+                                            <span class="fw-medium text-gray-800">
+                                                {{ $complaint->handler->name }}
+                                                <br><small class="text-primary-600">Seller Representative</small>
+                                            </span>
+                                        </div>
+                                    @endif
+
                                     <div class="mb-3">
                                         <span class="text-primary-700 d-block">Created</span>
-                                        <span class="fw-medium text-gray-800">{{ $complaint->created_at->format('F d, Y') }}
-                                            at {{ $complaint->created_at->format('g:i A') }}</span>
+                                        <span class="fw-medium text-gray-800">
+                                            {{ $complaint->created_at->format('F d, Y') }} at
+                                            {{ $complaint->created_at->format('g:i A') }}
+                                        </span>
                                     </div>
-                                    <div class="mb-3">
-                                        <span class="text-primary-700 d-block">Last Updated</span>
-                                        <span class="fw-medium text-gray-800">{{ $complaint->updated_at->format('F d, Y') }}
-                                            at {{ $complaint->updated_at->format('g:i A') }}</span>
-                                    </div>
-                                    @if($complaint->admin)
+
+                                    @if($complaint->updated_at->gt($complaint->created_at))
                                         <div>
-                                            <span class="text-primary-700 d-block">Assigned Admin</span>
-                                            <span class="fw-medium text-gray-800">{{ $complaint->admin->name }}</span>
+                                            <span class="text-primary-700 d-block">Last Updated</span>
+                                            <span class="fw-medium text-gray-800">
+                                                {{ $complaint->updated_at->format('F d, Y') }} at
+                                                {{ $complaint->updated_at->format('g:i A') }}
+                                            </span>
                                         </div>
                                     @endif
                                 </div>
@@ -109,32 +157,36 @@
                     </div>
                 </div>
 
-                <!-- Admin Response -->
-                @if($complaint->admin_response)
+                <!-- Seller Response -->
+                @if($complaint->seller_response)
                     <div class="mb-4">
                         <h5 class="fw-bold mb-3 d-flex align-items-center">
-                            <i class="fas fa-headset text-primary-600 me-2"></i>
-                            Admin Response
+                            <i class="fas fa-store-alt text-primary-600 me-2"></i>
+                            Seller's Response
                         </h5>
-                        <div class="card border-0 bg-success-soft rounded-4">
+                        <div class="card border-0 bg-info-soft rounded-4">
                             <div class="card-body p-4">
                                 <div class="d-flex align-items-start">
                                     <div class="bg-primary-100 rounded-3 p-3 me-3">
-                                        <i class="fas fa-user-shield text-primary-700 fs-5"></i>
+                                        <i class="fas fa-user-tie text-primary-700 fs-5"></i>
                                     </div>
                                     <div class="flex-grow-1">
-                                        <p class="mb-3 fs-6 text-gray-800">{{ $complaint->admin_response }}</p>
+                                        <p class="mb-3 fs-6 text-gray-800">{{ $complaint->seller_response }}</p>
                                         <div class="d-flex justify-content-between align-items-center text-primary-600">
                                             <small>
                                                 <i class="fas fa-clock me-1"></i>
-                                                Responded on {{ $complaint->updated_at->format('F d, Y') }} at
+                                                @if($complaint->handler)
+                                                    Responded by {{ $complaint->handler->name }} on
+                                                @else
+                                                    Responded on
+                                                @endif
+                                                {{ $complaint->updated_at->format('F d, Y') }} at
                                                 {{ $complaint->updated_at->format('g:i A') }}
                                             </small>
-                                            @if($complaint->admin)
-                                                <small class="fw-medium">
-                                                    <i class="fas fa-user-tie me-1"></i>
-                                                    {{ $complaint->admin->name }}
-                                                </small>
+                                            @if($complaint->status === 'resolved')
+                                                <span class="badge bg-success-soft text-success-800 rounded-pill px-3 py-1">
+                                                    <i class="fas fa-check me-1"></i>Resolved
+                                                </span>
                                             @endif
                                         </div>
                                     </div>
@@ -143,29 +195,85 @@
                         </div>
                     </div>
                 @else
-                    <!-- Pending Status -->
-                    <div class="alert border-0 bg-warning-soft rounded-4 d-flex align-items-center p-4">
-                        <div class="bg-primary-100 rounded-3 p-3 me-3">
-                            <i class="fas fa-clock text-primary-700 fs-5"></i>
+                    <!-- Status-specific messages -->
+                    @if($complaint->status === 'rejected')
+                        <div class="alert border-0 bg-error-soft rounded-4 d-flex align-items-center p-4 mb-4">
+                            <div class="bg-primary-100 rounded-3 p-3 me-3">
+                                <i class="fas fa-times-circle text-primary-700 fs-5"></i>
+                            </div>
+                            <div>
+                                <h6 class="fw-bold text-gray-900 mb-1">Complaint Rejected</h6>
+                                <p class="text-primary-700 mb-0">The seller has reviewed your complaint and found it invalid.</p>
+                            </div>
                         </div>
-                        <div>
-                            <h6 class="fw-bold text-gray-900 mb-1">Under Review</h6>
-                            <p class="text-primary-700 mb-0">Your complaint is being reviewed. An admin will respond shortly.
-                            </p>
+                    @elseif($complaint->status === 'closed')
+                        <div class="alert border-0 bg-gray-100 rounded-4 d-flex align-items-center p-4 mb-4">
+                            <div class="bg-primary-100 rounded-3 p-3 me-3">
+                                <i class="fas fa-lock text-primary-700 fs-5"></i>
+                            </div>
+                            <div>
+                                <h6 class="fw-bold text-gray-900 mb-1">Complaint Closed</h6>
+                                <p class="text-primary-700 mb-0">This complaint has been closed. No further action is required.</p>
+                            </div>
                         </div>
-                    </div>
+                    @elseif($complaint->status === 'in_progress')
+                        <div class="alert border-0 bg-info-soft rounded-4 d-flex align-items-center p-4 mb-4">
+                            <div class="bg-primary-100 rounded-3 p-3 me-3">
+                                <i class="fas fa-spinner text-primary-700 fs-5"></i>
+                            </div>
+                            <div>
+                                <h6 class="fw-bold text-gray-900 mb-1">Under Investigation</h6>
+                                <p class="text-primary-700 mb-0">The seller is currently investigating your complaint. You'll
+                                    receive a response shortly.</p>
+                            </div>
+                        </div>
+                    @else
+                        <!-- Default pending status -->
+                        <div class="alert border-0 bg-warning-soft rounded-4 d-flex align-items-center p-4 mb-4">
+                            <div class="bg-primary-100 rounded-3 p-3 me-3">
+                                <i class="fas fa-clock text-primary-700 fs-5"></i>
+                            </div>
+                            <div>
+                                <h6 class="fw-bold text-gray-900 mb-1">Awaiting Seller Response</h6>
+                                <p class="text-primary-700 mb-0">Your complaint has been submitted to the seller. They typically
+                                    respond within 24-48 hours.</p>
+                            </div>
+                        </div>
+                    @endif
                 @endif
 
-                <!-- Action Buttons -->
+                <!-- Action Buttons & Information -->
                 <div class="d-flex justify-content-between align-items-center mt-5 pt-4 border-top border-primary-200">
-                    <a href="{{ route('complaints.index') }}" class="btn btn-outline-primary rounded-pill px-4">
-                        <i class="fas fa-list me-2"></i>View All Complaints
-                    </a>
-                    @if($complaint->status !== 'resolved')
+                    <div>
+                        <a href="{{ route('complaints.index') }}"
+                            class="btn btn-outline-primary rounded-pill px-4 me-3">
+                            <i class="fas fa-list me-2"></i>View All Complaints
+                        </a>
+                    </div>
+
+                    @if(in_array($complaint->status, ['pending', 'in_progress']))
                         <div class="text-end">
-                            <small class="text-primary-600 d-block mb-1">Expected response within 24-48 hours</small>
+                            <small class="text-primary-600 d-block mb-1">
+                                <i class="fas fa-info-circle me-1"></i>
+                                @if($complaint->status === 'in_progress')
+                                    Seller is currently reviewing your complaint
+                                @else
+                                    Expected seller response within 24-48 hours
+                                @endif
+                            </small>
                             <span class="badge bg-primary-100 text-primary-700 rounded-pill px-3 py-2">
-                                <i class="fas fa-hourglass-half me-1"></i>Processing
+                                <i class="fas fa-hourglass-half me-1"></i>
+                                @if($complaint->status === 'in_progress')
+                                    Under Review
+                                @else
+                                    Waiting for Response
+                                @endif
+                            </span>
+                        </div>
+                    @elseif($complaint->status === 'resolved')
+                        <div class="text-end">
+                            <span class="badge bg-success-soft text-success-800 rounded-pill px-3 py-2">
+                                <i class="fas fa-check-circle me-1"></i>Resolved Successfully
                             </span>
                         </div>
                     @endif
@@ -478,6 +586,21 @@
             color: white !important;
             transform: translateY(-2px);
             box-shadow: 0 4px 12px rgba(110, 128, 85, 0.2);
+        }
+
+        .btn-outline-secondary {
+            background-color: transparent !important;
+            border: 2px solid var(--color-gray-400) !important;
+            color: var(--color-gray-700) !important;
+            transition: all 0.3s ease;
+        }
+
+        .btn-outline-secondary:hover {
+            background-color: var(--color-gray-600) !important;
+            border-color: var(--color-gray-600) !important;
+            color: white !important;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(107, 114, 128, 0.2);
         }
 
         /* Cards & Effects */
