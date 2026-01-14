@@ -137,7 +137,7 @@ class CheckoutController extends Controller
                 'order_id' => $order->id,
                 'amount' => $totalAmount,
                 'payment_method' => $request->payment_method,
-                'status' => $request->payment_method === 'cod' ? 'Pending' : 'Paid',
+                'status' => 'pending',
             ]);
 
             // Clear cart

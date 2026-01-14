@@ -74,6 +74,7 @@
                             <option value="{{ $product->id }}"
                                 data-growth-route="{{ route('sellers.plants.growth.store', ['product' => $product->id]) }}"
                                 data-care-route="{{ route('sellers.plants.care.store', ['product' => $product->id]) }}"
+                                 data-image-url="{{ $product->images->first() ? asset('images/' . $product->images->first()->image_path) : asset('images/default.jpg') }}"
                                 data-product='@json($product)'>
                                 {{ $product->product_name }} (ID: PL-{{ str_pad($product->id, 3, '0', STR_PAD_LEFT) }})
                             </option>
@@ -239,10 +240,6 @@
                                 <span id="last-measured">
                                     {{ $product->growthLogs->first() ? $product->growthLogs->first()->created_at->format('d/m/Y') : 'Not measured yet' }}
                                 </span>
-
-                                <button onclick="showGrowthForm()" class="text-green-600 hover:text-green-800 font-medium">
-                                    Update <i class="fas fa-arrow-right ml-1"></i>
-                                </button>
                             </div>
                         </div>
 
@@ -312,9 +309,6 @@
 
                             <div class="text-sm text-gray-600 flex justify-between">
                                 <span id="stage-progress">Progress: {{ $progressPercent }}% of stage</span>
-                                <button onclick="showGrowthForm()" class="text-green-600 hover:text-green-800 font-medium">
-                                    Update Stage <i class="fas fa-arrow-right ml-1"></i>
-                                </button>
                             </div>
                         </div>
 
@@ -335,9 +329,6 @@
                             </div>
                             <div class="text-sm text-gray-600 flex justify-between">
                                 <span>Total logs: <span id="growth-log-count">0</span></span>
-                                <button onclick="showGrowthForm()" class="text-green-600 hover:text-green-800 font-medium">
-                                    Add Log <i class="fas fa-arrow-right ml-1"></i>
-                                </button>
                             </div>
                         </div>
 
@@ -381,10 +372,6 @@
                                 @else
                                     <span id="growth-trend">No trend data</span>
                                 @endif
-
-                                <button onclick="showGrowthForm()" class="text-green-600 hover:text-green-800 font-medium">
-                                    Update <i class="fas fa-arrow-right ml-1"></i>
-                                </button>
                             </div>
 
                         </div>
@@ -412,12 +399,6 @@
                                     <p class="text-gray-700">No watering logs yet.</p>
                                 </div>
                             </div>
-                            <div class="text-sm text-gray-600 flex justify-between">
-                                <button onclick="showCareForm('watering')"
-                                    class="text-blue-600 hover:text-blue-800 font-medium">
-                                    Log Watering <i class="fas fa-arrow-right ml-1"></i>
-                                </button>
-                            </div>
                         </div>
 
                         <!-- Latest Care Log Card -->
@@ -436,9 +417,6 @@
                             </div>
                             <div class="text-sm text-gray-600 flex justify-between">
                                 <span>Total care logs: <span id="care-log-count">0</span></span>
-                                <button onclick="showCareForm()" class="text-blue-600 hover:text-blue-800 font-medium">
-                                    Add Log <i class="fas fa-arrow-right ml-1"></i>
-                                </button>
                             </div>
                         </div>
                     </div>
@@ -451,9 +429,14 @@
                         <h3 class="text-xl font-semibold text-gray-800 mb-6">Plant Summary</h3>
 
                         <div class="flex items-center mb-6">
-                            <div class="w-20 h-20 bg-green-100 rounded-lg flex items-center justify-center mr-4">
-                                <i class="fas fa-seedling text-4xl text-green-600"></i>
-                            </div>
+                        <div class="flex-shrink-0 rounded-lg overflow-hidden flex items-center justify-center mr-4
+            w-20 h-20 sm:w-28 sm:h-28 md:w-32 md:h-32 lg:w-40 lg:h-40">
+    <img id="plant-image"
+        src="{{ $product->images->first() ? asset('images/' . urlencode($product->images->first()->image_path)) : asset('images/default.jpg') }}"
+        alt="{{ $product->product_name }}" class="w-full h-full object-cover object-center">
+</div>
+
+
                             <div>
                                 <h4 id="plant-name" class="text-lg font-bold text-gray-800">Plant Name</h4>
                                 <p id="plant-id" class="text-gray-600">ID: PL-000</p>
@@ -482,9 +465,10 @@
                             </div>
                         </div>
                         <br>
-                        <a href="{{ route('sellers.plants.care-report', $product->id) }}" class="btn btn-success">
-                            Generate Report (PDF)
+                        <a href="#" id="generate-report-btn" class="btn btn-primary">
+                            Generate Care Report
                         </a>
+
 
                     </div>
         </template>
@@ -539,6 +523,7 @@
                 const clone = template.content.cloneNode(true);
                 contentArea.appendChild(clone);
 
+
                 // Update plant summary
                 const plantName = contentArea.querySelector('#plant-name');
                 const plantId = contentArea.querySelector('#plant-id');
@@ -553,6 +538,28 @@
                 if (summarySunlight) summarySunlight.textContent = product.sunlight_requirement || 'Not set';
                 if (summaryDifficulty) summaryDifficulty.textContent = product.difficulty_level || 'Not set';
                 if (summaryStock) summaryStock.textContent = product.stock_quantity || 0;
+
+
+                // Update plant image
+                const plantImage = contentArea.querySelector('#plant-image');
+if (plantImage) {
+    plantImage.src = option.getAttribute('data-image-url');
+}
+
+
+                // Attach report button listener **after template is in the DOM**
+                const reportBtn = contentArea.querySelector('#generate-report-btn');
+                if (reportBtn) {
+                    reportBtn.addEventListener('click', function (e) {
+                        e.preventDefault();
+                        if (!selectedProductId) {
+                            alert('Please select a plant first');
+                            return;
+                        }
+                        const url = `/seller/plants/${selectedProductId}/care-report`;
+                        window.open(url, '_blank');
+                    });
+                }
 
                 // Load data
                 loadGrowthData(product.id);
@@ -760,10 +767,10 @@
 
                 if (latestLog) {
                     const latestHtml = `
-                                                                                                        <p class="font-medium text-gray-800">${latestLog.growth_stage || 'No stage'}</p>
-                                                                                                        <p class="text-gray-600 text-sm">Height: ${latestLog.height_cm || 'N/A'} cm</p>
-                                                                                                        <p class="text-gray-600 text-sm mt-1">${latestLog.notes || 'No notes'}</p>
-                                                                                                    `;
+                                                                                                                                                                                    <p class="font-medium text-gray-800">${latestLog.growth_stage || 'No stage'}</p>
+                                                                                                                                                                                    <p class="text-gray-600 text-sm">Height: ${latestLog.height_cm || 'N/A'} cm</p>
+                                                                                                                                                                                    <p class="text-gray-600 text-sm mt-1">${latestLog.notes || 'No notes'}</p>
+                                                                                                                                                                                `;
                     const latestContainer = document.getElementById('latest-growth-log');
                     const countElem = document.getElementById('growth-log-count');
                     if (latestContainer) latestContainer.innerHTML = latestHtml;
@@ -778,36 +785,48 @@
                 const wateringLogs = data.watering_logs || [];
 
                 if (wateringLogs.length > 0) {
-                    const latestWatering = wateringLogs[0];
-                    const wateringDate = new Date(latestWatering.care_date);
-                    const today = new Date();
-                    const daysDiff = Math.floor((today - wateringDate) / (1000 * 60 * 60 * 24));
+    const latestWatering = wateringLogs[0];
 
-                    const wateringHtml = `
-                                                                                                        <p class="font-medium text-gray-800">Last watered: ${daysDiff} days ago</p>
-                                                                                                        <p class="text-gray-600 text-sm">Date: ${wateringDate.toLocaleDateString()}</p>
-                                                                                                        ${latestWatering.notes ? `<p class="text-gray-600 text-sm">Notes: ${latestWatering.notes}</p>` : ''}
-                                                                                                    `;
-                    const wateringContainer = document.getElementById('watering-info');
-                    if (wateringContainer) wateringContainer.innerHTML = wateringHtml;
-                }
+    // Parse watering date and set time to midnight
+    const wateringDate = new Date(latestWatering.care_date);
+    wateringDate.setHours(0, 0, 0, 0);
+
+    // Today's date at midnight
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    const daysDiff = Math.floor((today - wateringDate) / (1000 * 60 * 60 * 24));
+
+    // Make it display "Today" if 0 days, otherwise "x days ago"
+    const lastWateredText = daysDiff === 0 ? 'Today' : `${daysDiff} day${daysDiff > 1 ? 's' : ''} ago`;
+
+    const wateringHtml = `
+        <p class="font-medium text-gray-800">Last watered: ${lastWateredText}</p>
+        <p class="text-gray-600 text-sm">Date: ${wateringDate.toLocaleDateString()}</p>
+        ${latestWatering.notes ? `<p class="text-gray-600 text-sm">Notes: ${latestWatering.notes}</p>` : ''}
+    `;
+
+    const wateringContainer = document.getElementById('watering-info');
+    if (wateringContainer) wateringContainer.innerHTML = wateringHtml;
+}
+
 
                 if (latestLog) {
                     const careDate = new Date(latestLog.care_date).toLocaleDateString();
 
                     const careHtml = `
-                                    <p class="font-medium text-gray-800">
-                                        ${formatCareType(latestLog.care_type)}
-                                    </p>
-                                    <p class="text-gray-600 text-sm">
-                                        Date: ${careDate}
-                                    </p>
-                                    <p class="text-gray-600 text-sm mt-1">
-                                        ${latestLog.description && latestLog.description.trim()
+                                                                                                                <p class="font-medium text-gray-800">
+                                                                                                                    ${formatCareType(latestLog.care_type)}
+                                                                                                                </p>
+                                                                                                                <p class="text-gray-600 text-sm">
+                                                                                                                    Date: ${careDate}
+                                                                                                                </p>
+                                                                                                                <p class="text-gray-600 text-sm mt-1">
+                                                                                                                    ${latestLog.description && latestLog.description.trim()
                             ? latestLog.description
                             : 'No notes'}
-                                    </p>
-                                `;
+                                                                                                                </p>
+                                                                                                            `;
 
                     const latestContainer = document.getElementById('latest-care-log');
                     const countElem = document.getElementById('care-log-count');
@@ -837,16 +856,16 @@
                     const typeColor = getCareTypeColor(log.care_type);
 
                     historyHtml += `
-                                                                                                        <div class="flex items-center p-3 bg-gray-50 rounded-lg">
-                                                                                                            <div class="w-10 h-10 ${typeColor.bg} rounded-lg flex items-center justify-center mr-3">
-                                                                                                                <i class="${typeIcon} ${typeColor.text}"></i>
-                                                                                                            </div>
-                                                                                                            <div class="flex-1">
-                                                                                                                <div class="font-medium text-gray-800">${formatCareType(log.care_type)}</div>
-                                                                                                                <div class="text-sm text-gray-600">${date} - ${log.notes || 'No notes'}</div>
-                                                                                                            </div>
-                                                                                                        </div>
-                                                                                                    `;
+                                                                                                                                                                                    <div class="flex items-center p-3 bg-gray-50 rounded-lg">
+                                                                                                                                                                                        <div class="w-10 h-10 ${typeColor.bg} rounded-lg flex items-center justify-center mr-3">
+                                                                                                                                                                                            <i class="${typeIcon} ${typeColor.text}"></i>
+                                                                                                                                                                                        </div>
+                                                                                                                                                                                        <div class="flex-1">
+                                                                                                                                                                                            <div class="font-medium text-gray-800">${formatCareType(log.care_type)}</div>
+                                                                                                                                                                                            <div class="text-sm text-gray-600">${date} - ${log.notes || 'No notes'}</div>
+                                                                                                                                                                                        </div>
+                                                                                                                                                                                    </div>
+                                                                                                                                                                                `;
                 });
 
                 historyContainer.innerHTML = historyHtml;
@@ -922,40 +941,6 @@
                         }
                     }
                 });
-            }
-        </script>
-
-        <script>
-            function generateReport() {
-                if (!selectedProductId || !selectedProduct) {
-                    alert('Please select a plant first');
-                    return;
-                }
-
-                const report = `
-                                                            Plant Health Report
-                                                            -------------------
-                                                            Plant Name: ${selectedProduct.product_name}
-                                                            Plant ID: PL-${String(selectedProduct.id).padStart(3, '0')}
-
-                                                            Growth Stage: ${document.getElementById('summary-stage')?.textContent || 'N/A'}
-                                                            Watering Frequency: ${selectedProduct.watering_frequency || 'Not set'}
-                                                            Sunlight Requirement: ${selectedProduct.sunlight_requirement || 'Not set'}
-                                                            Difficulty Level: ${selectedProduct.difficulty_level || 'Not set'}
-                                                            Stock Quantity: ${selectedProduct.stock_quantity || 0}
-
-                                                            Generated on: ${new Date().toLocaleString()}
-                                                            `;
-
-                const blob = new Blob([report], { type: 'text/plain' });
-                const url = URL.createObjectURL(blob);
-
-                const a = document.createElement('a');
-                a.href = url;
-                a.download = `plant-health-report-${selectedProduct.id}.txt`;
-                a.click();
-
-                URL.revokeObjectURL(url);
             }
         </script>
 

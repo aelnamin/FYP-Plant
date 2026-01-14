@@ -389,7 +389,7 @@
             {{-- RIGHT COLUMN --}}
             <div class="col-lg-4" style="height: 600px;">
                 {{-- 3. PRODUCT INVENTORY --}}
-                <div class="card border-0 shadow-sm rounded-3 mb-4 h-100">
+                <div class="card border-0 shadow-sm rounded-3 mb-4 h-120">
                     <div class="card-header bg-transparent border-0 p-4 pb-2">
                         <div class="d-flex justify-content-between align-items-center">
                             <div>
@@ -417,7 +417,7 @@
                                                                 <img src="{{ $firstImage
                                     ? asset('images/' . $firstImage->image_path)
                                     : asset('images/default-product.jpg') }}" class="rounded-2"
-                                                                    style="width: 50px; height: 50px; object-fit: cover;">
+                                                                    style="width: 70px; height: 70px; object-fit: cover;">
 
                                                                 @if(($product->stock_quantity ?? 0) <= 10)
                                                                     <span

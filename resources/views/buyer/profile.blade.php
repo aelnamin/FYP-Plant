@@ -151,7 +151,8 @@
                                         <div class="mb-2">
                                             <small class="text-muted">
                                                 <i class="bi bi-calendar me-1"></i>
-                                                {{ $group['order_date']->format('d M Y, h:i A') }}
+                                                {{ $group['order_date']->timezone('Asia/Kuala_Lumpur')->format('d M, h:i A') }}
+
                                             </small>
                                         </div>
 

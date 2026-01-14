@@ -217,14 +217,15 @@ class PlantMonitoringController extends Controller
         ));
     }
 
-    public function printCareReport(Product $product)
+    public function careReport(Product $product)
     {
-        $seller = Auth::user()->seller;
+        $seller = auth()->user()->seller;
 
         if (!$seller || $product->seller_id !== $seller->id) {
             abort(403);
         }
 
+        // Fetch growth and care logs
         $growthLogs = ProductGrowthLog::where('product_id', $product->id)
             ->where('seller_id', $seller->id)
             ->orderBy('created_at')
@@ -237,6 +238,7 @@ class PlantMonitoringController extends Controller
 
         $latestGrowth = $growthLogs->last();
 
+        // Generate PDF
         $pdf = Pdf::loadView('sellers.plants.care-report', compact(
             'product',
             'seller',
@@ -245,12 +247,7 @@ class PlantMonitoringController extends Controller
             'latestGrowth'
         ));
 
-
-        return $pdf->stream(
-            'Plant_Care_Report_' . $product->id . '.pdf'
-        );
-
+        // Stream the PDF directly in browser
+        return $pdf->stream("care-report-{$product->id}.pdf");
     }
-
-
 }

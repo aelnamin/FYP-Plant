@@ -217,10 +217,9 @@ Route::middleware(['auth', 'role:seller'])
          ->name('chats.send');
 
       // routes/web.php
-      Route::get(
-         '/plants/{product}/care-report',
-         [PlantMonitoringController::class, 'printCareReport']
-      )->name('plants.care-report');
+      Route::get('/plants/{product}/care-report', [PlantMonitoringController::class, 'careReport'])
+         ->name('plants.care-report');
+
 
       Route::get('/plants', [PlantMonitoringController::class, 'index'])->name('plants.index'); // list all plants
       Route::get('/plants/{plant}', [PlantMonitoringController::class, 'show'])->name('plants.show'); // show single plant

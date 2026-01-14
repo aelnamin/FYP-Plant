@@ -8,6 +8,8 @@ use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\Product;
 use App\Models\Seller;
+use App\Models\Transaction;
+
 
 class SellerOrderController extends Controller
 {
@@ -68,6 +70,18 @@ class SellerOrderController extends Controller
         OrderItem::where('order_id', $orderId)
             ->whereHas('product', fn($q) => $q->where('seller_id', $seller->id))
             ->update(['seller_status' => 'paid']);
+
+        //  Check if ALL items in this order are paid
+        $allPaid = OrderItem::where('order_id', $orderId)
+            ->where('seller_status', '!=', 'paid')
+            ->doesntExist();
+
+        //  If yes → update transaction status
+        if ($allPaid) {
+            Transaction::where('order_id', $orderId)
+                ->update(['status' => 'paid']);
+        }
+
 
         return back()->with('success', 'Your products have been marked as Paid.');
     }

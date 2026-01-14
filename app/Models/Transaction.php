@@ -20,4 +20,11 @@ class Transaction extends Model
     {
         return $this->belongsTo(Order::class);
     }
+    public function getPaymentMethodLabelAttribute()
+    {
+        return $this->payment_method
+            ? ucwords(str_replace('_', ' ', $this->payment_method))
+            : 'Online Payment';
+    }
+
 }
