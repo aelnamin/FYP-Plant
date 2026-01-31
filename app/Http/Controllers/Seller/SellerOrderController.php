@@ -28,21 +28,58 @@ class SellerOrderController extends Controller
 
         if (!$seller) {
             // No seller record found for this user
-            return view('sellers.orders.index', ['orders' => collect(), 'sellerId' => null]);
+            return view('sellers.orders.index', [
+                'orders' => collect(),
+                'sellerId' => null
+            ]);
         }
 
-        $sellerId = $seller->id; // This is the seller_id used in products table
+        $sellerId = $seller->id;
 
-        // Fetch all orders containing this seller's products (no status filter)
+        // Fetch all orders containing this seller's products
         $orders = Order::whereHas('items.product', function ($q) use ($sellerId) {
             $q->where('seller_id', $sellerId);
         })
-            ->with(['items.product.images', 'buyer'])
+            ->with(['items.product.images', 'buyer', 'deliveries'])
             ->latest()
             ->get();
 
+        // Map orders to include seller-specific items, subtotal, delivery, and total
+        $orders = $orders->map(function ($order) use ($sellerId) {
+
+            // Filter items that belong to this seller
+            $sellerItems = $order->items->filter(fn($item) => $item->product && $item->product->seller_id == $sellerId);
+
+            if ($sellerItems->count() <= 0)
+                return null; // skip if no items for this seller
+
+            // Subtotal for this seller
+            $productSubtotal = $sellerItems->sum(fn($item) => $item->price * $item->quantity);
+
+            // Total order (all sellers/items) to check for free delivery
+            $orderTotal = $order->items->sum(fn($item) => $item->price * $item->quantity);
+
+            // Delivery fee: free if total order >= 150
+            $deliveryPerSeller = $orderTotal >= 150 ? 0 : 10.60;
+
+            // Seller total = seller subtotal + delivery
+            $sellerTotal = $productSubtotal + $deliveryPerSeller;
+
+            // Attach to order object for Blade
+            $order->sellerItems = $sellerItems;
+            $order->productSubtotal = $productSubtotal;
+            $order->deliveryPerSeller = $deliveryPerSeller;
+            $order->sellerTotal = $sellerTotal;
+            $order->sellerStatus = $sellerItems->first()->seller_status;
+
+            return $order;
+        })
+            ->filter() // remove null orders
+            ->values(); // reindex collection
+
         return view('sellers.orders.index', compact('orders', 'sellerId'));
     }
+
 
     /**
      * Show single order details for this seller

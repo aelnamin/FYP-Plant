@@ -137,7 +137,7 @@
 
                         <!-- Group by seller if not filtered -->
                         @if(!$sellerId)
-                            @foreach($items->groupBy(fn($item) => $item->product->seller_id) as $sellerId => $sellerItems)
+                        @foreach($items->groupBy(fn($item) => $item->product->seller_id) as $loopSellerId => $sellerItems)
                                 @php $seller = $sellerItems->first()->product->seller; @endphp
                                 <div class="mb-4 pb-4 border-bottom" style="border-color: #e9ecef !important;">
                                     <div class="d-flex align-items-center mb-3">
@@ -145,7 +145,7 @@
                                             <i class="fas fa-store" style="color: #6c757d;"></i>
                                         </div>
                                         <span class="fw-bold text-dark">{{ $seller->business_name ?? 'Seller' }}</span>
-                                        <a href="{{ route('buyer.orders.show', ['order' => $order->id, 'seller' => $sellerId]) }}"
+                                        <a href="{{ route('buyer.orders.show', ['order' => $order->id, 'seller' => $loopSellerId]) }}">
                                             class="btn btn-sm btn-outline-secondary ms-auto">
                                             View Seller Items Only
                                         </a>

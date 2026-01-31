@@ -35,7 +35,7 @@
                                 <div class="d-flex align-items-center">
                                     <span class="badge bg-primary-100 text-primary-700 px-2 py-1 me-2">
                                         <i class="fas fa-user-check me-1"></i>
-                                        Custumers & Sellers
+                                        Customers & Sellers
                                     </span>
                                 </div>
                             </div>
@@ -151,18 +151,10 @@
                                 </div>
                             </div>
                             <div class="col-md-3 col-6">
-    <div class="text-center p-4 bg-delivered-soft rounded-3">
-        <i class="fas fa-box-open text-delivered-600 fs-3 mb-2"></i>
-        <div class="h4 fw-bold text-delivered-600 mb-1">{{ $deliveredOrders ?? '0' }}</div>
-        <div class="text-gray-700">Delivered</div>
-    </div>
-</div>
-
-                            <div class="col-md-3 col-6">
-                                <div class="text-center p-4 bg-danger-soft rounded-3">
-                                    <i class="fas fa-times-circle text-danger fs-3 mb-2"></i>
-                                    <div class="h4 fw-bold text-danger mb-1">{{ $cancelledOrders ?? '0' }}</div>
-                                    <div class="text-gray-700">Cancelled</div>
+                                <div class="text-center p-4 bg-delivered-soft rounded-3">
+                                    <i class="fas fa-box-open text-delivered-600 fs-3 mb-2"></i>
+                                    <div class="h4 fw-bold text-delivered-600 mb-1">{{ $deliveredOrders ?? '0' }}</div>
+                                    <div class="text-gray-700">Delivered</div>
                                 </div>
                             </div>
                         </div>
@@ -193,14 +185,6 @@
                                     <span>Sellers Pending</span>
                                 </div>
                                 <span class="badge bg-warning rounded-pill">{{ $pendingSellers }}</span>
-                            </a>
-                            <a href="{{ route('admin.complaints.index', ['status' => 'open']) }}"
-                                class="list-group-item list-group-item-action border-0 px-0 py-3 d-flex justify-content-between align-items-center">
-                                <div>
-                                    <i class="fas fa-exclamation-triangle text-danger me-2"></i>
-                                    <span>Open Complaints</span>
-                                </div>
-                                <span class="badge bg-danger rounded-pill">{{ $openComplaints }}</span>
                             </a>
                         </div>
                     </div>
@@ -284,11 +268,11 @@
             --color-warning-soft: #fff4e0;
             --color-warning-700: #9c6c1a;
 
-    
+
             --color-delivered-50: #f5f0ff;
-    --color-delivered-soft:rgb(219, 228, 246);
-    --color-delivered-600:rgb(51, 44, 108);
-    --color-delivered-700:rgb(34, 50, 120);
+            --color-delivered-soft: rgb(219, 228, 246);
+            --color-delivered-600: rgb(51, 44, 108);
+            --color-delivered-700: rgb(34, 50, 120);
 
 
 
@@ -361,20 +345,20 @@
         }
 
         .bg-delivered-50 {
-    background-color: var(--color-delivered-50) !important;
-}
+            background-color: var(--color-delivered-50) !important;
+        }
 
-.bg-delivered-soft {
-    background-color: var(--color-delivered-soft) !important;
-}
+        .bg-delivered-soft {
+            background-color: var(--color-delivered-soft) !important;
+        }
 
-.text-delivered-600 {
-    color: var(--color-delivered-600) !important;
-}
+        .text-delivered-600 {
+            color: var(--color-delivered-600) !important;
+        }
 
-.text-delivered-700 {
-    color: var(--color-delivered-700) !important;
-}
+        .text-delivered-700 {
+            color: var(--color-delivered-700) !important;
+        }
 
         .bg-info-50 {
             background-color: var(--color-info-50) !important;

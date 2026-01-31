@@ -12,7 +12,6 @@ use App\Models\Complaint;
 use App\Models\Delivery;
 
 
-
 class Order extends Model
 {
     use HasFactory;
@@ -66,14 +65,14 @@ class Order extends Model
         return $this->hasOne(Delivery::class);
     }
 
-    // In Order.php
+
     public function deliveries()
     {
         return $this->hasMany(Delivery::class);
     }
 
 
-    // Add relationship to get seller's items
+    // get sellers items
     public function sellerItems($sellerId)
     {
         return $this->items()->where('seller_id', $sellerId);

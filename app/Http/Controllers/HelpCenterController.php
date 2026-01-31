@@ -11,7 +11,7 @@ class HelpCenterController extends Controller
     // Show the help center page
     public function index()
     {
-        // Fetch all complaints submitted by the logged-in buyer
+        // Fetch all complaints submitted by the logged in buyer
         $complaints = Complaint::where('user_id', Auth::id())
             ->orderBy('created_at', 'desc')
             ->get();
@@ -38,7 +38,7 @@ class HelpCenterController extends Controller
             ->with('success', 'Your complaint has been submitted successfully!');
     }
 
-    // Optional: View a single complaint
+    // View a single complaint
     public function show($id)
     {
         $complaint = Complaint::where('user_id', Auth::id())

@@ -20,7 +20,7 @@ class PaymentController extends Controller
         return view('admin.orders.show', compact('order'));
     }
 
-    // Mark order as Paid (simulation)
+    // Mark order as Paid 
     public function markAsPaid(Order $order)
     {
         $order->update(['status' => 'Paid']);

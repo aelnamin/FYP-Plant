@@ -17,8 +17,8 @@ class HomeController extends Controller
     {
         // Best Sellers (products with sales)
         $bestSellers = Product::with(['images', 'seller'])
-            ->where('approval_status', 'Approved') // assuming same column as buyer dashboard
-            ->whereHas('orderItems') // only products with at least 1 sale
+            ->where('approval_status', 'Approved')
+            ->whereHas('orderItems')
             ->withCount([
                 'orderItems as total_sold' => function ($query) {
                     $query->select(DB::raw('SUM(quantity)'));
@@ -37,7 +37,7 @@ class HomeController extends Controller
 
         // Top Sellers (approved sellers, ranked by average rating)
         $topSellers = Seller::with('user')
-            ->withAvg('reviews', 'rating') // through hasManyThrough from products
+            ->withAvg('reviews', 'rating')
             ->where('verification_status', 'Approved')
             ->orderByDesc('reviews_avg_rating')
             ->take(4)

@@ -156,10 +156,17 @@
 
                         {{-- Calculate subtotal, shipping, and total --}}
                         @php
-                            $subtotal = $items->sum(fn($item) => $item->price * $item->quantity);
-                            $delivery = 10.60; // flat per seller
-                            $total = $subtotal + $delivery;
-                        @endphp
+    // Subtotal of displayed items (per seller)
+    $subtotal = $items->sum(fn($item) => $item->price * $item->quantity);
+
+    // Delivery fee based on **entire order**, not just filtered items
+    $orderSubtotal = $order->items->sum(fn($item) => $item->price * $item->quantity);
+    $delivery = $orderSubtotal >= 150 ? 0 : 10.60;
+
+    // Total for display
+    $total = $subtotal + $delivery;
+@endphp
+
 
                         <div class="d-flex justify-content-between mb-2">
                             <span class="text-secondary">Subtotal</span>

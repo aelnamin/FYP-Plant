@@ -19,7 +19,7 @@ class ComplaintController extends Controller
     {
         $complaints = Complaint::where('user_id', auth()->id())
             ->orderBy('created_at', 'desc')
-            ->paginate(10); // adjust per-page number as needed
+            ->paginate(10);
 
 
         return view('buyer.complaints.index', compact('complaints'));

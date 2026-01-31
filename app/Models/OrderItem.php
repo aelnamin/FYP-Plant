@@ -34,7 +34,7 @@ class OrderItem extends Model
     {
         return $this->belongsTo(Seller::class, 'seller_id');
     }
-    // Add scope for seller items
+
     public function scopeForSeller($query, $sellerId)
     {
         return $query->where('seller_id', $sellerId);

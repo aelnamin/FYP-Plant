@@ -68,7 +68,8 @@ class CheckoutController extends Controller
 
         // Delivery fee per seller (you can adjust RM 10.60 per seller)
         $deliveryFeePerSeller = 10.60;
-        $delivery = count($groupedCart) * $deliveryFeePerSeller;
+        // Free shipping if total >= RM150
+        $delivery = $total >= 150 ? 0 : count($groupedCart) * $deliveryFeePerSeller;
 
         return view('buyer.checkout', compact('cartItems', 'total', 'groupedCart', 'delivery'));
     }
@@ -88,7 +89,7 @@ class CheckoutController extends Controller
         }
 
         $cartItems = CartItem::where('cart_id', $cart->id)
-            ->with('product')  // only product needed
+            ->with('product')
             ->get();
 
 
@@ -108,20 +109,34 @@ class CheckoutController extends Controller
             // Calculate totals
             $groupedCart = $cartItems->groupBy(fn($item) => $item->product->seller_id);
             $deliveryFeePerSeller = 10.60;
-            $delivery = count($groupedCart) * $deliveryFeePerSeller;
-            $totalAmount = $cartItems->sum(fn($item) => $item->product->price * $item->quantity) + $delivery;
+
+            $productsTotal = $cartItems->sum(fn($item) => $item->product->price * $item->quantity);
+
+            // Free shipping if total >= RM150
+            $delivery = $productsTotal >= 150 ? 0 : count($groupedCart) * $deliveryFeePerSeller;
+
+            $totalAmount = $productsTotal + $delivery;
 
             // Create order
             $order = Order::create([
                 'buyer_id' => $user->id,
-                'status' => 'Pending', // initial order status
+                'status' => 'Pending',
                 'total_amount' => $totalAmount,
                 'payment_method' => $request->payment_method,
             ]);
 
 
-            // Create order items - UPDATED VERSION
+            // Create order items 
+
             foreach ($cartItems as $item) {
+                $product = \App\Models\Product::lockForUpdate()->find($item->product_id);
+
+                if ($product->stock_quantity < $item->quantity) {
+                    throw new \Exception('Insufficient stock for ' . $product->product_name);
+                }
+
+                $product->decrement('stock_quantity', $item->quantity);
+
                 OrderItem::create([
                     'order_id' => $order->id,
                     'product_id' => $item->product_id,

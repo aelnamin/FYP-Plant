@@ -6,9 +6,10 @@
     <div class="container py-5">
         <!-- Header -->
         <div class="d-flex justify-content-between align-items-center mb-5">
-            <div>
-                <h1 class="h2 fw-bold text-gray-900 mb-2">Customer Complaints</h1>
-                <p class="text-primary-600 mb-0">Manage and respond to customer complaints</p>
+            <!-- Page Header -->
+            <div class="page-header">
+                <h1 class="page-title">Complaints</h1>
+                <p class="page-subtitle">Manage customers complaint</p>
             </div>
             <div class="text-end">
                 <div class="badge bg-primary-100 text-primary-700 rounded-pill px-3 py-2 mb-2">
@@ -496,6 +497,21 @@
         .card:hover {
             transform: translateY(-2px);
             box-shadow: 0 8px 20px rgba(110, 128, 85, 0.12) !important;
+        }
+
+        .page-header {
+            margin-bottom: 2rem;
+        }
+
+        .page-title {
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 0.25rem;
+        }
+
+        .page-subtitle {
+            color: #6c757d;
+            font-size: 0.9rem;
         }
     </style>
 @endsection

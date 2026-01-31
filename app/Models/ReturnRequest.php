@@ -9,12 +9,10 @@ class ReturnRequest extends Model
 {
     use HasFactory;
 
-    // Explicit table name
+
     protected $table = 'returns';
 
-    /**
-     * Mass assignable fields
-     */
+
     protected $fillable = [
         'order_id',
         'order_item_id',
@@ -73,10 +71,7 @@ class ReturnRequest extends Model
         return $this->belongsTo(User::class, 'seller_id');
     }
 
-    /**
-     * Accessor for image URL
-     * Returns full storage URL if image exists
-     */
+
     public function getImageUrlAttribute()
     {
         return $this->image ? asset('storage/' . $this->image) : null;

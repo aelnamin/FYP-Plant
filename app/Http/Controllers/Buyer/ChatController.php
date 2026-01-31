@@ -10,12 +10,7 @@ use Illuminate\Support\Facades\Auth;
 
 class ChatController extends Controller
 {
-    /**
-     * Show chat page with optional active seller
-     * URL:
-     *  - /buyer/chats
-     *  - /buyer/chats/{seller}
-     */
+
     public function index(Request $request, $sellerId = null)
     {
         $buyerId = Auth::id();
@@ -40,7 +35,7 @@ class ChatController extends Controller
         if ($sellerId) {
             $activeSeller = User::with('seller')->findOrFail($sellerId);
 
-            // ✅ MARK SELLER → BUYER MESSAGES AS READ
+            // MARK SELLER BUYER MESSAGES AS READ
             Message::where('sender_id', $sellerId)
                 ->where('receiver_id', $buyerId)
                 ->whereNull('read_at')

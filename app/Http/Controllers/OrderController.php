@@ -31,12 +31,18 @@ class OrderController extends Controller
 
     public function show(Request $request, $id)
     {
-        $order = Order::with(['items.product.images', 'buyer', 'items.product.seller', 'delivery', 'transaction',])
+        $order = Order::with([
+            'items.product.images',
+            'buyer',
+            'items.product.seller',
+            'delivery',
+            'transaction',
+        ])
             ->where('id', $id)
             ->where('buyer_id', auth()->id())
-            ->firstOrFail(); // ✅ FIX
+            ->firstOrFail();
 
-        // Optional seller filter
+        // Seller filter
         $sellerId = $request->query('seller');
         $selectedSeller = null;
 
@@ -45,21 +51,32 @@ class OrderController extends Controller
                 fn($item) => $item->product->seller_id == $sellerId
             );
 
-            $selectedSeller = $order->items
-                ->first(fn($item) => $item->product->seller_id == $sellerId)
-                ?->product
-                    ?->seller;
+            $selectedSeller = optional(
+                $order->items->first(fn($item) => $item->product->seller_id == $sellerId)
+            )->product?->seller;
         } else {
             $items = $order->items;
         }
 
-        $sellerCount = $sellerId
-            ? 1
-            : $items->pluck('product.seller_id')->unique()->count();
+        // =========================
+        // ✅ ORDER-LEVEL SUBTOTAL
+        // =========================
+        $orderSubtotal = $order->items->sum(
+            fn($item) => $item->price * $item->quantity
+        );
 
-        $deliveryPerSeller = 10.60;
-        $deliveryFee = $deliveryPerSeller * $sellerCount;
-        $subtotal = $items->sum(fn($item) => $item->price * $item->quantity);
+        // =========================
+        // ✅ DELIVERY RULE (SAME AS PROFILE)
+        // =========================
+        $deliveryFee = $orderSubtotal >= 150 ? 0 : 10.60;
+
+        // =========================
+        // DISPLAY TOTAL (CURRENT VIEW)
+        // =========================
+        $subtotal = $items->sum(
+            fn($item) => $item->price * $item->quantity
+        );
+
         $total = $subtotal + $deliveryFee;
 
         return view('buyer.order-details', compact(
@@ -69,10 +86,10 @@ class OrderController extends Controller
             'selectedSeller',
             'subtotal',
             'deliveryFee',
-            'total',
-            'sellerCount'
+            'total'
         ));
     }
+
 
     public function update(Request $request, $id)
     {
@@ -115,7 +132,7 @@ class OrderController extends Controller
             abort(403, 'Unauthorized action.');
         }
 
-        // Optional seller filter
+        // seller filter
         $sellerId = $request->query('seller');
 
         // Update items
@@ -130,7 +147,7 @@ class OrderController extends Controller
         // Update overall order status
         $order->update([
             'status' => 'COMPLETED',
-            'completed_at' => now(), // optional timestamp
+            'completed_at' => now(), // timestamp
         ]);
 
         return redirect()->back()->with('success', 'Order marked as received!');

@@ -100,23 +100,7 @@
                             </div>
                         </div>
                         <div class="card-body p-4">
-                            <!-- COD Option -->
-                            <div class="payment-option active mb-3" onclick="selectPayment('cod', event)">
 
-                                <div class="d-flex align-items-center">
-                                    <div class="rounded-3 p-2 me-3" style="background-color: #e8f0e8;">
-                                        <i class="fas fa-money-bill-wave" style="color: #8a9c6a;"></i>
-                                    </div>
-                                    <div class="flex-grow-1">
-                                        <h6 class="fw-bold text-dark mb-1">Cash on Delivery</h6>
-                                        <p class="text-secondary small mb-0">Pay when order arrives</p>
-                                    </div>
-                                    <div class="form-check">
-                                        <input class="form-check-input" type="radio" name="payment_method" value="cod"
-                                            id="cod" checked style="background-color: #8a9c6a; border-color: #8a9c6a;">
-                                    </div>
-                                </div>
-                            </div>
 
                             <!-- Online Payment Option -->
                             <div class="payment-option" onclick="selectPayment('online', event)">
@@ -262,6 +246,10 @@
                                     <span class="text-secondary">Delivery (inc. 6% SST)</span>
                                     <span class="fw-semibold text-dark">RM {{ number_format($delivery, 2) }}</span>
                                 </div>
+
+                                @if($delivery == 0)
+                                    <small class="text-success">You qualify for free shipping!</small>
+                                @endif
                                 <hr class="my-3" style="border-color: #e9ecef;">
                                 <div class="d-flex justify-content-between align-items-center">
                                     <div>

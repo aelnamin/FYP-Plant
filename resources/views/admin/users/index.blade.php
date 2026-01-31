@@ -10,9 +10,6 @@
                 <h1 class="h3 fw-bold text-gray-900 mb-1">User Management</h1>
                 <p class="text-gray-600 mb-0">Manage buyers and sellers</p>
             </div>
-            <a href="{{ route('admin.users.create') }}" class="btn btn-primary">
-                <i class="bi bi-plus-circle me-1"></i> Add New User
-            </a>
         </div>
 
         <!-- Centered Search & Filter -->
@@ -94,16 +91,12 @@
                                                     class="btn btn-sm btn-outline-primary">
                                                     Edit
                                                 </a>
-                                                <a href="{{ route('admin.users.reports', $u->id) }}"
-                                                    class="btn btn-sm btn-outline-warning ms-1">
-                                                    Reports
-                                                </a>
                                                 <form action="{{ route('admin.users.destroy', $u->id) }}" method="POST"
                                                     class="d-inline ms-1"
                                                     onsubmit="return confirm('Are you sure you want to delete this user?');">
                                                     @csrf
                                                     @method('DELETE')
-                                                    <button type="submit" class="btn btn-sm btn-outline-danger">
+                                                    <button type="submit" class="btn btn-sm btn-outline-warning">
                                                         Delete
                                                     </button>
                                                 </form>

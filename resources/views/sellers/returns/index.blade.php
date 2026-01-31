@@ -4,6 +4,22 @@
 
 @section('content')
     <div class="container py-5">
+        <style>
+             .page-header {
+                margin-bottom: 2rem;
+            }
+
+            .page-title {
+                font-weight: 600;
+                color: #2c3e50;
+                margin-bottom: 0.25rem;
+            }
+
+            .page-subtitle {
+                color: #6c757d;
+                font-size: 0.9rem;
+            }
+        </style>
 
         <!-- Header -->
         <div class="d-flex justify-content-between align-items-center mb-5">

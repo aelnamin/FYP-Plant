@@ -4,7 +4,7 @@
 
 @section('content')
     <div class="container-fluid py-4">
-       
+
 
         {{-- SUMMARY CARDS --}}
         <div class="row g-4 mb-5">
@@ -47,25 +47,25 @@
             </div>
 
             <div class="col-xl-3 col-md-6">
-    <div class="card border rounded-4 overflow-hidden h-100 shadow-sm">
-        <div class="card-body p-4">
-            <div class="d-flex justify-content-between align-items-start">
-                <div>
-                    <span class="text-muted small fw-semibold">TOTAL SELLERS</span>
-                    <h2 class="fw-bold mt-2 mb-0 text-dark">
-    {{ $totalRegisteredSellers }}
-    <span class="d-block fs-6 text-success">Active: {{ $totalActiveSellers }}</span>
-</h2>
+                <div class="card border rounded-4 overflow-hidden h-100 shadow-sm">
+                    <div class="card-body p-4">
+                        <div class="d-flex justify-content-between align-items-start">
+                            <div>
+                                <span class="text-muted small fw-semibold">TOTAL SELLERS</span>
+                                <h2 class="fw-bold mt-2 mb-0 text-dark">
+                                    {{ $totalRegisteredSellers }}
+                                    <span class="d-block fs-6 text-success">Active: {{ $totalActiveSellers }}</span>
+                                </h2>
 
-                    <span class="text-muted small">Registered / Making sales</span>
-                </div>
-                <div class="bg-warning bg-opacity-10 p-3 rounded-3">
-                    <i class="fas fa-store text-warning fs-4"></i>
+                                <span class="text-muted small">Registered / Making sales</span>
+                            </div>
+                            <div class="bg-warning bg-opacity-10 p-3 rounded-3">
+                                <i class="fas fa-store text-warning fs-4"></i>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
-        </div>
-    </div>
-</div>
 
 
             <div class="col-xl-3 col-md-6">

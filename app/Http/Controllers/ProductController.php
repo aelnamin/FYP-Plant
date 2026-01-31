@@ -13,7 +13,7 @@ use Illuminate\Support\Facades\Auth;
 class ProductController extends Controller
 {
     /* -------------------------------------------------------
-       PUBLIC INDEX (not admin)
+       PUBLIC INDEX 
     ------------------------------------------------------- */
     public function index()
     {
@@ -44,14 +44,14 @@ class ProductController extends Controller
             'seller',
         ])->findOrFail($id);
 
-        // ✅ PAGINATED REVIEWS
+        // PAGINATED REVIEWS
         $reviews = $product->reviews()
-            ->orderBy('created_at', 'desc') // optional, newest first
+            ->orderBy('created_at', 'desc') // newest first
             ->paginate(2)
-            ->withQueryString(); // remove ->withFragment
+            ->withQueryString();
 
 
-        // ✅ Rating summary (DO NOT use paginated data)
+        // Rating summary 
         $averageRating = round(
             $product->reviews()->avg('rating'),
             1

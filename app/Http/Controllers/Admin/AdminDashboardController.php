@@ -70,7 +70,7 @@ class AdminDashboardController extends Controller
             ->limit(6)
             ->get();
 
-        // ✅ Recent orders (FIX for undefined variable)
+        // Recent orders 
         $recentOrders = Order::with('user')
             ->latest()
             ->limit(5)

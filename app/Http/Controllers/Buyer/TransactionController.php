@@ -41,10 +41,10 @@ class TransactionController extends Controller
             return $item->product->price * $item->quantity;
         });
 
-        // Create Order ✅
+        // Create Order 
         $order = Order::create([
             'buyer_id' => $user->id,
-            'total_amount' => $total,   // ✅ FIXED
+            'total_amount' => $total,
             'status' => 'Pending',
         ]);
 
@@ -95,24 +95,33 @@ class TransactionController extends Controller
     {
         abort_if($order->buyer_id !== Auth::id(), 403);
 
-        // Get seller ID from query parameter
         $sellerId = request()->query('seller');
 
-        // If no seller ID, show all items or redirect
-        if (!$sellerId) {
-            return redirect()->route('buyer.order-details', ['order' => $order->id]);
-        }
+        // Filter items if seller ID is given
+        $items = $sellerId
+            ? $order->items->filter(fn($item) => $item->product->seller_id == $sellerId)
+            : $order->items;
 
-        // Filter items by seller
-        $items = $order->items->filter(fn($item) => $item->product->seller_id == $sellerId);
+        // Calculate free delivery based on ALL items in the order
+        $orderSubtotal = $order->items->sum(fn($item) => $item->price * $item->quantity);
+        $shipping = $orderSubtotal >= 150 ? 0 : 10.60;
 
+        // Subtotal for displayed items
         $subtotal = $items->sum(fn($item) => $item->price * $item->quantity);
-        $shipping = 10.60;
+
+        // Total
         $total = $subtotal + $shipping;
 
         $transaction = $order->transaction;
 
-        return view('buyer.transactions.show', compact('order', 'items', 'subtotal', 'shipping', 'total', 'transaction'));
+        return view('buyer.transactions.show', compact(
+            'order',
+            'items',
+            'subtotal',
+            'shipping',
+            'total',
+            'transaction'
+        ));
     }
 
 }

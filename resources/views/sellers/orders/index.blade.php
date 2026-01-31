@@ -60,26 +60,14 @@
 
                 @if(isset($sellerId) && $orders->count() > 0)
 
-                    <!-- Orders List -->
-                    @foreach($orders as $order)
-                        @php
-                            $deliveryPerSeller = 10.60;
-
-                            // Filter only items belonging to this seller
-                            $sellerItems = $order->items->filter(
-                                fn($item) => $item->product && $item->product->seller_id == $sellerId
-                            );
-
-                            // Skip if no items for this seller
-                            if ($sellerItems->count() <= 0)
-                                continue;
-
-                            // Product subtotal
-                            $productSubtotal = $sellerItems->sum(fn($item) => $item->price * $item->quantity);
-
-                            // Final seller total (subtotal + delivery)
-                            $sellerTotal = $productSubtotal + $deliveryPerSeller;
-
+<!-- Orders List -->
+@foreach($orders as $order)
+    @php
+        $sellerItems = $order->sellerItems;
+        $productSubtotal = $order->productSubtotal;
+        $deliveryPerSeller = $order->deliveryPerSeller;
+        $sellerTotal = $order->sellerTotal;
+       
                             // Get the first seller item status to display
                             $sellerStatus = $sellerItems->first()->seller_status;
 
@@ -178,9 +166,11 @@ $statusInfo = $statusColors[$sellerStatusNormalized] ?? ['bg' => 'bg-secondary',
                                                 <span class="fw-semibold">RM {{ number_format($productSubtotal, 2) }}</span>
                                             </div>
                                             <div class="d-flex justify-content-between mb-2">
-                                                <span class="text-muted">Delivery</span>
-                                                <span class="fw-semibold">RM {{ number_format($deliveryPerSeller, 2) }}</span>
-                                            </div>
+                                <span class="text-muted">Delivery</span>
+                                <span class="fw-semibold">
+                                    {{ $deliveryPerSeller == 0 ? 'Free Delivery' : 'RM ' . number_format($deliveryPerSeller, 2) }}
+                                </span>
+                            </div>
                                             <hr class="my-2">
                                             <div class="d-flex justify-content-between">
                                                 <span class="fw-bold text-dark">Total</span>

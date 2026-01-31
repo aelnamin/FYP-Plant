@@ -46,7 +46,7 @@ class PlantMonitoringController extends Controller
         $validated = $request->validate([
             'growth_stage' => 'required|string',
             'height_cm' => 'nullable|numeric|min:0',
-            'notes' => 'nullable|string|max:500',
+            'notes' => 'required|string|min:3|max:500',
         ]);
 
         $growthLog = ProductGrowthLog::create([
@@ -84,7 +84,7 @@ class PlantMonitoringController extends Controller
 
         $validated = $request->validate([
             'care_type' => 'required|string|in:watering,fertilizing,pruning,repotting,pest_control,disease_treatment,other',
-            'description' => 'nullable|string|max:500',
+            'description' => 'required|string|min:3|max:500',
             'care_date' => 'required|date|before_or_equal:today', // ADD THIS LINE
         ]);
 
