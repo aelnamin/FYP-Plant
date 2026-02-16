@@ -51,5 +51,6 @@ Key highlights:
   <img src="screenshots/Sellers-Dashboard.png" width="400" alt="Sellers Dashboard Screenshot">
   <img src="screenshots/Product-Management.png" width="400" alt="Product Management Screenshot">
   <img src="screenshots/Growth-Care.png" width="400" alt="Plant Growth & Care Monitoring Screenshot">
-  <img src="screenshots/Order-Management.png" width="400" alt="Order-Management Screenshot">
+  <img src="screenshots/Order-Management.png" width="400" alt="Order Management Screenshot">
+  <img src="screenshots/Sellers-Storefront.png" width="400" alt="Sellers Storefront Screenshot">
 </p>
