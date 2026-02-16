@@ -42,6 +42,6 @@ Key highlights:
 ## Screenshots
 
 <p align="center">
-  <img src="screenshots/dashboard.png" width="400" alt="Dashboard Screenshot">
-  <img src="screenshots/product-list.png" width="400" alt="Product Listing Screenshot">
+  <img src="screenshots/Dashboard.png" width="400" alt="Dashboard Screenshot">
+  <img src="screenshots/Product-List.png" width="400" alt="Product Listing & filters Screenshot">
 </p>
