@@ -53,4 +53,6 @@ Key highlights:
   <img src="screenshots/Growth-Care.png" width="400" alt="Plant Growth & Care Monitoring Screenshot">
   <img src="screenshots/Order-Management.png" width="400" alt="Order Management Screenshot">
   <img src="screenshots/Sellers-Storefront.png" width="400" alt="Sellers Storefront Screenshot">
+  <img src="screenshots/Transaction.png" width="400" alt="Transaction Screenshot">
+  <img src="screenshots/Review-Rating.png" width="400" alt="Review & Rating Screenshot">
 </p>
