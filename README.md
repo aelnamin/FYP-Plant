@@ -8,7 +8,7 @@
 
 ## About the Project
 
-Gardening and Plant E-Commerce Management System is a **full-stack web application** designed to manage indoor plant sales and inventory efficiently.  
+Gardening and Plant E-Commerce Management System is a **full-stack web application** designed to manage indoor plant sales, inventory, and online transactions with secure multi-role access control.
 It provides a seamless experience for **sellers**, **customers**, **guest**, and **admins**, combining e-commerce functionality with role-based access control.
 
 Key highlights:
