@@ -51,7 +51,7 @@
 
 
         .btn-matcha:hover {
-            background-color: rgb(117, 152, 107);
+            background-color: rgb(216, 220, 214);
         }
 
         .quantity-selector input {
@@ -145,15 +145,38 @@
             min-width: 20px;
             text-align: center;
         }
-        .seller-clickable {
-    cursor: pointer;
-    transition: all 0.25s ease;
-}
 
-.seller-clickable:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 10px 25px rgba(92, 127, 81, 0.25);
-}
+        .seller-clickable {
+            cursor: pointer;
+            transition: all 0.25s ease;
+        }
+
+        .seller-clickable:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(92, 127, 81, 0.25);
+        }
+
+        .variant-radio {
+            display: none;
+            /* hide the actual radio button */
+        }
+
+        .variant-label {
+            display: block;
+            transition: all 0.2s ease;
+        }
+
+        .variant-label:hover {
+            background-color: #e2e6ea !important;
+            /* subtle hover effect */
+            border-color: #adb5bd;
+        }
+
+        .variant-radio:checked+.variant-label {
+            background-color: rgb(231, 231, 231) !important;
+            color: #000;
+            border-color: rgb(0, 0, 0);
+        }
     </style>
 
     <div class="container mt-4">
@@ -187,36 +210,33 @@
             <div class="col-md-6">
                 <h2 class="fw-bold">{{ $product->product_name }}</h2>
 
-                <a href="{{ route('seller-shop', $product->seller->id) }}"
-   class="text-decoration-none text-dark">
+                <a href="{{ route('seller-shop', $product->seller->id) }}" class="text-decoration-none text-dark">
 
-    <div class="seller-card seller-clickable">
-        <div class="d-flex align-items-center mb-3">
-            <img src="{{ $product->seller->user->profile_picture && file_exists(public_path($product->seller->user->profile_picture))
-                ? asset($product->seller->user->profile_picture)
-                : asset('images/default.png') }}"
-                class="seller-profile-img me-3"
-                alt="{{ $product->seller->business_name }}">
+                    <div class="seller-card seller-clickable">
+                        <div class="d-flex align-items-center mb-3">
+                            <img src="{{ $product->seller->user->profile_picture && file_exists(public_path($product->seller->user->profile_picture))
+        ? asset($product->seller->user->profile_picture)
+        : asset('images/default.png') }}" class="seller-profile-img me-3" alt="{{ $product->seller->business_name }}">
 
-            <div>
-                <h5 class="fw-bold mb-1">
-                    {{ $product->seller->business_name }}
-                </h5>
-                <span class="verified-badge">
-                    <i class="bi bi-check-circle"></i> Verified Seller
-                </span>
-            </div>
-        </div>
+                            <div>
+                                <h5 class="fw-bold mb-1">
+                                    {{ $product->seller->business_name }}
+                                </h5>
+                                <span class="verified-badge">
+                                    <i class="bi bi-check-circle"></i> Verified Seller
+                                </span>
+                            </div>
+                        </div>
 
-        <div class="seller-info-item">
-            <i class="bi bi-geo-alt"></i>
-            <span>
-                <strong>Location:</strong>
-                {{ $product->seller->business_address ?? 'N/A' }}
-            </span>
-        </div>
-    </div>
-</a>
+                        <div class="seller-info-item">
+                            <i class="bi bi-geo-alt"></i>
+                            <span>
+                                <strong>Location:</strong>
+                                {{ $product->seller->business_address ?? 'N/A' }}
+                            </span>
+                        </div>
+                    </div>
+                </a>
 
 
                 {{-- Rating --}}
@@ -238,11 +258,33 @@
                 @endif
 
                 {{-- Price --}}
+                @php
+                    $oldPrice = $product->price + 30;
+                    $discount = $oldPrice - $product->price;
+                    $discountPercent = ($discount / $oldPrice) * 100;
+                @endphp
+
                 <div class="my-3">
-                    <span class="price-old">RM {{ number_format($product->price + 30, 2) }}</span>
-                    <span class="fs-4 fw-bold text-success">RM {{ number_format($product->price, 2) }}</span>
+
+                    {{-- Discount Percentage Above --}}
+                    <div class="text-success fw-semibold mb-1">
+                        Save {{ round($discountPercent) }}%
+                    </div>
+
+                    {{-- Old + New Price --}}
+                    <div>
+                        <span class="price-old text-muted text-decoration-line-through me-2">
+                            RM {{ number_format($oldPrice, 2) }}
+                        </span>
+
+                        <span class="fs-4 fw-bold text-success">
+                            RM {{ number_format($product->price, 2) }}
+                        </span>
+                    </div>
+
                 </div>
                 <hr>
+
 
                 {{-- Add to Cart Form --}}
                 <form action="{{ route('cart.add', $product->id) }}" method="POST" class="mt-4 d-flex flex-column gap-3">
@@ -250,18 +292,27 @@
 
                     @if(!empty($variants) && count($variants) > 0)
                         <div class="mb-3">
-                            <label class="form-label fw-semibold">Select Variant</label>
-                            <select name="variant" class="form-select" required style="max-width: 300px;">
-                                <option value="">Choose...</option>
-                                @foreach($variants as $v)
-                                    <option value="{{ $v }}">{{ $v }}</option>
+                            <label class="form-label fw-semibold d-block mb-2">Select Variant</label>
+                            <div class="d-flex flex-wrap gap-2">
+                                @foreach($variants as $index => $variant)
+                                    @php
+                                        $id = 'variant-' . $index; // unique ID for each radio
+                                    @endphp
+                                    <div class="variant-option">
+                                        <input type="radio" name="variant" id="{{ $id }}" value="{{ $variant }}"
+                                            class="variant-radio" required>
+                                        <label for="{{ $id }}" class="variant-label p-3 border rounded-3 shadow-sm text-center"
+                                            style="min-width: 120px; background-color: #f8f9fa; cursor: pointer;">
+                                            {{ $variant }}
+                                        </label>
+                                    </div>
                                 @endforeach
-                            </select>
-                            <small class="text-muted">Available: {{ implode(', ', $variants) }}</small>
+                            </div>
                         </div>
                     @else
                         <input type="hidden" name="variant" value="">
                     @endif
+
 
                     {{-- Quantity selector --}}
                     <div class="d-flex align-items-center gap-3">
@@ -275,25 +326,25 @@
                         <input type="hidden" name="quantity" id="quantityInput" value="1">
 
                         @if ($product->stock_quantity <= 0)
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            document.getElementById('increment')?.setAttribute('disabled', true);
-            document.getElementById('decrement')?.setAttribute('disabled', true);
-        });
-    </script>
-@endif
+                            <script>
+                                document.addEventListener('DOMContentLoaded', function () {
+                                    document.getElementById('increment')?.setAttribute('disabled', true);
+                                    document.getElementById('decrement')?.setAttribute('disabled', true);
+                                });
+                            </script>
+                        @endif
 
 
                         {{-- Add to cart --}}
                         @if ($product->stock_quantity > 0)
-    <button type="submit" class="btn btn-matcha border-secondary text-dark shadow-sm">
-        Add to Cart
-    </button>
-@else
-    <button type="button" class="btn btn-secondary shadow-sm" disabled>
-        Out of Stock
-    </button>
-@endif
+                            <button type="submit" class="btn btn-matcha border-secondary text-dark shadow-sm">
+                                Add to Cart
+                            </button>
+                        @else
+                            <button type="button" class="btn btn-secondary shadow-sm" disabled>
+                                Out of Stock
+                            </button>
+                        @endif
 
                     </div>
                 </form>
@@ -318,52 +369,54 @@
 
         {{-- Product Description --}}
         <div class="mt-4">
-    <h4 class="fw-bold">Product Description</h4>
-    <div class="col-6">
-        <p style="line-height: 1.6;">{!! nl2br(e($product->description)) !!}</p>
-    </div>
+            <h4 class="fw-bold">Product Description</h4>
+            <div class="col-6">
+                <p style="line-height: 1.6;">{!! nl2br(e($product->description)) !!}</p>
+            </div>
 
             {{-- Plant Information --}}
-            <div class="mt-4">
-                <h4 class="fw-bold">Plant Information</h4>
-                <p class="text-muted mb-1"><strong>Sunlight Requirement:</strong>
-                    {{ $product->sunlight_requirement ?? 'Not specified' }}</p>
-                <p class="text-muted mb-1"><strong>Watering Frequency:</strong>
-                    {{ $product->watering_frequency ?? 'Not specified' }}</p>
-                <p class="text-muted mb-1"><strong>Difficulty Level:</strong>
-                    {{ $product->difficulty_level ?? 'Not specified' }}</p>
-                <p class="text-muted mb-1"><strong>Growth Stage:</strong> {{ $product->growth_stage ?? 'Not specified' }}
-                </p>
-            </div>
-
-    {{-- Reviews --}}
-<div id="reviews" class="mt-5">
-    <h4 class="fw-bold mb-3">Customer Reviews</h4>
-
-    @if ($totalReviews > 0)
-        @foreach ($reviews as $review)
-            <div class="border rounded p-3 mb-3 bg-light">
-                <div class="d-flex justify-content-between align-items-center mb-1">
-                    <strong>{{ $review->user->name }}</strong>
-                    <small class="text-muted">{{ $review->created_at->diffForHumans() }}</small>
+            @if($product->category->category_name !== 'Tools')
+                <div class="mt-4">
+                    <h4 class="fw-bold">Plant Information</h4>
+                    <p class="text-muted mb-1"><strong>Sunlight Requirement:</strong>
+                        {{ $product->sunlight_requirement ?? 'Not specified' }}</p>
+                    <p class="text-muted mb-1"><strong>Watering Frequency:</strong>
+                        {{ $product->watering_frequency ?? 'Not specified' }}</p>
+                    <p class="text-muted mb-1"><strong>Difficulty Level:</strong>
+                        {{ $product->difficulty_level ?? 'Not specified' }}</p>
+                    <p class="text-muted mb-1"><strong>Growth Stage:</strong> {{ $product->growth_stage ?? 'Not specified' }}
+                    </p>
                 </div>
-                <div class="text-warning mb-1">
-                    @for ($i = 1; $i <= 5; $i++)
-                        @if ($i <= $review->rating) ★ @else ☆ @endif
-                    @endfor
-                </div>
-                <p class="mb-0 text-muted">{{ $review->comment }}</p>
-            </div>
-        @endforeach
+            @endif
 
-        {{-- Pagination --}}
-        <div class="mt-3" id="reviews-pagination">
-            {{ $reviews->withQueryString()->fragment('reviews')->links() }}
-        </div>
-    @else
-        <p class="text-muted">This product has no reviews yet</p>
-    @endif
-</div>
+            {{-- Reviews --}}
+            <div id="reviews" class="mt-5">
+                <h4 class="fw-bold mb-3">Customer Reviews</h4>
+
+                @if ($totalReviews > 0)
+                    @foreach ($reviews as $review)
+                        <div class="border rounded p-3 mb-3 bg-light">
+                            <div class="d-flex justify-content-between align-items-center mb-1">
+                                <strong>{{ $review->user->name }}</strong>
+                                <small class="text-muted">{{ $review->created_at->diffForHumans() }}</small>
+                            </div>
+                            <div class="text-warning mb-1">
+                                @for ($i = 1; $i <= 5; $i++)
+                                    @if ($i <= $review->rating) ★ @else ☆ @endif
+                                @endfor
+                            </div>
+                            <p class="mb-0 text-muted">{{ $review->comment }}</p>
+                        </div>
+                    @endforeach
+
+                    {{-- Pagination --}}
+                    <div class="mt-3" id="reviews-pagination">
+                        {{ $reviews->withQueryString()->fragment('reviews')->links() }}
+                    </div>
+                @else
+                    <p class="text-muted">This product has no reviews yet</p>
+                @endif
+            </div>
 
 
             {{-- More from same seller --}}
@@ -445,6 +498,6 @@
                     }
                 }
             });
-            
+
         </script>
 @endsection

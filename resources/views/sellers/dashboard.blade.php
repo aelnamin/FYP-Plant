@@ -259,7 +259,6 @@
                                             <th class="border-0" style="width: 20%">Date</th>
                                             <th class="border-0" style="width: 15%">Status</th>
                                             <th class="border-0" style="width: 15%">Amount</th>
-                                            <th class="border-0 text-end" style="width: 10%">Action</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -292,16 +291,16 @@
     if ($itemStatuses->count() == 1) {
         $status = $itemStatuses->first();
     } else {
-        $status = 'mixed';
+        $status = 'completed';
     }
 
     $statusColors = [
         'pending' => 'warning',
         'paid' => 'primary',
-        'shipped' => 'info',
+        'shipped' => 'secondary',
         'delivered' => 'success',
         'cancelled' => 'danger',
-        'mixed' => 'secondary'
+        'completed' => 'success'
     ];
 
     $statusColor = $statusColors[$status] ?? 'secondary';
@@ -314,19 +313,7 @@
 </td>
 
                                                 <td class="fw-bold">RM {{ number_format($order->seller_total ?? 0, 2) }}</td>
-                                                <td class="text-end">
-                                                    <div class="dropdown">
-                                                        <button class="btn btn-light btn-sm" type="button"
-                                                            data-bs-toggle="dropdown">
-                                                            <i class="fas fa-ellipsis-h"></i>
-                                                        </button>
-                                                        <ul class="dropdown-menu dropdown-menu-end">
-                                                            <li>
-                                                                <a class="dropdown-item"
-                                                                    href="{{ route('sellers.orders.show', $order->id) }}">
-                                                                    <i class="fas fa-eye me-2"></i> View Details
-                                                                </a>
-                                                            </li>
+                                                           
                                                             @if($order->status == 'paid')
                                                                 <li>
                                                                     <form action="{{ route('sellers.orders.update', $order->id) }}"
@@ -428,13 +415,18 @@
                                                             <div>
                                                                 <div class="fw-medium mb-1">{{ Str::limit($product->product_name, 22) }}</div>
                                                                 <div class="d-flex align-items-center">
-                                                                    <span class="badge bg-light text-dark me-2">
-                                                                        <i class="fas fa-cube me-1"></i> {{ $product->stock_quantity ?? 0 }}
-                                                                    </span>
+                                                                <span class="badge bg-light me-2 {{ ($product->stock_quantity ?? 0) <= 10 ? 'text-danger' : 'text-dark' }}">
+    <i class="fas fa-cube me-1"></i> 
+    {{ $product->stock_quantity ?? 0 }}
+</span>
 
+
+                                                                
                                                                     <span class="text-success fw-medium">
                                                                         RM {{ number_format($product->price, 2) }}
                                                                     </span>
+
+                                                                   
                                                                 </div>
                                                             </div>
                                                         </div>

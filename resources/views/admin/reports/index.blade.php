@@ -294,7 +294,7 @@
             background-color: #ffc107;
         }
 
-        .status-processing {
+        .status-paid {
             background-color: #17a2b8;
         }
 
@@ -336,10 +336,6 @@
 
         .text-bronze {
             color: #cd7f32;
-        }
-
-        .table tbody tr:last-child {
-            border-bottom: none !important;
         }
 
         .rounded-4 {
