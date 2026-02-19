@@ -8,35 +8,141 @@
 
 ## About the Project
 
-Gardening and Plant E-Commerce Management System is a **full-stack web application** designed to manage indoor plant sales, inventory, and online transactions with secure multi-role access control.
-It provides a seamless experience for **sellers**, **customers**, **guest**, and **admins**, combining e-commerce functionality with role-based access control.
+A full-stack web-based e-commerce platform designed for nursery management and online plant sales.
+This system digitalizes traditional nursery operations by integrating real-time inventory management, plant verification, order processing, and customer relationship management (CRM) into a centralized platform.
 
-Key highlights:
+## Project Overview
 
--   **Guest** – Browse and view products
--   **Customer** – Register, purchase, and track orders
--   **Seller** – Manage products, inventory, and customer orders
--   **Admin** – Manage users, approve & reject product, monitor system activities
+Developed as a Final Year Project, this system addresses limitations in existing agricultural e-commerce platforms:
 
----
+Lack of real-time stock synchronization
 
-## Features
+Absence of structured plant quality verification
 
--   **Role-Based Access Control:** Separate dashboards for Admin, Seller, Customer, Guest
--   **Product Management:** Add, edit, delete products with categories, sunlight requirements, water frequency, difficulty levels, growth stage, health & condition
--   **Inventory Management:** Track stock levels and product availability
--   **Order Management:** Process orders, tracking and update statuses
--   **Filtering & Search:** Customers can filter products by category, price, difficulty, and sunlight needs, and growth stage
--   **Responsive UI:** Works across desktops, mobile
+Poor integration between nursery operations and customer-facing systems
+
+The system supports four user roles:
+👤 Guest | 🛒 Customer (Buyer) | 🌱 Nursery Owner (Seller) | 🛠️ Administrator
 
 ---
 
-## Technologies Used
+## Key Features
 
--   **Back-End:** PHP (Laravel Framework)
--   **Front-End:** HTML, CSS, JavaScript
+🔐 **User Authentication & Role-Based Access**
+
+-   Secure registration & login
+
+-   Role-based dashboard redirection
+
+-   Profile management
+
+-   Admin user management
+
+🌿 **Plant Catalog & Browsing**
+
+-   Advanced search & filtering (category, price, difficulty, sunlight, growth stage)
+
+Product detail page with:
+
+-   Plant care information
+
+-   Sunlight & watering requirements
+
+-   Seller verification status
+
+-   Customer reviews
+
+📦 **Inventory & Plant Management**
+
+-   Add / edit / delete products
+
+-   Upload plant images
+
+-   Update stock levels
+
+-   Automatic stock synchronization after each completed transaction
+
+🛒 **Order & Payment Processing**
+
+-   Add to cart functionality
+
+-   Checkout system with order summary & total calculation
+
+-   Multiple payment options
+
+-   Order tracking & status updates
+
+🌱 **Plant Monitoring Module**
+
+Sellers can record:
+
+-   Plant growth stage
+
+-   Height
+
+-   Care activities (watering, fertilizing, etc.)
+
+Notes & observations
+
+💬 **Customer Relationship Management (CRM)**
+
+-   Complaint submission
+
+-   Review & rating system
+
+-   Real-time messaging (Service Desk)
+
+-   FAQ & self-help resources
+
+📊 **Seller Dashboard**
+
+-   Total orders overview
+
+-   Revenue tracking
+
+-   Pending actions
+
+-   Complaint & return management
+
+---
+
+## Technologies Stack
+
+-   **Back-End:** Laravel 10.49.1 (MVC), PHP
+-   **Front-End:** Laravel Blade, HTML, CSS, Bootstrap, JavaScript
 -   **Database:** MySQL
--   **Version Control:** Git & GitHub
+-   **Version Control:** XAMPP, phpMyAdmin, VS Code, GitHub, Figma, Draw.io
+
+---
+
+## System Modules
+
+-   Home Page
+
+-   Browse Page
+
+-   Product Detail Page
+
+-   Cart & Checkout
+
+-   Buyer Profile
+
+-   Seller Dashboard
+
+-   Manage Orders
+
+-   Manage Products
+
+-   Complaint & Review System
+
+-   Service Desk Messaging
+
+---
+
+👩‍💻 **Author**
+
+Nur Ainaa Yasmin
+Final Year Project – Bachelor of Software Engineering
 
 ---
 
