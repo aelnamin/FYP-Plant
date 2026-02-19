@@ -142,7 +142,7 @@ Notes & observations
 👩‍💻 **Author**
 
 Nur Ainaa Yasmin
-Final Year Project – Bachelor of Software Engineering
+Final Year Project – Diploma in Information Technology
 
 ---
 
