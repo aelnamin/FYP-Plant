@@ -162,4 +162,7 @@ Final Year Project – Diploma in Information Technology
   <img src="screenshots/Sellers-Storefront.png" width="400" alt="Sellers Storefront Screenshot">
   <img src="screenshots/Transaction.png" width="400" alt="Transaction Screenshot">
   <img src="screenshots/Review-Rating.png" width="400" alt="Review & Rating Screenshot">
+  <img src="screenshots/Product-Approval.png" width="400" alt="Admin Product Approval Screenshot">
+  <img src="screenshots/Service-Desk.png" width="400" alt="Service Desk Screenshot">
+  <img src="screenshots/Complaint-Form.png" width="400" alt="Complaint Form Screenshot">
 </p>
