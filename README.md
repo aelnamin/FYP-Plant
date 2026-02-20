@@ -178,13 +178,6 @@ The ERD (Entity Relationship Diagram) was designed prior to implementation to en
 
 ---
 
-👩‍💻 **Author**
-
-Nur Ainaa Yasmin
-Final Year Project – Diploma in Information Technology
-
----
-
 ## Screenshots
 
 <p align="center">
