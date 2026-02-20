@@ -149,6 +149,8 @@ Final Year Project – Diploma in Information Technology
 ## Screenshots
 
 <p align="center">
+  <img src="screenshots/Log-in.png" width="400" alt="Login Screenshot">
+  <img src="screenshots/Customer-Profile.png" width="400" alt="Customer Profile Screenshot">
   <img src="screenshots/Dashboard.png" width="400" alt="Dashboard Screenshot">
   <img src="screenshots/Product-List.png" width="400" alt="Product Listing & filters Screenshot">
   <img src="screenshots/Product-Details.png" width="400" alt="Product Details Screenshot">
