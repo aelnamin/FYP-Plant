@@ -132,16 +132,23 @@ The system uses a normalized relational database (MySQL) to ensure data integrit
 
 The database is designed with proper primary keys and foreign key constraints to maintain referential integrity.
 
--   One-to-many relationship (User → Orders)
--   One-to-many relationship (Seller → Products)
--   One-to-many relationship (Category → Products)
--   One-to-many relationship (Cart → CartItems)
--   One-to-many relationship (Order → OrderItems)
+**One-to-many relationships:**
 
-Many-to-many relationships are resolved using pivot tables:
+User → Orders
 
--   Orders ↔ Products (via `order_items`)
--   Carts ↔ Products (via `cart_items`)
+Seller → Products
+
+Category → Products
+
+Cart → CartItems
+
+Order → OrderItems
+
+**Many-to-many relationships (resolved using pivot tables):**
+
+Orders ↔ Products (via order_items)
+
+Carts ↔ Products (via cart_items)
 
 ### Data Integrity & Optimization
 
