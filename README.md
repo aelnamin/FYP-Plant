@@ -115,6 +115,45 @@ Notes & observations
 
 ---
 
+## System Architecture
+
+-   **Models:** Handle database logic using Eloquent ORM
+-   **Views:** Blade templates for dynamic rendering
+-   **Controllers:** Manage business logic and request handling
+-   **Middleware:** Role-based access control
+
+---
+
+### Database Design
+
+The system uses a normalized relational database (MySQL) to ensure data integrity, scalability, and structured transaction management.
+
+### Relationship Structure
+
+The database is designed with proper primary keys and foreign key constraints to maintain referential integrity.
+
+-   One-to-many relationship (User → Orders)
+-   One-to-many relationship (Seller → Products)
+-   One-to-many relationship (Category → Products)
+-   One-to-many relationship (Cart → CartItems)
+-   One-to-many relationship (Order → OrderItems)
+
+Many-to-many relationships are resolved using pivot tables:
+
+-   Orders ↔ Products (via `order_items`)
+-   Carts ↔ Products (via `cart_items`)
+
+### Data Integrity & Optimization
+
+-   Foreign keys enforce relational consistency
+-   Soft deletes are implemented for data recovery
+-   Timestamps (`created_at`, `updated_at`) are used for tracking activity
+-   Inventory stock is synchronized automatically after successful transactions
+
+The ERD (Entity Relationship Diagram) was designed prior to implementation to ensure proper normalization and modular system structure.
+
+---
+
 ## System Modules
 
 -   Home Page
