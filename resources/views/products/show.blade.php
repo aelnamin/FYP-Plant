@@ -389,31 +389,11 @@
                 </div>
                 {{-- Batch Plant Health Monitoring --}}
                 @if($latestGrowth || $latestWatering) {{-- Only show if monitoring data exists --}}
-                    <div class="mt-4 p-4 rounded-3 shadow-sm" style="background-color:#f3f8f4;">
-                        <h5 class="fw-bold mb-3">🌿 Plant Health</h5>
-
-                        <p class="mb-2">
-                            <strong>Growth Stage:</strong>
-                            {{ $latestGrowth->growth_stage ?? 'Not recorded yet' }}
-                        </p>
-
-                        <p class="mb-2">
-                            <strong>Height:</strong>
-                            {{ $latestGrowth->height_cm ?? 'N/A' }} cm
-                        </p>
-
-                        <p class="mb-2">
-                            <strong>Last Watered:</strong>
-                            @if(!empty($latestWatering))
-                                {{ \Carbon\Carbon::parse($latestWatering->care_date)->diffForHumans() }}
-                            @else
-                                No watering record
-                            @endif
-                        </p>
-
-                        <p class="mb-0">
-                            <strong>Overall Health:</strong>
-                            <span class="badge bg-{{ $healthColor ?? 'secondary' }}">
+                    <div class="mt-4 p-4 col-4 rounded-3 shadow-sm" style="background-color:#f3f8f4;">
+                        <p class="text-muted mb-1" style="font-size: 18px;">
+                            <strong>Overall Plant Health:</strong>
+                            <span class="badge bg-{{ $healthColor ?? 'secondary' }} px-3 py-2 rounded-pill shadow-sm"
+                                style="font-size: 16px;">
                                 {{ $healthStatus ?? 'Unknown' }}
                             </span>
                         </p>
