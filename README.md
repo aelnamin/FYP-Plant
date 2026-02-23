@@ -150,12 +150,7 @@ Orders ↔ Products (via order_items)
 
 Carts ↔ Products (via cart_items)
 
-### Data Integrity & Optimization
-
--   Foreign keys enforce relational consistency
--   Soft deletes are implemented for data recovery
--   Timestamps (`created_at`, `updated_at`) are used for tracking activity
--   Inventory stock is synchronized automatically after successful transactions
+Database integrity and consistency are maintained through proper relational design, and inventory updates automatically after transactions.
 
 The ERD (Entity Relationship Diagram) was designed prior to implementation to ensure proper normalization and modular system structure.
 
