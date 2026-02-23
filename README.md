@@ -44,9 +44,9 @@ The system supports four user roles:
 
 Product detail page with:
 
--   Plant care information
+-   Product description and Plant care information
 
--   Sunlight & watering requirements
+-   Sunlight Requirements, watering frequency, difficulty level, and growth stage
 
 -   Seller verification status
 

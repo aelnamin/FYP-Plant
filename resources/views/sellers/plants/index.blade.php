@@ -74,7 +74,7 @@
                             <option value="{{ $product->id }}"
                                 data-growth-route="{{ route('sellers.plants.growth.store', ['product' => $product->id]) }}"
                                 data-care-route="{{ route('sellers.plants.care.store', ['product' => $product->id]) }}"
-                                 data-image-url="{{ $product->images->first() ? asset('images/' . $product->images->first()->image_path) : asset('images/default.jpg') }}"
+                                data-image-url="{{ $product->images->first() ? asset('images/' . $product->images->first()->image_path) : asset('images/default.jpg') }}"
                                 data-product='@json($product)'>
                                 {{ $product->product_name }} (ID: PL-{{ str_pad($product->id, 3, '0', STR_PAD_LEFT) }})
                             </option>
@@ -429,12 +429,12 @@
                         <h3 class="text-xl font-semibold text-gray-800 mb-6">Plant Summary</h3>
 
                         <div class="flex items-center mb-6">
-                        <div class="flex-shrink-0 rounded-lg overflow-hidden flex items-center justify-center mr-4
-            w-20 h-20 sm:w-28 sm:h-28 md:w-32 md:h-32 lg:w-40 lg:h-40">
-    <img id="plant-image"
-        src="{{ $product->images->first() ? asset('images/' . urlencode($product->images->first()->image_path)) : asset('images/default.jpg') }}"
-        alt="{{ $product->product_name }}" class="w-full h-full object-cover object-center">
-</div>
+                            <div class="flex-shrink-0 rounded-lg overflow-hidden flex items-center justify-center mr-4
+                w-20 h-20 sm:w-28 sm:h-28 md:w-32 md:h-32 lg:w-40 lg:h-40">
+                                <img id="plant-image"
+                                    src="{{ $product->images->first() ? asset('images/' . urlencode($product->images->first()->image_path)) : asset('images/default.jpg') }}"
+                                    alt="{{ $product->product_name }}" class="w-full h-full object-cover object-center">
+                            </div>
 
 
                             <div>
@@ -542,9 +542,9 @@
 
                 // Update plant image
                 const plantImage = contentArea.querySelector('#plant-image');
-if (plantImage) {
-    plantImage.src = option.getAttribute('data-image-url');
-}
+                if (plantImage) {
+                    plantImage.src = option.getAttribute('data-image-url');
+                }
 
 
                 // Attach report button listener **after template is in the DOM**
@@ -767,10 +767,10 @@ if (plantImage) {
 
                 if (latestLog) {
                     const latestHtml = `
-                                                                                                                                                                                    <p class="font-medium text-gray-800">${latestLog.growth_stage || 'No stage'}</p>
-                                                                                                                                                                                    <p class="text-gray-600 text-sm">Height: ${latestLog.height_cm || 'N/A'} cm</p>
-                                                                                                                                                                                    <p class="text-gray-600 text-sm mt-1">${latestLog.notes || 'No notes'}</p>
-                                                                                                                                                                                `;
+                                                                                                                                                                                        <p class="font-medium text-gray-800">${latestLog.growth_stage || 'No stage'}</p>
+                                                                                                                                                                                        <p class="text-gray-600 text-sm">Height: ${latestLog.height_cm || 'N/A'} cm</p>
+                                                                                                                                                                                        <p class="text-gray-600 text-sm mt-1">${latestLog.notes || 'No notes'}</p>
+                                                                                                                                                                                    `;
                     const latestContainer = document.getElementById('latest-growth-log');
                     const countElem = document.getElementById('growth-log-count');
                     if (latestContainer) latestContainer.innerHTML = latestHtml;
@@ -785,48 +785,48 @@ if (plantImage) {
                 const wateringLogs = data.watering_logs || [];
 
                 if (wateringLogs.length > 0) {
-    const latestWatering = wateringLogs[0];
+                    const latestWatering = wateringLogs[0];
 
-    // Parse watering date and set time to midnight
-    const wateringDate = new Date(latestWatering.care_date);
-    wateringDate.setHours(0, 0, 0, 0);
+                    // Parse watering date and set time to midnight
+                    const wateringDate = new Date(latestWatering.care_date);
+                    wateringDate.setHours(0, 0, 0, 0);
 
-    // Today's date at midnight
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
+                    // Today's date at midnight
+                    const today = new Date();
+                    today.setHours(0, 0, 0, 0);
 
-    const daysDiff = Math.floor((today - wateringDate) / (1000 * 60 * 60 * 24));
+                    const daysDiff = Math.floor((today - wateringDate) / (1000 * 60 * 60 * 24));
 
-    // Make it display "Today" if 0 days, otherwise "x days ago"
-    const lastWateredText = daysDiff === 0 ? 'Today' : `${daysDiff} day${daysDiff > 1 ? 's' : ''} ago`;
+                    // Make it display "Today" if 0 days, otherwise "x days ago"
+                    const lastWateredText = daysDiff === 0 ? 'Today' : `${daysDiff} day${daysDiff > 1 ? 's' : ''} ago`;
 
-    const wateringHtml = `
-        <p class="font-medium text-gray-800">Last watered: ${lastWateredText}</p>
-        <p class="text-gray-600 text-sm">Date: ${wateringDate.toLocaleDateString()}</p>
-        ${latestWatering.notes ? `<p class="text-gray-600 text-sm">Notes: ${latestWatering.notes}</p>` : ''}
-    `;
+                    const wateringHtml = `
+            <p class="font-medium text-gray-800">Last watered: ${lastWateredText}</p>
+            <p class="text-gray-600 text-sm">Date: ${wateringDate.toLocaleDateString()}</p>
+            ${latestWatering.notes ? `<p class="text-gray-600 text-sm">Notes: ${latestWatering.notes}</p>` : ''}
+        `;
 
-    const wateringContainer = document.getElementById('watering-info');
-    if (wateringContainer) wateringContainer.innerHTML = wateringHtml;
-}
+                    const wateringContainer = document.getElementById('watering-info');
+                    if (wateringContainer) wateringContainer.innerHTML = wateringHtml;
+                }
 
 
                 if (latestLog) {
                     const careDate = new Date(latestLog.care_date).toLocaleDateString();
 
                     const careHtml = `
-                                                                                                                <p class="font-medium text-gray-800">
-                                                                                                                    ${formatCareType(latestLog.care_type)}
-                                                                                                                </p>
-                                                                                                                <p class="text-gray-600 text-sm">
-                                                                                                                    Date: ${careDate}
-                                                                                                                </p>
-                                                                                                                <p class="text-gray-600 text-sm mt-1">
-                                                                                                                    ${latestLog.description && latestLog.description.trim()
+                                                                                                                    <p class="font-medium text-gray-800">
+                                                                                                                        ${formatCareType(latestLog.care_type)}
+                                                                                                                    </p>
+                                                                                                                    <p class="text-gray-600 text-sm">
+                                                                                                                        Date: ${careDate}
+                                                                                                                    </p>
+                                                                                                                    <p class="text-gray-600 text-sm mt-1">
+                                                                                                                        ${latestLog.description && latestLog.description.trim()
                             ? latestLog.description
                             : 'No notes'}
-                                                                                                                </p>
-                                                                                                            `;
+                                                                                                                    </p>
+                                                                                                                `;
 
                     const latestContainer = document.getElementById('latest-care-log');
                     const countElem = document.getElementById('care-log-count');
@@ -856,16 +856,16 @@ if (plantImage) {
                     const typeColor = getCareTypeColor(log.care_type);
 
                     historyHtml += `
-                                                                                                                                                                                    <div class="flex items-center p-3 bg-gray-50 rounded-lg">
-                                                                                                                                                                                        <div class="w-10 h-10 ${typeColor.bg} rounded-lg flex items-center justify-center mr-3">
-                                                                                                                                                                                            <i class="${typeIcon} ${typeColor.text}"></i>
+                                                                                                                                                                                        <div class="flex items-center p-3 bg-gray-50 rounded-lg">
+                                                                                                                                                                                            <div class="w-10 h-10 ${typeColor.bg} rounded-lg flex items-center justify-center mr-3">
+                                                                                                                                                                                                <i class="${typeIcon} ${typeColor.text}"></i>
+                                                                                                                                                                                            </div>
+                                                                                                                                                                                            <div class="flex-1">
+                                                                                                                                                                                                <div class="font-medium text-gray-800">${formatCareType(log.care_type)}</div>
+                                                                                                                                                                                                <div class="text-sm text-gray-600">${date} - ${log.notes || 'No notes'}</div>
+                                                                                                                                                                                            </div>
                                                                                                                                                                                         </div>
-                                                                                                                                                                                        <div class="flex-1">
-                                                                                                                                                                                            <div class="font-medium text-gray-800">${formatCareType(log.care_type)}</div>
-                                                                                                                                                                                            <div class="text-sm text-gray-600">${date} - ${log.notes || 'No notes'}</div>
-                                                                                                                                                                                        </div>
-                                                                                                                                                                                    </div>
-                                                                                                                                                                                `;
+                                                                                                                                                                                    `;
                 });
 
                 historyContainer.innerHTML = historyHtml;

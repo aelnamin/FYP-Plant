@@ -42,6 +42,8 @@ class ProductController extends Controller
         $product = Product::with([
             'images',
             'seller',
+            'growthLogs',
+            'careLogs'
         ])->findOrFail($id);
 
         // PAGINATED REVIEWS
@@ -90,7 +92,42 @@ class ProductController extends Controller
 
         $variants = $variants ?? [];
 
+// ================================
+// BATCH HEALTH MONITORING
+// ================================
 
+$latestGrowth = $product->growthLogs()
+    ->latest('created_at')
+    ->first();
+
+$latestWatering = $product->careLogs()
+    ->where('care_type', 'watering')
+    ->latest('care_date')
+    ->first();
+
+$healthStatus = 'Monitoring Not Available';
+$healthColor = 'secondary';
+
+if ($latestGrowth || $latestWatering) {
+
+    $healthStatus = 'Healthy';
+    $healthColor = 'success';
+
+    if ($latestWatering) {
+        $daysSinceWater = \Carbon\Carbon::parse($latestWatering->care_date)
+            ->diffInDays(now());
+
+        if ($daysSinceWater > 7) {
+            $healthStatus = 'Needs Attention';
+            $healthColor = 'warning';
+        }
+
+        if ($daysSinceWater > 14) {
+            $healthStatus = 'High Risk';
+            $healthColor = 'danger';
+        }
+    }
+}
         return view('products.show', compact(
             'product',
             'reviews',
@@ -99,7 +136,11 @@ class ProductController extends Controller
             'hasPurchased',
             'hasReviewed',
             'sameSellerProducts',
-            'variants'
+            'variants',
+            'latestGrowth',
+            'latestWatering',
+            'healthStatus',
+            'healthColor'
         ));
     }
 

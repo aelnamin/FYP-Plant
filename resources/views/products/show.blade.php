@@ -387,7 +387,41 @@
                     <p class="text-muted mb-1"><strong>Growth Stage:</strong> {{ $product->growth_stage ?? 'Not specified' }}
                     </p>
                 </div>
+                {{-- Batch Plant Health Monitoring --}}
+                @if($latestGrowth || $latestWatering) {{-- Only show if monitoring data exists --}}
+                    <div class="mt-4 p-4 rounded-3 shadow-sm" style="background-color:#f3f8f4;">
+                        <h5 class="fw-bold mb-3">🌿 Plant Health</h5>
+
+                        <p class="mb-2">
+                            <strong>Growth Stage:</strong>
+                            {{ $latestGrowth->growth_stage ?? 'Not recorded yet' }}
+                        </p>
+
+                        <p class="mb-2">
+                            <strong>Height:</strong>
+                            {{ $latestGrowth->height_cm ?? 'N/A' }} cm
+                        </p>
+
+                        <p class="mb-2">
+                            <strong>Last Watered:</strong>
+                            @if(!empty($latestWatering))
+                                {{ \Carbon\Carbon::parse($latestWatering->care_date)->diffForHumans() }}
+                            @else
+                                No watering record
+                            @endif
+                        </p>
+
+                        <p class="mb-0">
+                            <strong>Overall Health:</strong>
+                            <span class="badge bg-{{ $healthColor ?? 'secondary' }}">
+                                {{ $healthStatus ?? 'Unknown' }}
+                            </span>
+                        </p>
+                    </div>
+                @endif
+
             @endif
+
 
             {{-- Reviews --}}
             <div id="reviews" class="mt-5">
@@ -400,9 +434,15 @@
                                 <strong>{{ $review->user->name }}</strong>
                                 <small class="text-muted">{{ $review->created_at->diffForHumans() }}</small>
                             </div>
-                            <div class="text-warning mb-1">
+                            <div class="text-warning mb-1 fs-4">
                                 @for ($i = 1; $i <= 5; $i++)
-                                    @if ($i <= $review->rating) ★ @else ☆ @endif
+                                    @if ($i <= floor($review->rating))
+                                        <i class="bi bi-star-fill"></i>
+                                    @elseif ($i - $review->rating < 1)
+                                        <i class="bi bi-star-half"></i>
+                                    @else
+                                        <i class="bi bi-star"></i>
+                                    @endif
                                 @endfor
                             </div>
                             <p class="mb-0 text-muted">{{ $review->comment }}</p>
