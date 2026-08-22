@@ -37,9 +37,6 @@ if ($isVercel) {
         'APP_PACKAGES_CACHE' => "$tmp/packages.php",
         'APP_ROUTES_CACHE' => "$tmp/routes.php",
         'APP_SERVICES_CACHE' => "$tmp/services.php",
-        'CACHE_DRIVER' => 'array',
-        'LOG_CHANNEL' => 'stderr',
-        'SESSION_DRIVER' => 'cookie',
         'VIEW_COMPILED_PATH' => "$tmp/framework/views",
     ];
 
@@ -48,6 +45,23 @@ if ($isVercel) {
             putenv("$name=$value");
             $_ENV[$name] = $value;
             $_SERVER[$name] = $value;
+        }
+    }
+
+    // Laravel's local file-backed defaults cannot persist on Vercel's
+    // read-only filesystem. Keep explicitly configured remote stores, but
+    // replace local file stores with serverless-safe alternatives.
+    $serverlessDefaults = [
+        'CACHE_DRIVER' => ['value' => 'array', 'unsupported' => [false, '', 'file']],
+        'LOG_CHANNEL' => ['value' => 'stderr', 'unsupported' => [false, '', 'stack', 'single', 'daily']],
+        'SESSION_DRIVER' => ['value' => 'cookie', 'unsupported' => [false, '', 'file']],
+    ];
+
+    foreach ($serverlessDefaults as $name => $setting) {
+        if (in_array(getenv($name), $setting['unsupported'], true)) {
+            putenv("$name={$setting['value']}");
+            $_ENV[$name] = $setting['value'];
+            $_SERVER[$name] = $setting['value'];
         }
     }
 }

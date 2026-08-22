@@ -2,6 +2,12 @@
 
 use Illuminate\Support\Str;
 
+$sessionLifetime = filter_var(
+    env('SESSION_LIFETIME', 120),
+    FILTER_VALIDATE_INT,
+    ['options' => ['default' => 120, 'min_range' => 1]]
+);
+
 return [
 
     /*
@@ -31,7 +37,7 @@ return [
     |
     */
 
-    'lifetime' => env('SESSION_LIFETIME', 120),
+    'lifetime' => $sessionLifetime,
 
     'expire_on_close' => false,
 
