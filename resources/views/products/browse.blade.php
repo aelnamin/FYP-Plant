@@ -266,6 +266,27 @@
             grid-template-columns: 1fr;
         }
     }
+
+    @media (max-width: 575.98px) {
+        .browse-page .filter-container {
+            padding: 1rem;
+        }
+
+        .browse-page .filter-header {
+            gap: 0.5rem;
+        }
+
+        .browse-page .search-container .input-group {
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .browse-page .search-container .form-control,
+        .browse-page .search-container .btn {
+            width: 100%;
+            border-radius: 8px !important;
+        }
+    }
 </style>
 
 <div class="browse-page">

@@ -200,15 +200,18 @@
         z-index: 100;
     }
 
-    @media (max-width: 768px) {
+    @media (max-width: 991.98px) {
         .admin-sidebar {
             position: fixed;
             z-index: 1000;
             transform: translateX(-100%);
-            width: 280px;
+            width: min(85vw, 280px);
+            height: 100vh;
+            overflow-y: auto;
         }
 
         .admin-sidebar.active {
+            display: block !important;
             transform: translateX(0);
             box-shadow: 4px 0 20px rgba(0, 0, 0, 0.1);
         }
@@ -243,7 +246,7 @@
     <div class="container-fluid g-0">
         <div class="row g-0">
             {{-- MOBILE HEADER --}}
-            <div class="d-md-none mobile-admin-header">
+            <div class="d-lg-none mobile-admin-header">
                 <div class="d-flex align-items-center justify-content-between">
                     <button class="btn btn-outline-success" type="button" id="adminSidebarToggle">
                         <i class="fas fa-bars"></i>
@@ -266,7 +269,7 @@
             </div>
 
             {{-- ADMIN SIDEBAR --}}
-            <aside class="col-md-3 col-lg-2 admin-sidebar d-none d-md-block">
+            <aside class="col-lg-2 admin-sidebar d-none d-lg-block">
                 <div class="admin-header">
                     <h4 class="admin-name mt-3 mb-0">
                         {{ Auth::user()->name }}
@@ -340,7 +343,7 @@
             </aside>
 
             {{-- MAIN CONTENT --}}
-            <main class="col-md-9 col-lg-10 main-content">
+            <main class="col-lg-10 main-content">
                 @yield('content')
             </main>
         </div>
@@ -362,7 +365,7 @@
 
             // Close sidebar when clicking outside on mobile
             document.addEventListener('click', function (event) {
-                if (window.innerWidth < 768) {
+                if (window.innerWidth < 992) {
                     if (sidebar &&
                         !sidebar.contains(event.target) &&
                         sidebarToggle &&

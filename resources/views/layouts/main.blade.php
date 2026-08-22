@@ -179,6 +179,45 @@
         .footer .newsletter-form button:hover {
             background-color: #8a9c6a;
         }
+
+        @media (max-width: 575.98px) {
+            .top-bar {
+                padding: 6px 0;
+            }
+
+            .slide-text {
+                font-size: 12px;
+            }
+
+            .navbar-brand {
+                gap: 0.4rem !important;
+                font-size: 0.95rem;
+                margin-right: 0.5rem;
+            }
+
+            .navbar-brand img {
+                height: 44px !important;
+            }
+
+            .footer {
+                padding-top: 28px;
+            }
+
+            .footer h5 {
+                margin-bottom: 12px;
+            }
+
+            .footer .newsletter-form {
+                flex-wrap: wrap;
+                gap: 0.5rem;
+            }
+
+            .footer .newsletter-form input,
+            .footer .newsletter-form button {
+                width: 100%;
+                border-radius: 4px;
+            }
+        }
     </style>
 </head>
 

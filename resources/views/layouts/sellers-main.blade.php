@@ -149,19 +149,24 @@
         background-color: #F8F9F5;
     }
 
-    @media (max-width: 768px) {
+    @media (max-width: 991.98px) {
         .sidebar {
             position: fixed;
             z-index: 1000;
             transform: translateX(-100%);
+            width: min(85vw, 280px);
+            height: 100vh;
+            overflow-y: auto;
         }
 
         .sidebar.active {
+            display: block !important;
             transform: translateX(0);
         }
 
         .main-content {
             padding: 1rem;
+            padding-top: 5rem;
         }
     }
 </style>
@@ -170,7 +175,7 @@
     <div class="container-fluid g-0">
         <div class="row g-0">
             {{-- SIDEBAR --}}
-            <aside class="col-md-2 col-lg-2 sidebar d-none d-md-block">
+            <aside class="col-lg-2 sidebar d-none d-lg-block">
                 <div class="sidebar-header">
                     <img src="{{ Auth::user()->profile_picture
     ? asset(Auth::user()->profile_picture)
@@ -246,7 +251,7 @@
             </aside>
 
             {{-- MOBILE MENU TOGGLE (Hidden on desktop) --}}
-            <div class="d-md-none fixed-top p-3 bg-white shadow-sm">
+            <div class="d-lg-none fixed-top p-3 bg-white shadow-sm">
                 <button class="btn btn-outline-success" type="button" id="sidebarToggle">
                     <i class="fas fa-bars"></i>
                 </button>
@@ -254,7 +259,7 @@
             </div>
 
             {{-- MAIN CONTENT --}}
-            <main class="col-md-10 col-lg-10 main-content">
+            <main class="col-lg-10 main-content">
                 @yield('content')
             </main>
         </div>
@@ -276,7 +281,7 @@
 
             // Close sidebar when clicking outside on mobile
             document.addEventListener('click', function (event) {
-                if (window.innerWidth < 768) {
+                if (window.innerWidth < 992) {
                     if (!sidebar.contains(event.target) &&
                         !sidebarToggle.contains(event.target) &&
                         sidebar.classList.contains('active')) {

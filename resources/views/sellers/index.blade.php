@@ -5,6 +5,7 @@
 
 <a href="{{ route('sellers.create') }}" class="btn btn-primary">Add Seller</a>
 
+<div class="table-responsive">
 <table class="table mt-3">
     <tr>
         <th>ID</th>
@@ -32,4 +33,5 @@
     </tr>
     @endforeach
 </table>
+</div>
 @endsection

@@ -163,6 +163,28 @@
                 background: linear-gradient(135deg, #f9f9f9 0%, rgb(207, 201, 131) 100%);
             }
 
+            @media (max-width: 575.98px) {
+                .section-title {
+                    font-size: 1.65rem;
+                }
+
+                .search-container {
+                    display: flex;
+                    flex-direction: column;
+                    gap: 0.5rem;
+                }
+
+                .search-btn {
+                    position: static;
+                    width: 100%;
+                    min-height: 44px;
+                }
+
+                .category-card {
+                    width: 100px;
+                }
+            }
+
             .icon-circle {
                 width: 50px;
                 height: 50px;

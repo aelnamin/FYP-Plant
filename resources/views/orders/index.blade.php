@@ -5,6 +5,7 @@
 
     <a href="{{ route('orders.create') }}" class="btn btn-primary">Create Order</a>
 
+    <div class="table-responsive">
     <table class="table mt-3">
         <tr>
             <th>ID</th>
@@ -36,4 +37,5 @@
             </tr>
         @endforeach
     </table>
+    </div>
 @endsection

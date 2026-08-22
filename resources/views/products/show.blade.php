@@ -177,6 +177,22 @@
             color: #000;
             border-color: rgb(0, 0, 0);
         }
+
+        @media (max-width: 575.98px) {
+            .btn-matcha {
+                width: 100%;
+                height: auto;
+                min-height: 42px;
+            }
+
+            .seller-card {
+                padding: 12px;
+            }
+
+            .variant-label {
+                overflow-wrap: anywhere;
+            }
+        }
     </style>
 
     <div class="container mt-4">
