@@ -8,6 +8,9 @@ use App\Models\Seller;
 use App\Models\ProductImage;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
+use Carbon\Carbon;
+use Throwable;
 
 
 class ProductController extends Controller
@@ -34,32 +37,33 @@ class ProductController extends Controller
         return view('products.index', compact('products'));
     }
 
-    public function show($id)
+    public function show(Request $request, $id)
     {
-        /** @var \App\Models\User|null $user */
-        $user = Auth::user();
+        try {
+            /** @var \App\Models\User|null $user */
+            $user = Auth::user();
 
-        $product = Product::with([
-            'images',
-            'seller',
-            'growthLogs',
-            'careLogs'
-        ])->findOrFail($id);
+            // Load only relationships rendered by this request. The previous
+            // query loaded the complete growth and care history, then queried
+            // both tables again for their latest records. Products with a long
+            // history could therefore consume excessive memory on Vercel.
+            $product = Product::query()
+                ->with(['images', 'seller.user', 'category'])
+                ->withAvg('reviews', 'rating')
+                ->withCount('reviews')
+                ->findOrFail($id);
 
         // PAGINATED REVIEWS
-        $reviews = $product->reviews()
+            $reviews = $product->reviews()
+            ->with('user')
             ->orderBy('created_at', 'desc') // newest first
             ->paginate(2)
             ->withQueryString();
 
 
         // Rating summary 
-        $averageRating = round(
-            $product->reviews()->avg('rating'),
-            1
-        );
-
-        $totalReviews = $product->reviews()->count();
+            $averageRating = round((float) ($product->reviews_avg_rating ?? 0), 1);
+            $totalReviews = (int) $product->reviews_count;
 
         $hasPurchased = false;
         $hasReviewed = false;
@@ -77,71 +81,90 @@ class ProductController extends Controller
                 ->exists();
         }
 
-        $sameSellerProducts = Product::with('images')
-            ->where('seller_id', $product->seller_id)
-            ->where('id', '!=', $product->id)
-            ->where('approval_status', 'Approved')
-            ->take(4)
-            ->get();
+            $sameSellerProducts = $product->seller
+                ? Product::with('images')
+                    ->where('seller_id', $product->seller_id)
+                    ->where('id', '!=', $product->id)
+                    ->where('approval_status', 'Approved')
+                    ->take(4)
+                    ->get()
+                : collect();
 
 
 
-        $variants = is_array($product->variants)
-            ? $product->variants
-            : json_decode($product->variants, true);
+            $variants = is_array($product->variants)
+                ? $product->variants
+                : json_decode((string) $product->variants, true);
 
-        $variants = $variants ?? [];
+            $variants = array_values(array_filter(
+                is_array($variants) ? $variants : [],
+                fn($variant) => is_string($variant) && trim($variant) !== ''
+            ));
 
 // ================================
 // BATCH HEALTH MONITORING
 // ================================
 
-$latestGrowth = $product->growthLogs()
-    ->latest('created_at')
-    ->first();
+            $latestGrowth = $product->growthLogs()
+                ->latest('created_at')
+                ->first();
 
-$latestWatering = $product->careLogs()
-    ->where('care_type', 'watering')
-    ->latest('care_date')
-    ->first();
+            $latestWatering = $product->careLogs()
+                ->where('care_type', 'watering')
+                ->latest('care_date')
+                ->first();
 
 $healthStatus = 'Monitoring Not Available';
 $healthColor = 'secondary';
 
-if ($latestGrowth || $latestWatering) {
+            if ($latestGrowth || $latestWatering) {
 
     $healthStatus = 'Healthy';
     $healthColor = 'success';
 
-    if ($latestWatering) {
-        $daysSinceWater = \Carbon\Carbon::parse($latestWatering->care_date)
-            ->diffInDays(now());
+                if ($latestWatering) {
+                    $wateringDate = Carbon::make($latestWatering->care_date);
+                    $daysSinceWater = $wateringDate?->diffInDays(now());
 
-        if ($daysSinceWater > 7) {
+                    if ($daysSinceWater !== null && $daysSinceWater > 7) {
             $healthStatus = 'Needs Attention';
             $healthColor = 'warning';
-        }
+                    }
 
-        if ($daysSinceWater > 14) {
+                    if ($daysSinceWater !== null && $daysSinceWater > 14) {
             $healthStatus = 'High Risk';
             $healthColor = 'danger';
+                    }
+                }
+            }
+
+            return view('products.show', compact(
+                'product',
+                'reviews',
+                'averageRating',
+                'totalReviews',
+                'hasPurchased',
+                'hasReviewed',
+                'sameSellerProducts',
+                'variants',
+                'latestGrowth',
+                'latestWatering',
+                'healthStatus',
+                'healthColor'
+            ));
+        } catch (Throwable $e) {
+            Log::error('Product detail request failed.', [
+                'exception_class' => $e::class,
+                'exception_message' => $e->getMessage(),
+                'exception_file' => $e->getFile(),
+                'exception_line' => $e->getLine(),
+                'product_id' => (string) $id,
+                'route_name' => $request->route()?->getName(),
+                'vercel_request_id' => $request->header('x-vercel-id'),
+            ]);
+
+            throw $e;
         }
-    }
-}
-        return view('products.show', compact(
-            'product',
-            'reviews',
-            'averageRating',
-            'totalReviews',
-            'hasPurchased',
-            'hasReviewed',
-            'sameSellerProducts',
-            'variants',
-            'latestGrowth',
-            'latestWatering',
-            'healthStatus',
-            'healthColor'
-        ));
     }
 
     /* -------------------------------------------------------

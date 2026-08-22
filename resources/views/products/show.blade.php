@@ -202,7 +202,7 @@
             <a
                 href="{{ auth()->check() && auth()->user()->role === 'buyer' ? route('buyer.dashboard') : route('home') }}">Home</a>
             <span class="mx-2">/</span>
-            <a href="#">{{ $product->category->category_name }}</a>
+            <a href="#">{{ $product->category?->category_name ?? 'Uncategorized' }}</a>
             <span class="mx-2">/</span>
             <span class="text-dark">{{ $product->product_name }}</span>
         </nav>
@@ -218,7 +218,9 @@
 
             {{-- CENTER: Main Image --}}
             <div class="col-md-5">
-                <img id="mainPreview" src="{{ asset('images/' . $product->images->first()->image_path) }}"
+                <img id="mainPreview" src="{{ $product->images->first()
+                    ? asset('images/' . $product->images->first()->image_path)
+                    : asset('images/default.jpg') }}"
                     class="main-image">
             </div>
 
@@ -226,11 +228,12 @@
             <div class="col-md-6">
                 <h2 class="fw-bold">{{ $product->product_name }}</h2>
 
+                @if($product->seller)
                 <a href="{{ route('seller-shop', $product->seller->id) }}" class="text-decoration-none text-dark">
 
                     <div class="seller-card seller-clickable">
                         <div class="d-flex align-items-center mb-3">
-                            <img src="{{ $product->seller->user->profile_picture && file_exists(public_path($product->seller->user->profile_picture))
+                            <img src="{{ $product->seller->user?->profile_picture && file_exists(public_path($product->seller->user->profile_picture))
         ? asset($product->seller->user->profile_picture)
         : asset('images/default.png') }}" class="seller-profile-img me-3" alt="{{ $product->seller->business_name }}">
 
@@ -253,6 +256,9 @@
                         </div>
                     </div>
                 </a>
+                @else
+                    <div class="seller-card text-muted">Seller information is unavailable.</div>
+                @endif
 
 
                 {{-- Rating --}}
@@ -391,7 +397,7 @@
             </div>
 
             {{-- Plant Information --}}
-            @if($product->category->category_name !== 'Tools')
+            @if(($product->category?->category_name ?? '') !== 'Tools')
                 <div class="mt-4">
                     <h4 class="fw-bold">Plant Information</h4>
                     <p class="text-muted mb-1"><strong>Sunlight Requirement:</strong>
@@ -427,7 +433,7 @@
                     @foreach ($reviews as $review)
                         <div class="border rounded p-3 mb-3 bg-light">
                             <div class="d-flex justify-content-between align-items-center mb-1">
-                                <strong>{{ $review->user->name }}</strong>
+                                <strong>{{ $review->user?->name ?? 'Former customer' }}</strong>
                                 <small class="text-muted">{{ $review->created_at->diffForHumans() }}</small>
                             </div>
                             <div class="text-warning mb-1 fs-4">
@@ -458,7 +464,7 @@
             {{-- More from same seller --}}
             @if($sameSellerProducts->count())
                 <div class="container mt-5">
-                    <h4 class="fw-bold">More from {{ $product->seller->business_name }}</h4>
+                    <h4 class="fw-bold">More from {{ $product->seller?->business_name ?? 'this seller' }}</h4>
                     <br>
                     <div class="row g-4">
                         @foreach ($sameSellerProducts as $p)
