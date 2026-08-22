@@ -24,13 +24,16 @@ class BuyerProfileController extends Controller
         $groupedOrders = collect();
 
         foreach ($orders as $order) {
-            $orderSubtotal = $order->items->sum(fn($item) => $item->price * $item->quantity);
+            $validItems = $order->items
+                ->filter(fn($item) => $item->product !== null);
+
+            $orderSubtotal = $validItems->sum(fn($item) => $item->price * $item->quantity);
 
             // Free delivery if order subtotal >= 150
             $freeDelivery = $orderSubtotal >= 150;
 
             // Group items by seller
-            $sellerGroups = $order->items->groupBy(fn($item) => $item->product->seller_id);
+            $sellerGroups = $validItems->groupBy(fn($item) => $item->product->seller_id);
 
             foreach ($sellerGroups as $sellerId => $items) {
                 $firstItem = $items->first();

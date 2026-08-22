@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Models\Product;
 use App\Models\Cart;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 
 class CartController extends Controller
 {
@@ -15,6 +16,21 @@ class CartController extends Controller
      */
     private function normalizeVariants($cartItems)
     {
+        $missingProductItemIds = $cartItems
+            ->filter(fn($item) => $item->product === null)
+            ->pluck('id');
+
+        if ($missingProductItemIds->isNotEmpty()) {
+            Log::warning('Ignoring cart items whose products no longer exist.', [
+                'cart_item_ids' => $missingProductItemIds->all(),
+                'user_id' => Auth::id(),
+            ]);
+        }
+
+        $cartItems = $cartItems
+            ->filter(fn($item) => $item->product !== null)
+            ->values();
+
         return $cartItems->transform(function ($item) {
             // Decode variants from product
             $variants = $item->product->variants;
@@ -223,7 +239,6 @@ class CartController extends Controller
         return view('buyer.checkout', compact('cartItems'));
     }
 }
-
 
 
 

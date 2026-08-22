@@ -36,7 +36,9 @@ class AppServiceProvider extends ServiceProvider
 
         Paginator::useBootstrap();
 
-        // Share "not shipped yet" orders count with seller layout
+        // Share "not shipped yet" orders count with seller layout.
+        // Keep this as one composer: duplicate registration previously ran
+        // the same remote-database queries twice on every seller page.
         View::composer('layouts.sellers-main', function ($view) {
 
             // Ensure user is logged in
@@ -63,29 +65,6 @@ class AppServiceProvider extends ServiceProvider
             // Share variable with view
             $view->with('notShippedOrdersCount', $notShippedOrdersCount);
 
-        });
-
-        View::composer('layouts.sellers-main', function ($view) {
-
-            if (!Auth::check()) {
-                return;
-            }
-
-            $seller = Seller::where('user_id', Auth::id())->first();
-            if (!$seller) {
-                return;
-            }
-
-            $sellerProductIds = Product::where('seller_id', $seller->id)->pluck('id');
-
-            $notShippedOrdersCount = Order::whereHas('items', function ($q) use ($sellerProductIds) {
-                $q->whereIn('product_id', $sellerProductIds)
-                    ->whereNotIn('seller_status', ['shipped', 'delivered', 'completed', 'cancelled']);
-            })
-                ->distinct('id')
-                ->count('id');
-
-            $view->with('notShippedOrdersCount', $notShippedOrdersCount);
         });
 
         View::composer('layouts.main', function ($view) {

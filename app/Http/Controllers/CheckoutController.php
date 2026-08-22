@@ -10,6 +10,8 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Cart;
 use App\Models\Transaction;
+use Illuminate\Support\Facades\Log;
+use Throwable;
 
 class CheckoutController extends Controller
 {
@@ -31,6 +33,8 @@ class CheckoutController extends Controller
         $cartItems = CartItem::where('cart_id', $cart->id)
             ->with(['product.seller', 'product.images'])
             ->get();
+
+        $cartItems = $this->withoutMissingProducts($cartItems, $user->id);
 
         if ($cartItems->isEmpty()) {
             return redirect()->route('buyer.cart')->with('error', 'Your cart is empty.');
@@ -92,6 +96,8 @@ class CheckoutController extends Controller
             ->with('product')
             ->get();
 
+        $cartItems = $this->withoutMissingProducts($cartItems, $user->id);
+
 
         if ($cartItems->isEmpty()) {
             return redirect()->route('buyer.cart')
@@ -131,6 +137,10 @@ class CheckoutController extends Controller
             foreach ($cartItems as $item) {
                 $product = \App\Models\Product::lockForUpdate()->find($item->product_id);
 
+                if (!$product) {
+                    throw new \RuntimeException('A product in the cart no longer exists.');
+                }
+
                 if ($product->stock_quantity < $item->quantity) {
                     throw new \Exception('Insufficient stock for ' . $product->product_name);
                 }
@@ -163,12 +173,35 @@ class CheckoutController extends Controller
             return redirect()->route('buyer.dashboard')
                 ->with('success', 'Order placed successfully!');
 
-        } catch (\Exception $e) {
+        } catch (Throwable $e) {
             DB::rollBack();
 
+            Log::error('Checkout failed.', [
+                'user_id' => $user->id,
+                'cart_id' => $cart->id,
+                'exception' => $e,
+            ]);
+
             return redirect()->route('buyer.cart')
-                ->with('error', 'Something went wrong: ' . $e->getMessage());
+                ->with('error', 'We could not complete your order. Please review your cart and try again.');
         }
     }
-}
 
+    private function withoutMissingProducts($cartItems, int $userId)
+    {
+        $missingProductItemIds = $cartItems
+            ->filter(fn($item) => $item->product === null)
+            ->pluck('id');
+
+        if ($missingProductItemIds->isNotEmpty()) {
+            Log::warning('Ignoring checkout items whose products no longer exist.', [
+                'cart_item_ids' => $missingProductItemIds->all(),
+                'user_id' => $userId,
+            ]);
+        }
+
+        return $cartItems
+            ->filter(fn($item) => $item->product !== null)
+            ->values();
+    }
+}
