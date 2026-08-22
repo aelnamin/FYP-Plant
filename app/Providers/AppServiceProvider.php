@@ -6,6 +6,7 @@ use Illuminate\Pagination\Paginator;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\URL;
 use App\Models\Seller;
 use App\Models\Product;
 use App\Models\Order;
@@ -26,6 +27,13 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        // Vercel terminates TLS before forwarding the request to PHP. Ensure
+        // every generated route, form action, asset URL, and redirect remains
+        // HTTPS in production while leaving local HTTP development unchanged.
+        if ($this->app->environment('production')) {
+            URL::forceScheme('https');
+        }
+
         Paginator::useBootstrap();
 
         // Share "not shipped yet" orders count with seller layout
