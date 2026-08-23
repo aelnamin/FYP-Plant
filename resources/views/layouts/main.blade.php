@@ -340,6 +340,9 @@
             </div>
         </nav>
 
+        <!-- OPTIONAL FULL-WIDTH PAGE CONTENT -->
+        @yield('full-width-content')
+
         <!-- PAGE CONTENT -->
         <div class="container py-4">
             @yield('content')

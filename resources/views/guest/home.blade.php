@@ -1,6 +1,6 @@
 @extends('layouts.main')
 
-@section('content')
+@section('full-width-content')
 
     {{-- SHOW BANNER ONLY FOR GUESTS / NON-BUYERS --}}
     @if(!Auth::check() || Auth::user()->role !== 'buyer')
@@ -213,56 +213,315 @@
                 transform: translateY(-8px);
                 box-shadow: 0 15px 30px rgba(92, 127, 81, 0.15);
             }
+
+            /* Homepage hero */
+            .home-hero {
+                position: relative;
+                min-height: clamp(470px, 67vh, 650px);
+                width: 100%;
+                margin: 0;
+                overflow: hidden;
+                border-radius: 0;
+                background: #253723;
+                box-shadow: none;
+                isolation: isolate;
+            }
+
+            .home-hero::after {
+                content: '';
+                position: absolute;
+                inset: 0;
+                z-index: 1;
+                pointer-events: none;
+                background:
+                    linear-gradient(90deg, rgba(25, 43, 23, 0.91) 0%, rgba(34, 54, 30, 0.7) 44%, rgba(24, 36, 22, 0.2) 76%),
+                    linear-gradient(0deg, rgba(13, 24, 12, 0.32), transparent 48%);
+            }
+
+            .home-hero__carousel,
+            .home-hero__carousel .carousel-inner,
+            .home-hero__carousel .carousel-item {
+                position: absolute;
+                inset: 0;
+                height: 100%;
+            }
+
+            .home-hero__image {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+                object-position: center;
+                transform: scale(1.015);
+            }
+
+            .home-hero__content {
+                position: relative;
+                z-index: 2;
+                display: flex;
+                align-items: center;
+                width: 100%;
+                max-width: 1440px;
+                min-height: clamp(470px, 67vh, 650px);
+                margin-inline: auto;
+                padding-inline: clamp(1.25rem, 6vw, 6rem);
+                padding-block: clamp(3rem, 8vw, 6rem);
+            }
+
+            .home-hero__copy {
+                max-width: 690px;
+                color: #fff;
+            }
+
+            .home-hero__eyebrow {
+                display: inline-flex;
+                align-items: center;
+                gap: 0.5rem;
+                margin-bottom: 1.25rem;
+                padding: 0.55rem 0.9rem;
+                border: 1px solid rgba(255, 255, 255, 0.24);
+                border-radius: 999px;
+                background: rgba(255, 255, 255, 0.1);
+                color: #f2f6ed;
+                font-size: 0.78rem;
+                font-weight: 700;
+                letter-spacing: 0.09em;
+                text-transform: uppercase;
+                backdrop-filter: blur(10px);
+            }
+
+            .home-hero__title {
+                max-width: 650px;
+                margin-bottom: 1rem;
+                font-size: clamp(2.45rem, 5.7vw, 5.25rem);
+                font-weight: 800;
+                line-height: 0.98;
+                letter-spacing: -0.045em;
+                text-wrap: balance;
+            }
+
+            .home-hero__title-accent {
+                color: #c9dfa9;
+            }
+
+            .home-hero__subtitle {
+                max-width: 570px;
+                margin-bottom: 1.75rem;
+                color: rgba(255, 255, 255, 0.82);
+                font-size: clamp(1rem, 1.7vw, 1.2rem);
+                line-height: 1.7;
+            }
+
+            .home-hero .search-container {
+                display: flex;
+                max-width: 650px;
+                margin: 0;
+                padding: 0.4rem;
+                border: 1px solid rgba(255, 255, 255, 0.38);
+                border-radius: 999px;
+                background: rgba(255, 255, 255, 0.96);
+                box-shadow: 0 16px 34px rgba(15, 28, 13, 0.24);
+            }
+
+            .home-hero .search-input {
+                min-width: 0;
+                padding: 0.8rem 1.1rem;
+                border: 0;
+                background: transparent;
+                box-shadow: none;
+            }
+
+            .home-hero .search-input:focus {
+                border: 0;
+                box-shadow: none;
+            }
+
+            .home-hero .search-btn {
+                position: static;
+                flex: 0 0 auto;
+                min-height: 48px;
+                padding-inline: 1.5rem;
+                border-radius: 999px;
+                background: #5c7f51;
+                box-shadow: 0 8px 18px rgba(62, 94, 52, 0.25);
+            }
+
+            .home-hero .search-btn:hover,
+            .home-hero .search-btn:focus {
+                color: #fff;
+                background: #496a40;
+                transform: translateY(-1px);
+            }
+
+            .home-hero__assurance {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 0.75rem 1.5rem;
+                margin-top: 1.25rem;
+                color: rgba(255, 255, 255, 0.78);
+                font-size: 0.88rem;
+            }
+
+            .home-hero__assurance span {
+                display: inline-flex;
+                align-items: center;
+                gap: 0.45rem;
+            }
+
+            .home-hero__assurance i {
+                color: #c9dfa9;
+            }
+
+            .home-hero .carousel-indicators {
+                z-index: 3;
+                justify-content: flex-end;
+                margin-right: clamp(1rem, 4vw, 3rem);
+                margin-bottom: 1.5rem;
+            }
+
+            .home-hero .carousel-indicators [data-bs-target] {
+                width: 2rem;
+                height: 0.22rem;
+                border: 0;
+                border-radius: 999px;
+            }
+
+            @media (max-width: 767.98px) {
+                .home-hero {
+                    min-height: 560px;
+                }
+
+                .home-hero::after {
+                    background: linear-gradient(0deg, rgba(21, 37, 19, 0.94) 0%, rgba(28, 47, 25, 0.72) 67%, rgba(22, 35, 20, 0.38) 100%);
+                }
+
+                .home-hero__content {
+                    align-items: flex-end;
+                    min-height: 560px;
+                    padding: 3.5rem 0 4.25rem;
+                }
+
+                .home-hero__copy {
+                    max-width: 100%;
+                    text-align: center;
+                }
+
+                .home-hero__subtitle {
+                    margin-inline: auto;
+                }
+
+                .home-hero .search-container {
+                    max-width: 560px;
+                    margin-inline: auto;
+                }
+
+                .home-hero__assurance {
+                    justify-content: center;
+                }
+
+                .home-hero .carousel-indicators {
+                    justify-content: center;
+                    margin-right: 15%;
+                    margin-bottom: 1rem;
+                }
+            }
+
+            @media (max-width: 575.98px) {
+                .home-hero {
+                    min-height: 590px;
+                }
+
+                .home-hero__content {
+                    min-height: 590px;
+                    padding-inline: 1rem;
+                }
+
+                .home-hero .search-container {
+                    display: grid;
+                    gap: 0.45rem;
+                    padding: 0.5rem;
+                    border-radius: 1rem;
+                }
+
+                .home-hero .search-input,
+                .home-hero .search-btn {
+                    width: 100%;
+                }
+
+                .home-hero .search-input {
+                    text-align: center;
+                }
+
+                .home-hero .search-btn {
+                    border-radius: 0.75rem;
+                }
+
+                .home-hero__assurance {
+                    gap: 0.5rem 1rem;
+                    font-size: 0.8rem;
+                }
+            }
         </style>
 
-        <!-- BANNER SECTION WITH SEARCH BAR ON TOP -->
-        <section style="position: relative;">
-
-            <!-- SEARCH BAR OVERLAY -->
-            <div
-                style="position: absolute; top: 50%; left: 50%;
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                        transform: translate(-50%, -50%); z-index: 10; width: 100%; max-width: 700px;
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                        text-align: center; color: white;">
-
-                <h1 class="fw-bold text-shadow">Welcome to Aether & Leaf Co.</h1>
-                <p class="text-shadow">Your trusted place for plants & gardening essentials</p>
-
-
-                <!-- SEARCH BAR -->
-                <form method="GET" action="{{ route('products.browse') }}" class="search-container mb-4">
-                    <input type="text" name="search" class="form-control search-input"
-                        placeholder="Search for plants, tools, seeds..." value="{{ request('search') }}">
-                    <button type="submit" class="search-btn">
-                        <i class="bi bi-search me-2"></i> Search
-                    </button>
-                </form>
-            </div>
-
-            <!-- IMAGE CAROUSEL -->
-            <div id="plantBanner" class="carousel slide" data-bs-ride="carousel" data-bs-interval="3000">
+        <!-- HOMEPAGE HERO -->
+        <section class="home-hero" aria-labelledby="home-hero-title">
+            <div id="plantBanner" class="carousel slide home-hero__carousel" data-bs-ride="carousel" data-bs-interval="5000">
+                <div class="carousel-indicators">
+                    <button type="button" data-bs-target="#plantBanner" data-bs-slide-to="0" class="active"
+                        aria-current="true" aria-label="Show indoor plants"></button>
+                    <button type="button" data-bs-target="#plantBanner" data-bs-slide-to="1"
+                        aria-label="Show garden plants"></button>
+                    <button type="button" data-bs-target="#plantBanner" data-bs-slide-to="2"
+                        aria-label="Show gardening essentials"></button>
+                </div>
                 <div class="carousel-inner">
-
                     <div class="carousel-item active">
-                        <img src="{{ asset('images/banner7.jpg') }}" class="d-block w-100"
-                            style="height: 529px; object-fit: cover; border-radius: 20px;">
+                        <img src="{{ asset('images/0210df71-d45f-47c7-ad13-a0961e6321b4.png') }}" class="home-hero__image"
+                            alt="A curated collection of healthy indoor plants">
                     </div>
-
                     <div class="carousel-item">
-                        <img src="{{ asset('images/banner9.jpg') }}" class="d-block w-100"
-                            style="height: 529px; object-fit: cover; border-radius: 20px;">
+                        <img src="{{ asset('images/2c4fba5e-9f01-4211-b7ed-6ad162103f39.png') }}" class="home-hero__image"
+                            alt="Green plants styled for a welcoming home">
                     </div>
-
                     <div class="carousel-item">
-                        <img src="{{ asset('images/banner11.jpg') }}" class="d-block w-100"
-                            style="height: 529px; object-fit: cover; border-radius: 20px;">
+                        <img src="{{ asset('images/9605776d-88f0-464d-b6f0-2dfe42e39b47.png') }}" class="home-hero__image"
+                            alt="Plant and gardening essentials from trusted sellers">
                     </div>
-
                 </div>
             </div>
 
+            <div class="home-hero__content">
+                <div class="home-hero__copy">
+                    <div class="home-hero__eyebrow">
+                        <i class="bi bi-leaf-fill" aria-hidden="true"></i>
+                        Curated for greener living
+                    </div>
+                    <h1 id="home-hero-title" class="home-hero__title">
+                        Welcome to <span class="home-hero__title-accent">Aether & Leaf Co.</span>
+                    </h1>
+                    <p class="home-hero__subtitle">Your trusted place for plants & gardening essentials</p>
+
+                    <form method="GET" action="{{ route('products.browse') }}" class="search-container" role="search">
+                        <label for="hero-search" class="visually-hidden">Search products</label>
+                        <input id="hero-search" type="search" name="search" class="form-control search-input"
+                            placeholder="Search plants, tools, seeds..." value="{{ request('search') }}">
+                        <button type="submit" class="search-btn">
+                            <i class="bi bi-search me-2" aria-hidden="true"></i>Search
+                        </button>
+                    </form>
+
+                    <div class="home-hero__assurance" aria-label="Shopping benefits">
+                        <span><i class="bi bi-patch-check-fill" aria-hidden="true"></i>Trusted local sellers</span>
+                        <span><i class="bi bi-box-seam-fill" aria-hidden="true"></i>Carefully packed</span>
+                        <span><i class="bi bi-heart-fill" aria-hidden="true"></i>Selected with care</span>
+                    </div>
+                </div>
+            </div>
         </section>
 
     @endif
+@endsection
+
+@section('content')
 <br>
     <div class="container py-4">
 
