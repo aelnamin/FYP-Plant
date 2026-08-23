@@ -74,7 +74,23 @@ class Handler extends ExceptionHandler
                 'vercel_request_id' => $request->header('x-vercel-id'),
                 'vercel_region' => getenv('VERCEL_REGION') ?: null,
                 'php_memory_peak_mb' => round(memory_get_peak_usage(true) / 1048576, 1),
+                'trace' => collect($e->getTrace())
+                    ->take(8)
+                    ->map(static fn (array $frame): string => sprintf(
+                        '%s:%s %s%s%s',
+                        $frame['file'] ?? '[internal]',
+                        $frame['line'] ?? '?',
+                        $frame['class'] ?? '',
+                        $frame['type'] ?? '',
+                        $frame['function'] ?? ''
+                    ))
+                    ->all(),
             ]);
+
+            // The bounded summary above contains the exception origin and the
+            // first useful frames. Prevent the default multi-page trace from
+            // being appended to the same stderr record and truncating its cause.
+            return false;
         });
     }
 }

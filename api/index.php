@@ -48,6 +48,20 @@ if ($isVercel) {
         }
     }
 
+    // Composer creates these manifests during the Vercel build. Seed the
+    // writable runtime copies once per cold instance so Laravel does not
+    // rediscover every package and provider during the first request.
+    foreach (['packages.php', 'services.php'] as $manifest) {
+        $source = dirname(__DIR__)."/bootstrap/cache/$manifest";
+        $destination = "$tmp/$manifest";
+
+        if (is_file($source) && ! is_file($destination)) {
+            if (! copy($source, $destination)) {
+                throw new RuntimeException("Unable to seed Laravel manifest: $manifest");
+            }
+        }
+    }
+
     // Laravel's local file-backed defaults cannot persist on Vercel's
     // read-only filesystem. Keep explicitly configured remote stores, but
     // replace local file stores with serverless-safe alternatives.

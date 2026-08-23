@@ -225,6 +225,16 @@
 
     @php
         $user = Auth::guard('web')->user();
+        $cartItemCount = 0;
+
+        if ($user && $user->role === 'buyer') {
+            // One aggregate query instead of lazily loading the cart and then
+            // issuing a second query for its item total on every buyer page.
+            $cartItemCount = \App\Models\CartItem::query()
+                ->join('carts', 'cart_items.cart_id', '=', 'carts.id')
+                ->where('carts.user_id', $user->id)
+                ->sum('cart_items.quantity');
+        }
     @endphp
 
     <main>
@@ -289,7 +299,7 @@
                                 <a class="nav-link cart-link" href="#" data-bs-toggle="offcanvas" data-bs-target="#cartSidebar">
                                     <i class="bi bi-cart4" style="font-size: 1.3rem;"></i>
                                     <span id="cart-count" class="cart-badge">
-                                        {{ $user->cart?->items()->sum('quantity') ?? 0 }}
+                                        {{ $cartItemCount }}
                                     </span>
                                 </a>
                             @else
