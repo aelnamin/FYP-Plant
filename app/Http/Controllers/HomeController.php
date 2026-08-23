@@ -36,10 +36,7 @@ class HomeController extends Controller
             ->get();
 
         // Top Sellers (approved sellers, ranked by average rating)
-        $topSellers = Seller::with('user')
-            ->withAvg('reviews', 'rating')
-            ->where('verification_status', 'Approved')
-            ->orderByDesc('reviews_avg_rating')
+        $topSellers = Seller::storefrontTopSellers()
             ->take(4)
             ->get();
 

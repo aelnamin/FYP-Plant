@@ -53,4 +53,18 @@ class Seller extends Model
         );
     }
 
+    /**
+     * Sellers featured in the storefront's Top Sellers section.
+     */
+    public function scopeStorefrontTopSellers($query)
+    {
+        return $query
+            ->with('user')
+            ->withAvg('reviews', 'rating')
+            ->where('verification_status', 'Approved')
+            ->whereNotIn('business_name', ['Green Thumb', 'Tropical Leaf'])
+            ->orderByRaw('CASE WHEN business_name = ? THEN 0 ELSE 1 END', ['Orchid Hub'])
+            ->orderByDesc('reviews_avg_rating');
+    }
+
 }

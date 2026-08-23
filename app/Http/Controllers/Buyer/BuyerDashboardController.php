@@ -47,10 +47,7 @@ class BuyerDashboardController extends Controller
             ->get();
 
         // Top Sellers (approved sellers)
-        $topSellers = Seller::with('user')
-            ->withAvg('reviews', 'rating') // calculates average rating through products
-            ->where('verification_status', 'Approved')
-            ->orderByDesc('reviews_avg_rating') // order by average rating
+        $topSellers = Seller::storefrontTopSellers()
             ->take(4)
             ->get();
 
