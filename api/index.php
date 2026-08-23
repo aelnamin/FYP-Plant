@@ -63,11 +63,10 @@ if ($isVercel) {
     }
 
     // Laravel's local file-backed defaults cannot persist on Vercel's
-    // read-only filesystem. Keep explicitly configured remote stores, but
-    // replace local file stores with serverless-safe alternatives.
+    // read-only filesystem. Keep explicitly configured remote cache/session
+    // stores, but make stderr authoritative for every Vercel log path.
     $serverlessDefaults = [
         'CACHE_DRIVER' => ['value' => 'array', 'unsupported' => [false, '', 'file']],
-        'LOG_CHANNEL' => ['value' => 'stderr', 'unsupported' => [false, '', 'stack', 'single', 'daily']],
         'SESSION_DRIVER' => ['value' => 'cookie', 'unsupported' => [false, '', 'file']],
     ];
 
@@ -77,6 +76,12 @@ if ($isVercel) {
             $_ENV[$name] = $setting['value'];
             $_SERVER[$name] = $setting['value'];
         }
+    }
+
+    foreach (['LOG_CHANNEL' => 'stderr', 'LOG_STACK' => 'stderr'] as $name => $value) {
+        putenv("$name=$value");
+        $_ENV[$name] = $value;
+        $_SERVER[$name] = $value;
     }
 }
 

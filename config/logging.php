@@ -5,6 +5,8 @@ use Monolog\Handler\StreamHandler;
 use Monolog\Handler\SyslogUdpHandler;
 use Monolog\Processor\PsrLogMessageProcessor;
 
+$isVercel = (bool) env('VERCEL', false);
+
 return [
 
     /*
@@ -18,7 +20,7 @@ return [
     |
     */
 
-    'default' => env('LOG_CHANNEL', 'stack'),
+    'default' => $isVercel ? 'stderr' : env('LOG_CHANNEL', 'stack'),
 
     /*
     |--------------------------------------------------------------------------
@@ -54,7 +56,9 @@ return [
     'channels' => [
         'stack' => [
             'driver' => 'stack',
-            'channels' => ['single'],
+            'channels' => $isVercel
+                ? ['stderr']
+                : array_filter(explode(',', env('LOG_STACK', 'single'))),
             'ignore_exceptions' => false,
         ],
 
@@ -98,7 +102,10 @@ return [
             'driver' => 'monolog',
             'level' => env('LOG_LEVEL', 'debug'),
             'handler' => StreamHandler::class,
-            'formatter' => env('LOG_STDERR_FORMATTER'),
+            // A stale or non-class formatter value makes Laravel abandon the
+            // configured logger and invoke its emergency channel. Use
+            // Monolog's native formatter on Vercel to keep stderr dependable.
+            'formatter' => $isVercel ? null : env('LOG_STDERR_FORMATTER'),
             'with' => [
                 'stream' => 'php://stderr',
             ],
@@ -124,7 +131,9 @@ return [
         ],
 
         'emergency' => [
-            'path' => storage_path('logs/laravel.log'),
+            'path' => $isVercel
+                ? 'php://stderr'
+                : storage_path('logs/laravel.log'),
         ],
     ],
 
