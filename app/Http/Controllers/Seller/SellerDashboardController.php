@@ -55,8 +55,6 @@ class SellerDashboardController extends Controller
             ->distinct('order_id')
             ->count();
 
-        $sellerProductIds = $seller->products()->pluck('id');
-
         // Count distinct orders where seller_status = 'paid'
         $orders_to_ship = OrderItem::whereIn('product_id', $sellerProductIds)
             ->where('seller_status', 'pending')
@@ -69,21 +67,14 @@ class SellerDashboardController extends Controller
            TOTAL REVENUE (SELLER ONLY)
         ====================== */
 
-        $total_revenue = OrderItem::whereIn('product_id', $sellerProductIds)
-            ->whereIn('seller_status', ['pending', 'paid', 'shipped', 'delivered', 'completed'])
-            ->get()
-            ->sum(fn($item) => $item->quantity * $item->price);
-
-
         /* ======================
-    MONTH REVENUE
- ====================== */
+           MONTH REVENUE
+        ====================== */
         $month_revenue = OrderItem::whereIn('product_id', $sellerProductIds)
             ->whereIn('seller_status', ['pending', 'paid', 'shipped', 'delivered', 'completed'])
             ->whereMonth('created_at', Carbon::now()->month)
             ->whereYear('created_at', Carbon::now()->year)
-            ->get()
-            ->sum(fn($item) => $item->quantity * $item->price);
+            ->sum(DB::raw('quantity * price'));
 
 
         /* ======================

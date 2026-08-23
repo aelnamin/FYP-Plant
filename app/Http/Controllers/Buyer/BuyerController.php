@@ -16,18 +16,12 @@ class BuyerController extends Controller
         $seller->load([
             'products' => function ($query) {
                 $query->with(['images', 'category'])
+                    ->withSum('orderItems as total_sold', 'quantity')
                     ->where('approval_status', 'approved') // Only show approved products
                     ->orderBy('created_at', 'desc');
             },
             'user'
         ]);
-
-        // Calculate total sold count for each product
-        $seller->products->each(function ($product) {
-            $product->total_sold = DB::table('order_items')
-                ->where('product_id', $product->id)
-                ->sum('quantity');
-        });
 
         // Calculate shop stats
         $seller->products_count = $seller->products->count();
@@ -86,15 +80,9 @@ class BuyerController extends Controller
         $products = Product::where('seller_id', $seller->id)
             ->where('approval_status', 'approved')
             ->with(['images', 'category'])
+            ->withSum('orderItems as total_sold', 'quantity')
             ->latest()
             ->get();
-
-        // Calculate total sold for each product
-        foreach ($products as $product) {
-            $product->total_sold = DB::table('order_items')
-                ->where('product_id', $product->id)
-                ->sum('quantity');
-        }
 
         $seller->products = $products;
         $seller->products_count = $products->count();

@@ -7,10 +7,7 @@ use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\URL;
-use App\Models\Seller;
-use App\Models\Product;
-use App\Models\Order;
-use App\Models\Message;
+use App\Models\OrderItem;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -46,38 +43,25 @@ class AppServiceProvider extends ServiceProvider
                 return;
             }
 
-            $seller = Seller::where('user_id', Auth::id())->first();
-            if (!$seller) {
-                return;
-            }
-
-            // Get seller product IDs
-            $sellerProductIds = Product::where('seller_id', $seller->id)->pluck('id');
-
-            // Count orders NOT shipped yet (exclude shipped & delivered)
-            $notShippedOrdersCount = Order::whereHas('items', function ($q) use ($sellerProductIds) {
-                $q->whereIn('product_id', $sellerProductIds)
-                    ->whereNotIn('seller_status', ['shipped', 'delivered', 'completed', 'cancelled']);
-            })
-                ->distinct('id')
-                ->count('id');
+            // Resolve the seller and count its outstanding orders in one query.
+            // This layout is rendered on every seller page, so avoiding separate
+            // seller and product-ID queries materially reduces remote DB traffic.
+            $notShippedOrdersCount = OrderItem::query()
+                ->join('products', 'order_items.product_id', '=', 'products.id')
+                ->join('sellers', 'products.seller_id', '=', 'sellers.id')
+                ->where('sellers.user_id', Auth::id())
+                ->whereNotIn('order_items.seller_status', [
+                    'shipped',
+                    'delivered',
+                    'completed',
+                    'cancelled',
+                ])
+                ->distinct()
+                ->count('order_items.order_id');
 
             // Share variable with view
             $view->with('notShippedOrdersCount', $notShippedOrdersCount);
 
-        });
-
-        View::composer('layouts.main', function ($view) {
-
-            if (!Auth::check() || Auth::user()->role !== 'buyer') {
-                return;
-            }
-
-            $unreadCount = Message::where('receiver_id', Auth::id())
-                ->whereNull('deleted_at')
-                ->count(); // add ->whereNull('read_at') if you have it
-
-            $view->with('unreadCount', $unreadCount);
         });
 
     }

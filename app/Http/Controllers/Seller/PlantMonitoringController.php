@@ -25,7 +25,10 @@ class PlantMonitoringController extends Controller
 
         $products = Product::where('seller_id', $seller->id)
             ->whereIn('category_id', $plantCategoryIds)
-            ->with(['growthLogs', 'careLogs']) // eager load related logs
+            // The selected plant's monitoring logs are loaded by the existing
+            // growth/care JSON endpoints. Only images are needed to render the
+            // selector, avoiding an N+1 image query and oversized option JSON.
+            ->with('images')
             ->get();
 
         return view('sellers.plants.index', compact('products'));

@@ -3,19 +3,14 @@
 @section('title', 'Plant Growth & Care Monitoring | Seller Dashboard')
 
 @section('styles')
-<script src="https://cdn.tailwindcss.com"></script>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+@endsection
 
 @section('content')
     <div class="container mx-auto px-4 py-8 bg-gray-50">
-        <!-- Page Header -->
-        <div class="page-header">
-            <h1 class="page-title">Plant Growth & Care Monitoring</h1>
-            <p class="page-subtitle">Track and manage your plants' health and development</p>
-        </div>
-
         <!-- Success Messages -->
         @if(session('success'))
             <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-6">
@@ -32,37 +27,37 @@
 
         @if($products->isEmpty())
             <!-- No Plants Found Section -->
-            <div class="text-center py-12">
-                <div class="w-24 h-24 bg-yellow-100 rounded-full flex items-center justify-center mx-auto mb-6">
-                    <i class="fas fa-store-slash text-4xl text-yellow-600"></i>
+            <div class="text-center py-5 px-3">
+                <div class="empty-state-icon mb-4" aria-hidden="true">
+                    <i class="bi bi-flower1 display-1" style="color: #dee2e6;"></i>
                 </div>
-                <h2 class="text-2xl font-bold text-gray-800 mb-4">No Plants Found</h2>
-                <p class="text-gray-600 max-w-md mx-auto mb-8">
+
+                <h4 class="text-muted mb-3">No Plants Found</h4>
+                <p class="text-muted mx-auto mb-4" style="max-width: 560px;">
                     @if(auth()->user()->sellerProfile)
-                        You don't have any plants listed yet. Add some plants to your inventory to start monitoring them.
+                        You haven't added any plant products. Once you add a plant, you can track its growth and care activities
+                        here.
                     @else
-                        You need to set up your seller profile first before you can add plants.
+                        Complete your seller profile first, then add a plant to begin tracking its growth and care activities.
                     @endif
                 </p>
-                <div class="flex flex-col sm:flex-row gap-4 justify-center">
-                    @if(auth()->user()->sellerProfile)
-                        <a href="{{ route('sellers.products.create') }}"
-                            class="inline-flex items-center px-6 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700">
-                            <i class="fas fa-plus mr-2"></i> Add New Plant
-                        </a>
-                    @else
-                        <a href="{{ route('sellers.profile') }}"
-                            class="inline-flex items-center px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
-                            <i class="fas fa-user-tie mr-2"></i> Complete Seller Profile
-                        </a>
-                    @endif
-                    <a href="{{ route('seller.dashboard') }}"
-                        class="inline-flex items-center px-6 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50">
-                        <i class="fas fa-arrow-left mr-2"></i> Back to Dashboard
+
+                <div class="d-flex flex-column flex-sm-row justify-content-center gap-3">
+                    <a href="{{ route('sellers.inventory.create') }}" class="btn btn-primary rounded-pill px-4 py-2">
+                        <i class="bi bi-plus-circle me-2"></i>+ Add New Plant
+                    </a>
+                    <a href="{{ route('sellers.dashboard') }}" class="btn btn-outline-secondary rounded-pill px-4 py-2">
+                        <i class="bi bi-arrow-left me-2"></i> Back to Dashboard
                     </a>
                 </div>
             </div>
         @else
+            <!-- Page Header -->
+            <div class="page-header">
+                <h1 class="page-title">Plant Growth & Care Monitoring</h1>
+                <p class="page-subtitle">Track and manage your plants' health and development</p>
+            </div>
+
             <!-- Plant Selection -->
             <div class="flex flex-wrap gap-4 mb-6">
                 <div class="flex-1 min-w-[300px]">
@@ -237,9 +232,7 @@
                                 </div>
                             </div>
                             <div class="text-sm text-gray-600 flex justify-between">
-                                <span id="last-measured">
-                                    {{ $product->growthLogs->first() ? $product->growthLogs->first()->created_at->format('d/m/Y') : 'Not measured yet' }}
-                                </span>
+                                <span id="last-measured">Not measured yet</span>
                             </div>
                         </div>
 
@@ -254,61 +247,19 @@
                             </div>
 
                             <div class="mb-4">
-                                @php
-                                    // Define stage durations in days
-                                    $stageDurations = [
-                                        'seedling' => 7,
-                                        'vegetative' => 14,
-                                        'flowering' => 21,
-                                        'fruiting' => 28,
-                                        'mature' => 0
-                                    ];
-
-                                    // Latest growth log
-                                    $latestGrowth = $product->growthLogs->last();
-
-                                    // Current stage
-                                    $currentStage = strtolower($product->current_stage ?? 'seedling');
-
-                                    // Start date of current stage
-                                    $stageStart = $latestGrowth ? $latestGrowth->created_at : now();
-
-                                    // Total days of current stage
-                                    $stageLength = $stageDurations[$currentStage] ?? 1;
-
-                                    // Days in stage
-                                    $daysInStage = $stageStart->diffInDays(now());
-                                    $overdue = $daysInStage > $stageLength ? true : false;
-
-
-                                    // Calculate progress %
-                                    $progressPercent = $stageLength > 0 ? min(100, round(($daysInStage / $stageLength) * 100)) : 100;
-
-                                    // Next stage
-                                    $stages = ['seedling', 'vegetative', 'flowering', 'fruiting', 'mature'];
-                                    $currentIndex = array_search($currentStage, $stages);
-                                    $nextStage = isset($stages[$currentIndex + 1]) ? ucfirst($stages[$currentIndex + 1]) : 'None';
-                                @endphp
-
                                 <div class="flex items-center mb-3">
-                                    <span id="stage-indicator"
-                                        class="stage-indicator {{ $currentStage }}-stage mr-3">{{ ucfirst($currentStage) }}</span>
-                                    <span class="text-gray-700" id="stage-duration">
-                                        Day {{ min($daysInStage, $stageLength) }} of {{ $stageLength }}
-                                        @if($overdue)
-                                            (Overdue)
-                                        @endif
-                                    </span>
+                                    <span id="stage-indicator" class="stage-indicator seedling-stage mr-3">Not set</span>
+                                    <span class="text-gray-700" id="stage-duration">No growth data</span>
 
                                 </div>
 
                                 <div class="text-sm text-gray-600" id="next-stage">
-                                    Next: <span class="font-medium">{{ $nextStage }}</span>
+                                    Next: <span class="font-medium">Not available</span>
                                 </div>
                             </div>
 
                             <div class="text-sm text-gray-600 flex justify-between">
-                                <span id="stage-progress">Progress: {{ $progressPercent }}% of stage</span>
+                                <span id="stage-progress">Progress: 0% of stage</span>
                             </div>
                         </div>
 
@@ -351,27 +302,7 @@
                                 </div>
                             </div>
                             <div class="text-sm text-gray-600 flex justify-between">
-                                @if($latestGrowth)
-                                    @php
-                                        // Calculate trend compared to previous log
-                                        $previousGrowth = $product->growthLogs()->where('id', '<', $latestGrowth->id)->latest()->first();
-                                        if ($previousGrowth) {
-                                            $trend = $latestGrowth->height_cm - $previousGrowth->height_cm;
-                                            if ($trend > 0) {
-                                                $trendText = '+' . $trend . ' cm ↑';
-                                            } elseif ($trend < 0) {
-                                                $trendText = $trend . ' cm ↓';
-                                            } else {
-                                                $trendText = 'No change';
-                                            }
-                                        } else {
-                                            $trendText = 'Not enough data';
-                                        }
-                                    @endphp
-                                    <span id="growth-trend">{{ $trendText }}</span>
-                                @else
-                                    <span id="growth-trend">No trend data</span>
-                                @endif
+                                <span id="growth-trend">No trend data</span>
                             </div>
 
                         </div>
@@ -430,10 +361,9 @@
 
                         <div class="flex items-center mb-6">
                             <div class="flex-shrink-0 rounded-lg overflow-hidden flex items-center justify-center mr-4
-                w-20 h-20 sm:w-28 sm:h-28 md:w-32 md:h-32 lg:w-40 lg:h-40">
-                                <img id="plant-image"
-                                    src="{{ $product->images->first() ? asset('images/' . urlencode($product->images->first()->image_path)) : asset('images/default.jpg') }}"
-                                    alt="{{ $product->product_name }}" class="w-full h-full object-cover object-center">
+                                                    w-20 h-20 sm:w-28 sm:h-28 md:w-32 md:h-32 lg:w-40 lg:h-40">
+                                <img id="plant-image" src="{{ asset('images/default.jpg') }}" alt="Selected plant"
+                                    class="w-full h-full object-cover object-center">
                             </div>
 
 
@@ -485,7 +415,7 @@
                 const plantSelect = document.getElementById('plant-select');
 
                 // Handle plant selection
-                plantSelect.addEventListener('change', function () {
+                plantSelect?.addEventListener('change', function () {
                     const selectedOption = this.options[this.selectedIndex];
                     if (selectedOption.value) {
                         selectedProduct = JSON.parse(selectedOption.getAttribute('data-product'));
@@ -716,6 +646,52 @@
             function updateGrowthDisplay(data) {
                 const latestLog = data.latest_log;
                 const logs = data.logs || [];
+                const product = data.product || {};
+                const stages = ['seedling', 'vegetative', 'flowering', 'fruiting', 'mature'];
+                const stageDurations = { seedling: 7, vegetative: 14, flowering: 21, fruiting: 28, mature: 0 };
+                const currentStage = String(latestLog?.growth_stage || product.current_stage || 'seedling').toLowerCase();
+                const stageLength = stageDurations[currentStage] ?? 1;
+                const stageStarted = latestLog?.created_at ? new Date(latestLog.created_at) : null;
+                const daysInStage = stageStarted
+                    ? Math.max(0, Math.floor((Date.now() - stageStarted.getTime()) / 86400000))
+                    : 0;
+                const stageProgressPercent = stageLength > 0
+                    ? Math.min(100, Math.round((daysInStage / stageLength) * 100))
+                    : 100;
+                const currentStageIndex = stages.indexOf(currentStage);
+                const nextStage = currentStageIndex >= 0 && stages[currentStageIndex + 1]
+                    ? stages[currentStageIndex + 1]
+                    : 'None';
+
+                document.getElementById('last-measured').textContent = stageStarted
+                    ? stageStarted.toLocaleDateString()
+                    : 'Not measured yet';
+                document.getElementById('stage-duration').textContent = latestLog
+                    ? `Day ${Math.min(daysInStage, stageLength)} of ${stageLength}${daysInStage > stageLength ? ' (Overdue)' : ''}`
+                    : 'No growth data';
+                document.querySelector('#next-stage .font-medium').textContent = nextStage === 'None'
+                    ? nextStage
+                    : nextStage.charAt(0).toUpperCase() + nextStage.slice(1);
+                document.getElementById('stage-progress').textContent = `Progress: ${stageProgressPercent}% of stage`;
+                document.getElementById('growth-log-count').textContent = logs.length;
+
+                const latestContainer = document.getElementById('latest-growth-log');
+                const trendElement = document.getElementById('growth-trend');
+
+                if (!latestLog) {
+                    document.getElementById('height-display').textContent = '0 cm / 0 cm';
+                    document.getElementById('height-percentage').textContent = '0%';
+                    document.getElementById('height-progress').style.width = '0%';
+                    latestContainer.innerHTML = '<p class="text-gray-700">No growth logs yet.</p>';
+                    trendElement.textContent = 'No trend data';
+                } else if (logs.length > 1 && latestLog.height_cm != null && logs[1].height_cm != null) {
+                    const trend = Number(latestLog.height_cm) - Number(logs[1].height_cm);
+                    trendElement.textContent = trend > 0
+                        ? `+${trend} cm ↑`
+                        : trend < 0 ? `${trend} cm ↓` : 'No change';
+                } else {
+                    trendElement.textContent = 'Not enough data';
+                }
 
                 if (latestLog && latestLog.height_cm) {
                     const targetHeight = 25;
@@ -767,10 +743,10 @@
 
                 if (latestLog) {
                     const latestHtml = `
-                                                                                                                                                                                        <p class="font-medium text-gray-800">${latestLog.growth_stage || 'No stage'}</p>
-                                                                                                                                                                                        <p class="text-gray-600 text-sm">Height: ${latestLog.height_cm || 'N/A'} cm</p>
-                                                                                                                                                                                        <p class="text-gray-600 text-sm mt-1">${latestLog.notes || 'No notes'}</p>
-                                                                                                                                                                                    `;
+                                                                                                                                                                                                                            <p class="font-medium text-gray-800">${latestLog.growth_stage || 'No stage'}</p>
+                                                                                                                                                                                                                            <p class="text-gray-600 text-sm">Height: ${latestLog.height_cm || 'N/A'} cm</p>
+                                                                                                                                                                                                                            <p class="text-gray-600 text-sm mt-1">${latestLog.notes || 'No notes'}</p>
+                                                                                                                                                                                                                        `;
                     const latestContainer = document.getElementById('latest-growth-log');
                     const countElem = document.getElementById('growth-log-count');
                     if (latestContainer) latestContainer.innerHTML = latestHtml;
@@ -801,10 +777,10 @@
                     const lastWateredText = daysDiff === 0 ? 'Today' : `${daysDiff} day${daysDiff > 1 ? 's' : ''} ago`;
 
                     const wateringHtml = `
-            <p class="font-medium text-gray-800">Last watered: ${lastWateredText}</p>
-            <p class="text-gray-600 text-sm">Date: ${wateringDate.toLocaleDateString()}</p>
-            ${latestWatering.notes ? `<p class="text-gray-600 text-sm">Notes: ${latestWatering.notes}</p>` : ''}
-        `;
+                                                <p class="font-medium text-gray-800">Last watered: ${lastWateredText}</p>
+                                                <p class="text-gray-600 text-sm">Date: ${wateringDate.toLocaleDateString()}</p>
+                                                ${latestWatering.notes ? `<p class="text-gray-600 text-sm">Notes: ${latestWatering.notes}</p>` : ''}
+                                            `;
 
                     const wateringContainer = document.getElementById('watering-info');
                     if (wateringContainer) wateringContainer.innerHTML = wateringHtml;
@@ -815,18 +791,18 @@
                     const careDate = new Date(latestLog.care_date).toLocaleDateString();
 
                     const careHtml = `
-                                                                                                                    <p class="font-medium text-gray-800">
-                                                                                                                        ${formatCareType(latestLog.care_type)}
-                                                                                                                    </p>
-                                                                                                                    <p class="text-gray-600 text-sm">
-                                                                                                                        Date: ${careDate}
-                                                                                                                    </p>
-                                                                                                                    <p class="text-gray-600 text-sm mt-1">
-                                                                                                                        ${latestLog.description && latestLog.description.trim()
+                                                                                                                                                        <p class="font-medium text-gray-800">
+                                                                                                                                                            ${formatCareType(latestLog.care_type)}
+                                                                                                                                                        </p>
+                                                                                                                                                        <p class="text-gray-600 text-sm">
+                                                                                                                                                            Date: ${careDate}
+                                                                                                                                                        </p>
+                                                                                                                                                        <p class="text-gray-600 text-sm mt-1">
+                                                                                                                                                            ${latestLog.description && latestLog.description.trim()
                             ? latestLog.description
                             : 'No notes'}
-                                                                                                                    </p>
-                                                                                                                `;
+                                                                                                                                                        </p>
+                                                                                                                                                    `;
 
                     const latestContainer = document.getElementById('latest-care-log');
                     const countElem = document.getElementById('care-log-count');
@@ -856,16 +832,16 @@
                     const typeColor = getCareTypeColor(log.care_type);
 
                     historyHtml += `
-                                                                                                                                                                                        <div class="flex items-center p-3 bg-gray-50 rounded-lg">
-                                                                                                                                                                                            <div class="w-10 h-10 ${typeColor.bg} rounded-lg flex items-center justify-center mr-3">
-                                                                                                                                                                                                <i class="${typeIcon} ${typeColor.text}"></i>
-                                                                                                                                                                                            </div>
-                                                                                                                                                                                            <div class="flex-1">
-                                                                                                                                                                                                <div class="font-medium text-gray-800">${formatCareType(log.care_type)}</div>
-                                                                                                                                                                                                <div class="text-sm text-gray-600">${date} - ${log.notes || 'No notes'}</div>
-                                                                                                                                                                                            </div>
-                                                                                                                                                                                        </div>
-                                                                                                                                                                                    `;
+                                                                                                                                                                                                                            <div class="flex items-center p-3 bg-gray-50 rounded-lg">
+                                                                                                                                                                                                                                <div class="w-10 h-10 ${typeColor.bg} rounded-lg flex items-center justify-center mr-3">
+                                                                                                                                                                                                                                    <i class="${typeIcon} ${typeColor.text}"></i>
+                                                                                                                                                                                                                                </div>
+                                                                                                                                                                                                                                <div class="flex-1">
+                                                                                                                                                                                                                                    <div class="font-medium text-gray-800">${formatCareType(log.care_type)}</div>
+                                                                                                                                                                                                                                    <div class="text-sm text-gray-600">${date} - ${log.notes || 'No notes'}</div>
+                                                                                                                                                                                                                                </div>
+                                                                                                                                                                                                                            </div>
+                                                                                                                                                                                                                        `;
                 });
 
                 historyContainer.innerHTML = historyHtml;

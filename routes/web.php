@@ -16,7 +16,6 @@ use App\Http\Controllers\Seller\DeliveryController;
 use App\Http\Controllers\Buyer\ReviewController;
 use App\Http\Controllers\Buyer\TransactionController;
 use App\Http\Controllers\Seller\OrderManagementController;
-use App\Http\Controllers\Admin\AdminComplaintController;
 use App\Http\Controllers\ComplaintController;
 use App\Http\Controllers\Seller\ComplaintController as SellerComplaintController;
 use App\Http\Controllers\Admin\ReportController;
@@ -123,17 +122,9 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
    Route::get('orders/{order}', [PaymentController::class, 'show'])
       ->name('orders.show');
 
-   Route::resource('complaints', ComplaintController::class);
-
    //reports
    Route::get('/reports', [ReportController::class, 'index'])
       ->name('reports.index');
-
-   Route::get('/complaints', [AdminComplaintController::class, 'index'])->name('complaints.index');
-   Route::get('/complaints/statistics', [AdminComplaintController::class, 'statistics'])->name('complaints.statistics');
-   Route::get('/complaints/{complaint}', [AdminComplaintController::class, 'show'])->name('complaints.show');
-   Route::put('/complaints/{complaint}', [AdminComplaintController::class, 'update'])->name('complaints.update');
-   Route::post('/complaints/{complaint}/assign', [AdminComplaintController::class, 'assign'])->name('complaints.assign');
 
 });
 
@@ -370,5 +361,3 @@ Route::get('/privacy-policy', function () {
 
 Route::get('/help-center', [HelpCenterController::class, 'index'])
    ->name('buyer.help-center');
-
-
