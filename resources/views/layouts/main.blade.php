@@ -31,6 +31,24 @@
             flex-grow: 1; /* ensures main content pushes footer down */
         }
 
+        .main-navbar-brand {
+            min-width: 0;
+            white-space: nowrap;
+        }
+
+        .main-navbar-brand__logo {
+            display: block;
+            width: auto !important;
+            height: 56px;
+            max-width: none;
+            object-fit: contain;
+            flex: 0 0 auto;
+        }
+
+        .main-navbar-brand__text {
+            white-space: nowrap;
+        }
+
         /* --- TOP BAR MARQUEE --- */
         .top-bar {
             background-color: #60794f;
@@ -200,8 +218,10 @@
                 margin-right: 0.5rem;
             }
 
-            .navbar-brand img {
-                height: 44px !important;
+            .main-navbar-brand__logo {
+                width: auto !important;
+                height: 44px;
+                max-width: none;
             }
 
             .footer {
@@ -221,6 +241,18 @@
             .footer .newsletter-form button {
                 width: 100%;
                 border-radius: 4px;
+            }
+        }
+
+        @media (max-width: 359.98px) {
+            .main-navbar-brand {
+                gap: 0.3rem !important;
+                font-size: 0.86rem;
+            }
+
+            .main-navbar-brand__logo {
+                width: auto !important;
+                height: 40px;
             }
         }
     </style>
@@ -257,10 +289,10 @@
         <!-- MAIN NAVBAR -->
         <nav class="navbar navbar-expand-lg navbar-light shadow-sm" style="background-color:#FFFFFF;">
             <div class="container">
-                <a class="navbar-brand d-flex align-items-center gap-2" href="/" style="color: #4f713f;">
+                <a class="navbar-brand main-navbar-brand d-flex align-items-center gap-2" href="/" style="color: #4f713f;">
                     <img src="{{ asset('images/logo3.png') }}" alt="" width="56" height="56"
-                        decoding="async" style="height: 56px; width: 56px;">
-                    <span>Aether & Leaf.Co</span>
+                        class="main-navbar-brand__logo" decoding="async">
+                    <span class="main-navbar-brand__text">Aether & Leaf.Co</span>
                 </a>
 
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
