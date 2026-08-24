@@ -3,19 +3,19 @@
 @section('title', 'Dashboard')
 
 @section('content')
-    <div class="container-fluid px-4 py-4">
+    <div class="container-fluid admin-dashboard px-0 py-2 py-md-3">
         <!-- Header -->
-        <div class="d-flex justify-content-between align-items-center mb-5">
+        <div class="dashboard-heading d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4">
             <div>
                 <h1 class="h2 fw-bold text-gray-900 mb-1">Dashboard</h1>
                 <p class="text-gray-600 mb-0">Welcome back, Aether & Leaf.Co! Platform overview and insights.</p>
             </div>
-            <div class="d-flex gap-2">
-                <span class="badge bg-light text-gray-700 px-3 py-2">
+            <div class="dashboard-datetime d-flex flex-wrap gap-2">
+                <span class="badge bg-white text-gray-700 px-3 py-2 shadow-sm">
                     <i class="fas fa-calendar-alt me-1"></i>
                     {{ \Carbon\Carbon::now('Asia/Kuala_Lumpur')->format('d M Y') }}
                 </span>
-                <span class="badge bg-light text-gray-700 px-3 py-2">
+                <span class="badge bg-white text-gray-700 px-3 py-2 shadow-sm">
                     <i class="fas fa-clock me-1"></i>
                     {{ \Carbon\Carbon::now('Asia/Kuala_Lumpur')->format('g:i A') }}
                 </span>
@@ -23,23 +23,23 @@
         </div>
 
         <!-- Stats -->
-        <div class="row g-4 mb-5">
+        <div class="row g-3 g-xl-4 mb-4 dashboard-stats">
             <!-- Total Users -->
-            <div class="col-xl-3 col-lg-6">
-                <div class="card border-0 shadow-sm hover-card">
-                    <div class="card-body p-4">
-                        <div class="d-flex justify-content-between align-items-start">
-                            <div>
+            <div class="col-sm-6 col-xxl-3 d-flex">
+                <div class="card border-0 shadow-sm hover-card stat-card w-100">
+                    <div class="card-body p-3 p-xl-4">
+                        <div class="d-flex justify-content-between align-items-start gap-3 h-100">
+                            <div class="stat-card__content">
                                 <p class="text-gray-600 mb-1">Total Users</p>
                                 <h2 class="fw-bold mb-2">{{ $totalUsers }}</h2>
                                 <div class="d-flex align-items-center">
-                                    <span class="badge bg-primary-100 text-primary-700 px-2 py-1 me-2">
+                                    <span class="badge stat-card__detail bg-primary-100 text-primary-700 px-2 py-1">
                                         <i class="fas fa-user-check me-1"></i>
-                                        Customers & Sellers
+                                        {{ $totalBuyers }} buyers · {{ $totalSellerAccounts }} seller accounts
                                     </span>
                                 </div>
                             </div>
-                            <div class="bg-primary-50 rounded-circle p-3">
+                            <div class="stat-card__icon bg-primary-50 rounded-circle">
                                 <i class="fas fa-users text-primary-600" style="font-size: 1.5rem;"></i>
                             </div>
                         </div>
@@ -48,11 +48,11 @@
             </div>
 
             <!-- Total Sellers -->
-            <div class="col-xl-3 col-lg-6">
-                <div class="card border-0 shadow-sm hover-card">
-                    <div class="card-body p-4">
-                        <div class="d-flex justify-content-between align-items-start">
-                            <div>
+            <div class="col-sm-6 col-xxl-3 d-flex">
+                <div class="card border-0 shadow-sm hover-card stat-card w-100">
+                    <div class="card-body p-3 p-xl-4">
+                        <div class="d-flex justify-content-between align-items-start gap-3 h-100">
+                            <div class="stat-card__content">
                                 <p class="text-gray-600 mb-1">Total Sellers</p>
                                 <h2 class="fw-bold mb-2">{{ $totalSellers ?? '0' }}</h2>
                                 <div class="text-success">
@@ -60,7 +60,7 @@
                                     Approved seller
                                 </div>
                             </div>
-                            <div class="bg-success-50 rounded-circle p-3">
+                            <div class="stat-card__icon bg-success-50 rounded-circle">
                                 <i class="fas fa-store text-success" style="font-size: 1.5rem;"></i>
                             </div>
                         </div>
@@ -69,11 +69,11 @@
             </div>
 
             <!-- Total Products -->
-            <div class="col-xl-3 col-lg-6">
-                <div class="card border-0 shadow-sm hover-card">
-                    <div class="card-body p-4">
-                        <div class="d-flex justify-content-between align-items-start">
-                            <div>
+            <div class="col-sm-6 col-xxl-3 d-flex">
+                <div class="card border-0 shadow-sm hover-card stat-card w-100">
+                    <div class="card-body p-3 p-xl-4">
+                        <div class="d-flex justify-content-between align-items-start gap-3 h-100">
+                            <div class="stat-card__content">
                                 <p class="text-gray-600 mb-1">Total Products</p>
                                 <h2 class="fw-bold mb-2">{{ $totalProducts }}</h2>
                                 @if(($pendingProducts ?? 0) > 0)
@@ -88,7 +88,7 @@
                                     </div>
                                 @endif
                             </div>
-                            <div class="bg-info-50 rounded-circle p-3">
+                            <div class="stat-card__icon bg-info-50 rounded-circle">
                                 <i class="fas fa-boxes text-info" style="font-size: 1.5rem;"></i>
                             </div>
                         </div>
@@ -96,20 +96,20 @@
                 </div>
             </div>
 
-            <!-- Pending Actions -->
-            <div class="col-xl-3 col-lg-6">
-                <div class="card border-0 shadow-sm hover-card">
-                    <div class="card-body p-4">
-                        <div class="d-flex justify-content-between align-items-start">
-                            <div>
-                                <p class="text-gray-600 mb-1">Pending Actions</p>
+            <!-- Pending Sellers -->
+            <div class="col-sm-6 col-xxl-3 d-flex">
+                <div class="card border-0 shadow-sm hover-card stat-card w-100">
+                    <div class="card-body p-3 p-xl-4">
+                        <div class="d-flex justify-content-between align-items-start gap-3 h-100">
+                            <div class="stat-card__content">
+                                <p class="text-gray-600 mb-1">Pending Sellers</p>
                                 <h2 class="fw-bold text-warning mb-2">{{ $pendingSellers ?? '0' }}</h2>
                                 <div class="text-warning">
                                     <i class="fas fa-store-alt me-1"></i>
                                     {{ $pendingSellers }} sellers to approve
                                 </div>
                             </div>
-                            <div class="bg-warning-50 rounded-circle p-3">
+                            <div class="stat-card__icon bg-warning-50 rounded-circle">
                                 <i class="fas fa-bell text-warning" style="font-size: 1.5rem;"></i>
                             </div>
                         </div>
@@ -122,39 +122,39 @@
         <div class="row g-4">
             <!-- Order Status -->
             <div class="col-lg-8">
-                <div class="card border-0 shadow-sm">
+                <div class="card border-0 shadow-sm h-100">
                     <div class="card-header bg-transparent border-0 p-4">
-                        <h3 class="h5 fw-semibold mb-1">Order Status</h3>
-                        <p class="text-gray-600 small mb-0">Platform-wide overview</p>
+                        <h3 class="h5 fw-semibold mb-1">Order Fulfillment Status</h3>
+                        <p class="text-gray-600 small mb-0">Each order is counted once at its current seller-fulfillment stage</p>
                     </div>
                     <div class="card-body p-4 pt-0">
                         <div class="row g-3">
                             <div class="col-md-3 col-6">
-                                <div class="text-center p-4 bg-warning-soft rounded-3">
+                                <div class="fulfillment-tile text-center p-3 p-xl-4 bg-warning-soft rounded-3 h-100">
                                     <i class="fas fa-clock text-warning fs-3 mb-2"></i>
                                     <div class="h4 fw-bold text-warning mb-1">{{ $pendingOrders ?? '0' }}</div>
                                     <div class="text-gray-700">Pending</div>
                                 </div>
                             </div>
                             <div class="col-md-3 col-6">
-                                <div class="text-center p-4 bg-success-soft rounded-3">
+                                <div class="fulfillment-tile text-center p-3 p-xl-4 bg-success-soft rounded-3 h-100">
                                     <i class="fas fa-check-circle text-success fs-3 mb-2"></i>
                                     <div class="h4 fw-bold text-success mb-1">{{ $paidOrders ?? '0' }}</div>
                                     <div class="text-gray-700">Paid</div>
                                 </div>
                             </div>
                             <div class="col-md-3 col-6">
-                                <div class="text-center p-4 bg-info-soft rounded-3">
+                                <div class="fulfillment-tile text-center p-3 p-xl-4 bg-info-soft rounded-3 h-100">
                                     <i class="fas fa-shipping-fast text-info fs-3 mb-2"></i>
                                     <div class="h4 fw-bold text-info mb-1">{{ $shippedOrders ?? '0' }}</div>
                                     <div class="text-gray-700">Shipped</div>
                                 </div>
                             </div>
                             <div class="col-md-3 col-6">
-                                <div class="text-center p-4 bg-delivered-soft rounded-3">
+                                <div class="fulfillment-tile text-center p-3 p-xl-4 bg-delivered-soft rounded-3 h-100">
                                     <i class="fas fa-box-open text-delivered-600 fs-3 mb-2"></i>
                                     <div class="h4 fw-bold text-delivered-600 mb-1">{{ $deliveredOrders ?? '0' }}</div>
-                                    <div class="text-gray-700">Delivered</div>
+                                    <div class="text-gray-700">Delivered / Completed</div>
                                 </div>
                             </div>
                         </div>
@@ -164,8 +164,8 @@
 
             <!-- Pending Actions -->
             <div class="col-lg-4">
-                <div class="card border-0 shadow-sm">
-                    <div class="card-header bg-transparent border-0 p-3">
+                <div class="card border-0 shadow-sm h-100">
+                    <div class="card-header bg-transparent border-0 p-4">
                         <h4 class="h5 fw-semibold mb-1">Actions</h4>
                     </div>
                     <div class="card-body p-4 pt-0">
@@ -193,11 +193,11 @@
         </div>
 
         <!-- Recent Products -->
-        <div class="row g-4 mt-4">
+        <div class="row g-4 mt-1">
             <div class="col-12">
                 <div class="card border-0 shadow-sm">
                     <div class="card-header bg-transparent border-0 p-4">
-                        <div class="d-flex justify-content-between align-items-center">
+                        <div class="d-flex flex-wrap justify-content-between align-items-center gap-3">
                             <div>
                                 <h5 class="fw-semibold mb-1">Recent Products</h5>
                                 <p class="text-gray-600 small mb-0">Newly added products</p>
@@ -210,33 +210,29 @@
                     <div class="card-body p-4 pt-0">
                         <div class="row g-3">
                             @foreach($recentProducts as $p)
-                                <div class="col-md-6 col-lg-4 col-xl-3">
-                                    <a href="{{ route('admin.products.show', $p->id) }}" class="text-decoration-none text-dark">
-                                        <div class="card border hover-card h-100">
+                                <div class="col-sm-6 col-xl-4 col-xxl-3 d-flex">
+                                    <a href="{{ route('admin.products.show', $p->id) }}" class="text-decoration-none text-dark w-100">
+                                        <div class="card recent-product-card border hover-card h-100">
                                             <div class="card-body p-3">
-                                                <div class="d-flex align-items-start gap-3">
+                                                <div class="d-flex align-items-start gap-3 h-100">
                                                     <img src="{{ $p->images->first() ? asset('images/' . $p->images->first()->image_path) : asset('images/default.jpg') }}"
-                                                        class="rounded-3" alt="{{ $p->product_name }}" style="width: 60px; height: 60px; object-fit: cover;">
-                                                    <div class="flex-grow-1">
+                                                        class="recent-product-card__image rounded-3" alt="{{ $p->product_name }}" width="72" height="72" loading="lazy">
+                                                    <div class="recent-product-card__content d-flex flex-column flex-grow-1">
                                                         <div class="fw-semibold mb-1">{{ Str::limit($p->product_name, 25) }}
                                                         </div>
-                                                        <div class="d-flex justify-content-between align-items-center">
-                                                            <small class="text-gray-600">
-                                                                {{ $p->seller->business_name ?? 'No Seller' }}
-                                                            </small>
-                                                            <span class="text-success fw-semibold">
+                                                        <small class="text-gray-600 d-block text-truncate mb-2">
+                                                            {{ $p->seller->business_name ?? 'No Seller' }}
+                                                        </small>
+                                                        <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mt-auto">
+                                                            <span class="text-success fw-semibold text-nowrap">
                                                                 RM {{ number_format($p->price, 2) }}
                                                             </span>
+                                                            @if(strtolower($p->approval_status) === 'approved')
+                                                                <span class="badge bg-success">Approved</span>
+                                                            @else
+                                                                <span class="badge bg-secondary">{{ $p->approval_status }}</span>
+                                                            @endif
                                                         </div>
-                                                    </div>
-                                                    <div>
-                                                        @if($p->status == 'pending')
-                                                            <span class="badge bg-warning">Pending</span>
-                                                        @elseif($p->status == 'approved')
-                                                            <span class="badge bg-success">Approved</span>
-                                                        @else
-                                                            <span class="badge bg-secondary">{{ ucfirst($p->status) }}</span>
-                                                        @endif
                                                     </div>
                                                 </div>
                                             </div>
@@ -405,9 +401,71 @@
         }
 
         /* Components */
+        .admin-dashboard {
+            max-width: 1600px;
+            margin-inline: auto;
+        }
+
+        .dashboard-heading h1 {
+            letter-spacing: -0.025em;
+        }
+
+        .dashboard-datetime .badge {
+            border: 1px solid rgba(107, 114, 128, 0.12);
+            font-size: 0.78rem;
+            font-weight: 600;
+        }
+
         .card {
             border-radius: 12px;
             transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .stat-card {
+            min-height: 166px;
+        }
+
+        .stat-card__content {
+            min-width: 0;
+        }
+
+        .stat-card__detail {
+            max-width: 100%;
+            white-space: normal;
+            line-height: 1.35;
+            text-align: left;
+        }
+
+        .stat-card__icon {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 52px;
+            height: 52px;
+            flex: 0 0 52px;
+        }
+
+        .fulfillment-tile {
+            min-height: 132px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .recent-product-card {
+            min-width: 0;
+        }
+
+        .recent-product-card__image {
+            width: 72px;
+            height: 72px;
+            flex: 0 0 72px;
+            object-fit: cover;
+        }
+
+        .recent-product-card__content {
+            min-width: 0;
         }
 
         .hover-card:hover {
@@ -437,20 +495,36 @@
         .fs-3 {
             font-size: 1.5rem !important;
         }
-    </style>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            // Simple hover effects
-            const cards = document.querySelectorAll('.hover-card');
-            cards.forEach(card => {
-                card.addEventListener('mouseenter', function () {
-                    this.style.zIndex = '10';
-                });
-                card.addEventListener('mouseleave', function () {
-                    this.style.zIndex = '1';
-                });
-            });
-        });
-    </script>
+        @media (max-width: 767.98px) {
+            .dashboard-heading h1 {
+                font-size: 1.65rem;
+            }
+
+            .dashboard-datetime {
+                width: 100%;
+            }
+
+            .dashboard-datetime .badge {
+                flex: 1 1 auto;
+                text-align: center;
+            }
+
+            .stat-card {
+                min-height: 150px;
+            }
+
+            .fulfillment-tile {
+                min-height: 118px;
+            }
+        }
+
+        @media (max-width: 374.98px) {
+            .recent-product-card__image {
+                width: 60px;
+                height: 60px;
+                flex-basis: 60px;
+            }
+        }
+    </style>
 @endsection
