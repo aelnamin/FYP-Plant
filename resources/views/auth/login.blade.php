@@ -36,26 +36,28 @@
         }
 
         .logo-container {
-            margin-bottom: 15px;
+            margin-bottom: 12px;
         }
 
         .logo {
-            width: 100px;
-            height: 100px;
+            width: clamp(106px, 10vw, 120px);
+            aspect-ratio: 1;
             border-radius: 50%;
             background: white;
             display: flex;
             align-items: center;
             justify-content: center;
             margin: 0 auto;
-            padding: 12px;
+            padding: 7px;
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
         }
 
         .logo img {
-            width: 134%;
-            height: 134%;
-            object-fit: cover;
+            display: block;
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            object-position: center;
         }
 
         .brand-name {
@@ -69,6 +71,17 @@
             color: rgba(255, 255, 255, 0.9);
             font-size: 14px;
             margin-top: 5px;
+            margin-bottom: 0;
+        }
+
+        @media (max-width: 575.98px) {
+            .card-header {
+                padding: 24px 20px;
+            }
+
+            .logo {
+                width: 106px;
+            }
         }
 
         .card-body {
