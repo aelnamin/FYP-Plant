@@ -25,125 +25,113 @@ class SellerDashboardController extends Controller
         /* ======================
            SELLER PRODUCTS
         ====================== */
-        $sellerProductIds = Product::where('seller_id', $seller->id)->pluck('id');
-        $total_products = $sellerProductIds->count();
+        $activeProducts = Product::query()
+            ->where('seller_id', $seller->id)
+            ->whereNull('deleted_at');
 
-        $low_stock_count = Product::where('seller_id', $seller->id)
+        $total_products = (clone $activeProducts)->count();
+
+        $low_stock_count = (clone $activeProducts)
             ->where('stock_quantity', '<=', 10)
             ->count();
 
-        $inventoryProducts = Product::where('seller_id', $seller->id)
+        $inventoryProducts = (clone $activeProducts)
+            ->with('images')
             ->latest()
             ->take(5)
             ->get();
 
         /* ======================
-           ORDERS FILTERED BY SELLER PRODUCTS
+           SELLER ORDER ITEMS
         ====================== */
-        $ordersQuery = Order::whereHas('items', function ($q) use ($sellerProductIds) {
-            $q->whereIn('product_id', $sellerProductIds);
-        });
+        // Keep historical sales attributable even if a product was later deleted,
+        // but never count deleted order items or deleted orders.
+        $sellerOrderItems = OrderItem::query()
+            ->join('products', 'products.id', '=', 'order_items.product_id')
+            ->join('orders', 'orders.id', '=', 'order_items.order_id')
+            ->where('products.seller_id', $seller->id)
+            ->whereNull('order_items.deleted_at')
+            ->whereNull('orders.deleted_at');
 
-        // total orders
-        $total_orders = OrderItem::whereIn('product_id', $sellerProductIds)
-            ->distinct('order_id')
-            ->count();
+        $total_orders = (clone $sellerOrderItems)
+            ->distinct()
+            ->count('order_items.order_id');
 
-        // paid orders
-        $paid_orders = OrderItem::whereIn('product_id', $sellerProductIds)
-            ->where('seller_status', 'paid')
-            ->distinct('order_id')
-            ->count();
+        // Count each seller order once at its least-advanced item stage. This
+        // prevents a mixed-status order from appearing in multiple cards.
+        $sellerFulfillmentPerOrder = (clone $sellerOrderItems)
+            ->selectRaw("order_items.order_id, MIN(CASE
+                WHEN LOWER(order_items.seller_status) = 'pending' THEN 1
+                WHEN LOWER(order_items.seller_status) = 'paid' THEN 2
+                WHEN LOWER(order_items.seller_status) = 'shipped' THEN 3
+                WHEN LOWER(order_items.seller_status) IN ('delivered', 'completed') THEN 4
+                ELSE 1 END) as fulfillment_stage")
+            ->groupBy('order_items.order_id');
 
-        // Count distinct orders where seller_status = 'paid'
-        $orders_to_ship = OrderItem::whereIn('product_id', $sellerProductIds)
-            ->where('seller_status', 'pending')
-            ->distinct('order_id')
-            ->count();
+        $ordersByFulfillmentStage = DB::query()
+            ->fromSub($sellerFulfillmentPerOrder, 'seller_order_fulfillment')
+            ->selectRaw('fulfillment_stage, COUNT(*) as total')
+            ->groupBy('fulfillment_stage')
+            ->pluck('total', 'fulfillment_stage');
 
-        $pending_orders = $orders_to_ship;
+        $pending_orders = (int) $ordersByFulfillmentStage->get(1, 0);
+        $paid_orders = (int) $ordersByFulfillmentStage->get(2, 0);
+        $orders_to_ship = $paid_orders;
 
-        /* ======================
-           TOTAL REVENUE (SELLER ONLY)
-        ====================== */
+        // Revenue is recognized only after payment. Pending, cancelled, and
+        // refunded items are deliberately excluded.
+        $revenueStatuses = ['paid', 'shipped', 'delivered', 'completed'];
+        $recognizedRevenueItems = (clone $sellerOrderItems)
+            ->whereIn(DB::raw('LOWER(order_items.seller_status)'), $revenueStatuses);
 
-        /* ======================
-           MONTH REVENUE
-        ====================== */
-        $month_revenue = OrderItem::whereIn('product_id', $sellerProductIds)
-            ->whereIn('seller_status', ['pending', 'paid', 'shipped', 'delivered', 'completed'])
-            ->whereMonth('created_at', Carbon::now()->month)
-            ->whereYear('created_at', Carbon::now()->year)
-            ->sum(DB::raw('quantity * price'));
+        $total_revenue = (clone $recognizedRevenueItems)
+            ->sum(DB::raw('order_items.quantity * order_items.price'));
 
+        $monthStart = Carbon::now('Asia/Kuala_Lumpur')->startOfMonth()->utc();
+        $monthEnd = Carbon::now('Asia/Kuala_Lumpur')->endOfMonth()->utc();
 
-        /* ======================
-    DEDUCT REVENUE
- ====================== */
-        $total_revenue = OrderItem::whereIn('product_id', $sellerProductIds)
-            ->whereNotIn('seller_status', ['refunded', 'cancelled'])
-            ->sum(DB::raw('quantity * price'));
-
-
-        /* ======================
-      SALES LAST 7 DAYS FOR ANALYTICS
-   ====================== */
-        $sales_last_7_days = OrderItem::whereIn('product_id', $sellerProductIds)
-            ->whereHas('order', function ($q) {
-                $q->whereIn('status', ['paid', 'shipped', 'delivered']);
-            })
-            ->where('created_at', '>=', Carbon::now()->subDays(6)->startOfDay()) // last 7 days including today
-            ->get()
-            ->groupBy(function ($item) {
-                return Carbon::parse($item->created_at)->format('d M'); // group by day
-            })
-            ->map(function ($items) {
-                return $items->sum(fn($i) => $i->quantity * $i->price);
-            });
-
-        // Make sure all 7 days exist in labels (fill 0 if no sales)
-        $last7Days = collect();
-        for ($i = 6; $i >= 0; $i--) {
-            $day = Carbon::now()->subDays($i)->format('d M');
-            $last7Days[$day] = $sales_last_7_days->get($day, 0);
-        }
-
-        $sales_labels = $last7Days->keys()->toArray();  // Convert to array
-        $sales_data = $last7Days->values()->map(fn($v) => (float) $v)->toArray();
+        $month_revenue = (clone $recognizedRevenueItems)
+            ->whereBetween('order_items.created_at', [$monthStart, $monthEnd])
+            ->sum(DB::raw('order_items.quantity * order_items.price'));
 
 
 
         /* ======================
            RECENT ORDERS WITH SELLER ITEMS
         ====================== */
-        $recentOrders = (clone $ordersQuery)
-            ->with(['user', 'items.product'])
+        $recentOrders = Order::query()
+            ->whereNull('orders.deleted_at')
+            ->whereHas('items.product', function ($query) use ($seller) {
+                $query->where('seller_id', $seller->id);
+            })
+            ->with([
+                'user:id,name,email',
+                'items' => function ($query) use ($seller) {
+                    $query->whereNull('order_items.deleted_at')
+                        ->whereHas('product', fn($productQuery) => $productQuery->where('seller_id', $seller->id));
+                },
+            ])
             ->latest()
             ->take(5)
             ->get();
 
-        // Add seller-specific total for recent orders
-        $recentOrders->transform(function ($order) use ($sellerProductIds) {
-            $order->seller_total = $order->items
-                ->whereIn('product_id', $sellerProductIds)
-                ->sum(fn($item) => $item->quantity * $item->price);
+        $statusRank = [
+            'pending' => 1,
+            'paid' => 2,
+            'shipped' => 3,
+            'delivered' => 4,
+            'completed' => 4,
+        ];
+
+        $recentOrders->transform(function ($order) use ($statusRank) {
+            $order->seller_total = $order->items->sum(fn($item) => $item->quantity * $item->price);
+            $order->seller_status = $order->items
+                ->map(fn($item) => strtolower((string) $item->seller_status))
+                ->sortBy(fn($status) => $statusRank[$status] ?? 0)
+                ->first() ?? 'pending';
+
             return $order;
         });
-
-        /* ======================
-           BASIC ANALYTICS
-        ====================== */
-        $avg_order_value = $paid_orders > 0
-            ? $total_revenue / $paid_orders
-            : 0;
-
-        $conversion_rate = 0; // placeholder (you can calculate: paid_orders / total_visitors * 100)
-        $avg_rating = 0;       // placeholder (if you have product reviews)
-
-        $best_selling_product = Product::where('seller_id', $seller->id)
-            ->withCount('orderItems')
-            ->orderByDesc('order_items_count')
-            ->value('product_name');
 
         return view('sellers.dashboard', compact(
             'seller',
@@ -153,15 +141,10 @@ class SellerDashboardController extends Controller
             'total_orders',
             'paid_orders',
             'pending_orders',
+            'orders_to_ship',
             'total_revenue',
             'month_revenue',
-            'recentOrders',
-            'avg_order_value',
-            'conversion_rate',
-            'best_selling_product',
-            'avg_rating',
-            'sales_labels',
-            'sales_data'
+            'recentOrders'
         ));
     }
 }

@@ -216,10 +216,10 @@
                         <div class="d-flex justify-content-between align-items-start">
                             <div>
                                 <div class="text-muted mb-1">Pending Actions</div>
-                                <div class="h2 fw-bold mb-2 text-warning">{{ $pending_orders ?? 0 }}</div>
+                                <div class="h2 fw-bold mb-2 text-warning">{{ $orders_to_ship ?? 0 }}</div>
                                 <div class="text-warning small">
                                     <i class="fas fa-truck me-1"></i>
-                                    {{ $pending_orders ?? 0 }} orders to ship
+                                    {{ $orders_to_ship ?? 0 }} paid orders to ship
                                 </div>
                             </div>
                             <div class="bg-warning bg-opacity-10 p-3 rounded-circle">
@@ -287,12 +287,7 @@
 
                                                 <td>
                                                 @php
-    $itemStatuses = $order->orderItems->pluck('seller_status')->unique();
-    if ($itemStatuses->count() == 1) {
-        $status = $itemStatuses->first();
-    } else {
-        $status = 'completed';
-    }
+    $status = $order->seller_status;
 
     $statusColors = [
         'pending' => 'warning',
