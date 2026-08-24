@@ -33,7 +33,7 @@
 
         /* --- TOP BAR MARQUEE --- */
         .top-bar {
-            background-color: #A5B682;
+            background-color: #60794f;
             overflow: hidden;
             padding: 8px 0;
             font-family: 'Inter', sans-serif;
@@ -172,7 +172,7 @@
         }
 
         .footer .newsletter-form button {
-            background-color: #A5B682;
+            background-color: #60794f;
             color: white;
             border: none;
             padding: 10px 20px;
@@ -182,7 +182,7 @@
         }
 
         .footer .newsletter-form button:hover {
-            background-color: #8a9c6a;
+            background-color: #52683f;
         }
 
         @media (max-width: 575.98px) {
@@ -257,14 +257,15 @@
         <!-- MAIN NAVBAR -->
         <nav class="navbar navbar-expand-lg navbar-light shadow-sm" style="background-color:#FFFFFF;">
             <div class="container">
-                <a class="navbar-brand d-flex align-items-center gap-2" href="/" style="color: #6A8F4E;">
-                    <img src="{{ asset('images/logo3.png') }}" alt="Logo" width="56" height="56"
+                <a class="navbar-brand d-flex align-items-center gap-2" href="/" style="color: #4f713f;">
+                    <img src="{{ asset('images/logo3.png') }}" alt="" width="56" height="56"
                         decoding="async" style="height: 56px; width: 56px;">
                     <span>Aether & Leaf.Co</span>
                 </a>
 
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
-                    data-bs-target="#navbarNav">
+                    data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false"
+                    aria-label="Toggle main navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
 
@@ -272,7 +273,7 @@
                     <ul class="navbar-nav ms-auto d-flex align-items-center">
                         <!-- HOME LINK -->
                         <li class="nav-item me-3">
-                            <a class="nav-link" 
+                            <a class="nav-link" aria-label="Home"
                             href="{{ auth()->check() && auth()->user()->role === 'buyer' 
                                         ? route('buyer.dashboard') 
                                         : url('/') }}">
@@ -282,11 +283,11 @@
 
                         <li class="nav-item me-3 position-relative">
     @auth('web') {{-- If a buyer is logged in --}}
-        <a href="{{ route('complaints.index') }}" class="nav-link">
+        <a href="{{ route('complaints.index') }}" class="nav-link" aria-label="Complaints">
             <i class="bi bi-megaphone" style="font-size: 1.3rem;"></i>
         </a>
     @else {{-- If guest --}}
-        <a href="{{ route('auth.login') }}" class="nav-link">
+        <a href="{{ route('auth.login') }}" class="nav-link" aria-label="Sign in to view complaints">
             <i class="bi bi-megaphone" style="font-size: 1.3rem;"></i>
         </a>
     @endauth
@@ -294,7 +295,7 @@
 
 
                         <li class="nav-item me-3 position-relative">
-                            <a href="{{ route('buyer.chats.index') }}" class="nav-link">
+                            <a href="{{ route('buyer.chats.index') }}" class="nav-link" aria-label="Messages">
                                 <i class="bi bi-chat-dots" style="font-size: 1.3rem;"></i>
                             </a>
                         </li>
@@ -302,14 +303,15 @@
                         <!-- CART ICON -->
                         <li class="nav-item me-3">
                             @if($user && $user->role === 'buyer')
-                                <a class="nav-link cart-link" href="#" data-bs-toggle="offcanvas" data-bs-target="#cartSidebar">
+                                <a class="nav-link cart-link" href="#" data-bs-toggle="offcanvas" data-bs-target="#cartSidebar"
+                                    aria-label="Shopping cart with {{ $cartItemCount }} items" aria-controls="cartSidebar">
                                     <i class="bi bi-cart4" style="font-size: 1.3rem;"></i>
                                     <span id="cart-count" class="cart-badge">
                                         {{ $cartItemCount }}
                                     </span>
                                 </a>
                             @else
-                                <a class="nav-link" href="{{ route('auth.login') }}">
+                                <a class="nav-link" href="{{ route('auth.login') }}" aria-label="Sign in to view cart">
                                     <i class="bi bi-cart4" style="font-size: 1.3rem;"></i>
                                 </a>
                             @endif
@@ -320,23 +322,23 @@
                             @if($user)
                                 @switch($user->role)
                                     @case('buyer')
-                                        <a class="nav-link" href="{{ route('buyer.profile') }}">
+                                        <a class="nav-link" href="{{ route('buyer.profile') }}" aria-label="Buyer profile">
                                             <i class="bi bi-person-circle" style="font-size: 1.4rem;"></i>
                                         </a>
                                         @break
                                     @case('seller')
-                                        <a class="nav-link" href="{{ route('sellers.dashboard') }}">
+                                        <a class="nav-link" href="{{ route('sellers.dashboard') }}" aria-label="Seller dashboard">
                                             <i class="bi bi-person-circle" style="font-size: 1.4rem;"></i>
                                         </a>
                                         @break
                                     @case('admin')
-                                        <a class="nav-link" href="{{ route('admin.dashboard') }}">
+                                        <a class="nav-link" href="{{ route('admin.dashboard') }}" aria-label="Admin dashboard">
                                             <i class="bi bi-person-circle" style="font-size: 1.4rem;"></i>
                                         </a>
                                         @break
                                 @endswitch
                             @else
-                                <a class="nav-link" href="{{ route('auth.login') }}">
+                                <a class="nav-link" href="{{ route('auth.login') }}" aria-label="Sign in">
                                     <i class="bi bi-person" style="font-size: 1.4rem;"></i>
                                 </a>
                             @endif
@@ -361,13 +363,13 @@
             <div class="row">
                 <!-- Company Info -->
                 <div class="col-lg-4 col-md-6 mb-4">
-                    <h5>Aether & Leaf.Co</h5>
+                    <h2 class="h5">Aether & Leaf.Co</h2>
                     <p class="mb-4">Bringing nature's beauty to your doorstep. We specialize in carefully curated plants for every space, ensuring quality and sustainability.</p>
                 </div>
 
                 <!-- Quick Links -->
                 <div class="col-lg-2 col-md-6 mb-4">
-                    <h5>Quick Links</h5>
+                    <h2 class="h5">Quick Links</h2>
                     <ul class="list-unstyled">
                     <li class="mb-2">
     <a href="
@@ -398,7 +400,7 @@
 
                 <!-- Categories -->
                 <div class="col-lg-2 col-md-6 mb-4">
-                    <h5>Categories</h5>
+                    <h2 class="h5">Categories</h2>
                     <ul class="list-unstyled">
                     <li class="mb-2">Indoor Plants</li>
         <li class="mb-2">Herbs</li>
@@ -411,7 +413,7 @@
 
                 <!-- Contact & Newsletter -->
                 <div class="col-lg-4 col-md-6 mb-4">
-                    <h5>Contact Us</h5>
+                    <h2 class="h5">Contact Us</h2>
                     <div class="contact-info mb-4">
                         <p class="mb-2"><i class="bi bi-geo-alt-fill"></i> 1016, Jalan Sultan Ismail, 50250 Kuala Lumpur</p>
                         <p class="mb-2"><i class="bi bi-telephone-fill"></i> +60 17-274 3933</p>
@@ -419,7 +421,7 @@
                     </div>
 
                     <div class="col-lg-8 col-md-6 mb-4">
-    <h5>Help Center</h5>
+    <h2 class="h5">Help Center</h2>
     <ul class="list-unstyled">
         <li class="mb-2">
             <a href="{{ route('buyer.help-center') }}">
@@ -449,8 +451,8 @@
     @if($user && $user->role === 'buyer')
     <div class="offcanvas offcanvas-end" tabindex="-1" id="cartSidebar">
         <div class="offcanvas-header">
-            <h5 class="fw-bold">Basket</h5>
-            <button type="button" class="btn-close" data-bs-dismiss="offcanvas"></button>
+            <h2 class="h5 fw-bold">Basket</h2>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close shopping cart"></button>
         </div>
         <div class="offcanvas-body">
             <div id="cartSidebarItems">

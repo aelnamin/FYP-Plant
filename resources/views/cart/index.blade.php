@@ -20,7 +20,7 @@
 
             {{-- IMAGE --}}
             <img src="{{ asset('images/' . $item['image']) }}"
-                class="w-20 h-20 object-cover rounded-lg shadow">
+                class="w-20 h-20 object-cover rounded-lg shadow" alt="{{ $item['name'] }}">
 
             {{-- PRODUCT DETAILS --}}
             <div class="flex-1 px-4">
@@ -30,9 +30,9 @@
 
             {{-- QUANTITY --}}
             <div class="flex items-center space-x-3">
-                <button class="bg-gray-200 px-3 py-1 rounded">-</button>
+                    <button class="bg-gray-200 px-3 py-1 rounded" aria-label="Decrease quantity of {{ $item['name'] }}">-</button>
                 <span class="font-semibold">{{ $item['quantity'] }}</span>
-                <button class="bg-gray-200 px-3 py-1 rounded">+</button>
+                    <button class="bg-gray-200 px-3 py-1 rounded" aria-label="Increase quantity of {{ $item['name'] }}">+</button>
             </div>
 
             {{-- REMOVE --}}

@@ -248,7 +248,8 @@
             {{-- MOBILE HEADER --}}
             <div class="d-lg-none mobile-admin-header">
                 <div class="d-flex align-items-center justify-content-between">
-                    <button class="btn btn-outline-success" type="button" id="adminSidebarToggle">
+                    <button class="btn btn-outline-success" type="button" id="adminSidebarToggle"
+                        aria-label="Toggle admin navigation" aria-controls="adminSidebar" aria-expanded="false">
                         <i class="fas fa-bars"></i>
                     </button>
                     <div class="text-center">
@@ -269,11 +270,11 @@
             </div>
 
             {{-- ADMIN SIDEBAR --}}
-            <aside class="col-lg-2 admin-sidebar d-none d-lg-block">
+            <aside class="col-lg-2 admin-sidebar d-none d-lg-block" id="adminSidebar" aria-label="Admin navigation">
                 <div class="admin-header">
-                    <h4 class="admin-name mt-3 mb-0">
+                    <p class="admin-name h4 mt-3 mb-0">
                         {{ Auth::user()->name }}
-                    </h4>
+                    </p>
                 </div>
 
                 <nav class="nav flex-column">
@@ -360,6 +361,7 @@
             if (sidebarToggle) {
                 sidebarToggle.addEventListener('click', function () {
                     sidebar.classList.toggle('active');
+                    sidebarToggle.setAttribute('aria-expanded', sidebar.classList.contains('active') ? 'true' : 'false');
                 });
             }
 
@@ -372,6 +374,7 @@
                         !sidebarToggle.contains(event.target) &&
                         sidebar.classList.contains('active')) {
                         sidebar.classList.remove('active');
+                        sidebarToggle.setAttribute('aria-expanded', 'false');
                     }
                 }
             });

@@ -39,7 +39,7 @@
                                     <!-- Thumbnail Gallery -->
                                     @if($product->images->count() > 1)
                                         <div class="mb-4">
-                                            <h6 class="fw-semibold text-gray-700 mb-3">Additional Images</h6>
+                                            <h2 class="h6 fw-semibold text-gray-700 mb-3">Additional Images</h2>
                                             <div class="row g-2">
                                                 @foreach($product->images as $image)
                                                     <div class="col-3">
@@ -111,7 +111,7 @@
 
                                 <!-- Description -->
                                 <div class="mb-4">
-                                    <h6 class="fw-semibold text-gray-700 mb-2">Description</h6>
+                                    <h3 class="h6 fw-semibold text-gray-700 mb-2">Description</h3>
                                     <div class="card border">
                                         <div class="card-body p-3">
                                             <div class="text-gray-700" style="line-height: 1.6;">
@@ -124,7 +124,7 @@
                                 <!-- Health Condition -->
                                 @if($product->health_condition)
                                     <div class="mb-4">
-                                        <h6 class="fw-semibold text-gray-700 mb-2">Health & Condition</h6>
+                                        <h4 class="h6 fw-semibold text-gray-700 mb-2">Health & Condition</h4>
                                         <div class="card border">
                                             <div class="card-body p-3">
                                                 <div class="text-gray-700" style="line-height: 1.6;">

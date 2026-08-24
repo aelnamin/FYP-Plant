@@ -55,7 +55,7 @@
                                     <div class="bg-primary-100 rounded-3 p-3 me-3">
                                         <i class="fas fa-user text-primary-700 fs-5"></i>
                                     </div>
-                                    <h5 class="fw-bold text-gray-900 mb-0">Buyer & Order Information</h5>
+                                    <h2 class="h5 fw-bold text-gray-900 mb-0">Buyer & Order Information</h2>
                                 </div>
                                 <div class="ps-5">
                                     @if($complaint->buyer)
@@ -101,7 +101,7 @@
                                     <div class="bg-primary-100 rounded-3 p-3 me-3">
                                         <i class="fas fa-history text-primary-700 fs-5"></i>
                                     </div>
-                                    <h5 class="fw-bold text-gray-900 mb-0">Complaint Timeline</h5>
+                                    <h3 class="h5 fw-bold text-gray-900 mb-0">Complaint Timeline</h3>
                                 </div>
                                 <div class="ps-5">
                                     <div class="mb-3">
@@ -151,10 +151,10 @@
 
                 <!-- Complaint Message -->
                 <div class="mb-5">
-                    <h5 class="fw-bold mb-3 d-flex align-items-center">
+                    <h4 class="h5 fw-bold mb-3 d-flex align-items-center">
                         <i class="fas fa-comment-dots text-primary-600 me-2"></i>
                         Buyer's Complaint
-                    </h5>
+                    </h4>
                     <div class="card border-start border-3 border-warning-400 rounded-end-4 bg-warning-50">
                         <div class="card-body p-4">
                             <p class="mb-0 fs-6 lh-lg text-gray-800">{{ $complaint->complaint_message }}</p>

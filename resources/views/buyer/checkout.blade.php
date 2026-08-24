@@ -59,7 +59,7 @@
                                 <div class="rounded-2 p-2 me-3" style="background-color: #e8f0e8;">
                                     <i class="fas fa-truck" style="color: #8a9c6a;"></i>
                                 </div>
-                                <h5 class="fw-bold text-dark mb-0">Shipping Information</h5>
+                                <h2 class="h5 fw-bold text-dark mb-0">Shipping Information</h2>
                             </div>
                         </div>
                         <div class="card-body p-4">
@@ -96,7 +96,7 @@
                                 <div class="rounded-2 p-2 me-3" style="background-color: #e8f0e8;">
                                     <i class="fas fa-wallet" style="color: #8a9c6a;"></i>
                                 </div>
-                                <h5 class="fw-bold text-dark mb-0">Payment Method</h5>
+                                <h3 class="h5 fw-bold text-dark mb-0">Payment Method</h3>
                             </div>
                         </div>
                         <div class="card-body p-4">
@@ -106,10 +106,10 @@
                             <div class="payment-option" onclick="selectPayment('online', event)">
                                 <div class="d-flex align-items-center">
                                     <div class="rounded-3 p-2 me-3" style="background-color: #e8f0e8;">
-                                        <img src="{{ asset('images/visa-logo.jpg') }}" width="35" class="img-fluid">
+                                        <img src="{{ asset('images/visa-logo.jpg') }}" width="35" class="img-fluid" alt="">
                                     </div>
                                     <div class="flex-grow-1">
-                                        <h6 class="fw-bold text-dark mb-1">Online Payment</h6>
+                                        <h4 class="h6 fw-bold text-dark mb-1">Online Payment</h4>
                                         <p class="text-secondary small mb-0">Pay with visa, or mastercard</p>
                                     </div>
                                     <div class="form-check">
@@ -123,10 +123,10 @@
                             <div class="payment-option" onclick="selectPayment('touch_n_go', event)">
                                 <div class="d-flex align-items-center">
                                     <div class="rounded-3 p-2 me-3" style="background-color: #e8f0e8;">
-                                        <img src="{{ asset('images/tng-logo.jpg') }}" width="35" class="img-fluid">
+                                        <img src="{{ asset('images/tng-logo.jpg') }}" width="35" class="img-fluid" alt="">
                                     </div>
                                     <div class="flex-grow-1">
-                                        <h6 class="fw-bold text-dark mb-1">Touch n Go</h6>
+                                        <h5 class="h6 fw-bold text-dark mb-1">Touch n Go</h5>
                                         <p class="text-secondary small mb-0">Pay with e-wallet</p>
                                     </div>
                                     <div class="form-check">
@@ -140,7 +140,7 @@
                             <div class="payment-option" onclick="selectPayment('apple_pay', event)">
                                 <div class="d-flex align-items-center">
                                     <div class="rounded-3 p-2 me-3" style="background-color: #e8f0e8;">
-                                        <img src="{{ asset('images/apple-logo.jpg') }}" width="35" class="img-fluid">
+                                        <img src="{{ asset('images/apple-logo.jpg') }}" width="35" class="img-fluid" alt="">
                                     </div>
                                     <div class="flex-grow-1">
                                         <h6 class="fw-bold text-dark mb-1">Apple Pay</h6>
@@ -157,7 +157,7 @@
                             <div class="payment-option" onclick="selectPayment('grab_pay', event)">
                                 <div class="d-flex align-items-center">
                                     <div class="rounded-3 p-2 me-3" style="background-color: #e8f0e8;">
-                                        <img src="{{ asset('images/grab-pay-logo.png') }}" width="35" class="img-fluid">
+                                        <img src="{{ asset('images/grab-pay-logo.png') }}" width="35" class="img-fluid" alt="">
                                     </div>
                                     <div class="flex-grow-1">
                                         <h6 class="fw-bold text-dark mb-1">Grab Pay</h6>
@@ -213,6 +213,7 @@
                                                         style="border-color: #e9ecef !important;">
                                                         <img src="{{ $item->product->images->first() ? asset('images/' . $item->product->images->first()->image_path) : asset('images/default.jpg') }}"
                                                             class="rounded-3 me-3"
+                                                            alt="{{ $item->product->product_name }}"
                                                             style="width: 100px; height: 100px; object-fit: cover; border: 1px solid #e9ecef;">
                                                         <div class="flex-grow-1">
                                                             <h6 class="fw-semibold text-dark mb-1" style="font-size: 0.95rem;">
@@ -265,7 +266,7 @@
 
                             <!-- Place Order Button -->
                             <button type="submit" id="placeOrderBtn" class="btn w-100 py-3 rounded-3 fw-bold mt-4 border-0"
-                                style="background-color: #8a9c6a; color: white;">
+                                style="background-color: #60794f; color: white;">
                                 <i class="fas fa-shopping-bag me-2"></i> Place Order
                             </button>
 

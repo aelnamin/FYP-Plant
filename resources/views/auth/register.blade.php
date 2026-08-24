@@ -84,7 +84,7 @@
                 <!-- Register Button -->
                 <div class="mt-3">
                     <button type="submit" class="btn w-100 py-2 rounded-4 fw-semibold"
-                        style="background-color: #A5B682; color: white; transition: 0.3s;">
+                        style="background-color: #60794f; color: white; transition: 0.3s;">
                         Create Account
                     </button>
                 </div>

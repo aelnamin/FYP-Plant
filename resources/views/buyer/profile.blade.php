@@ -12,7 +12,7 @@
                             <div class="alert alert-success alert-dismissible fade show m-3" role="alert">
                                 <i class="bi bi-check-circle-fill me-2"></i>
                                 {{ session('success') }}
-                                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Dismiss notification"></button>
                             </div>
                         @endif
 
@@ -20,7 +20,7 @@
                             <div class="position-relative">
                                 <div class="profile-pic-wrapper">
                                     <img src="{{ Auth::user()->profile_picture ? asset(Auth::user()->profile_picture) : asset('images/default.png') }}"
-                                        class="profile-pic" id="profilePicPreview">
+                                        class="profile-pic" id="profilePicPreview" alt="{{ Auth::user()->name }} profile photo">
                                     <div class="profile-pic-overlay">
                                         <i class="bi bi-camera"></i>
                                     </div>
@@ -43,7 +43,7 @@
                                 @csrf
                                 @method('PUT')
 
-                                <h4 class="section-title">Personal Information</h4>
+                                <h2 class="h4 section-title">Personal Information</h2>
 
                                 <div class="row g-4">
                                     <div class="col-md-6">
@@ -114,7 +114,7 @@
 
                         <!-- Purchase History Section - FIXED -->
                         <div class="purchase-history-section mt-5">
-                            <h4 class="section-title mb-4">Purchase History</h4>
+                            <h3 class="h4 section-title mb-4">Purchase History</h3>
 
                             @if($groupedOrders->count() > 0)
                                 @foreach($groupedOrders as $group)
@@ -128,7 +128,7 @@
                                                 </div>
                                             </div>
                                             <div class="seller-info flex-grow-1">
-                                                <h6 class="seller-name mb-0">{{ $group['seller_name'] }}</h6>
+                                                <h4 class="h6 seller-name mb-0">{{ $group['seller_name'] }}</h4>
                                                 <small class="text-muted">
                                                     Order #{{ str_pad($group['order_id'], 8, '0', STR_PAD_LEFT) }}
                                                 </small>

@@ -22,7 +22,7 @@
                 @if($existingReturn)
                 <!-- Buyer already submitted return/refund -->
                 <div class="alert alert-info text-center p-4">
-                    <h5>You have already submitted a return/refund for this order.</h5>
+                    <h2 class="h5">You have already submitted a return/refund for this order.</h2>
                     <p>Status: <strong>{{ ucfirst($existingReturn->status) }}</strong></p>
                     <a href="{{ route('buyer.returns.index') }}" class="btn btn-primary mt-3 rounded-pill">
                         View All Returns
@@ -38,7 +38,7 @@
                                 <i class="fas fa-undo" style="color:#8a9c6a;"></i>
                             </div>
                             <div>
-                                <h4 class="fw-bold mb-1">Return Request Form</h4>
+                                <h3 class="h4 fw-bold mb-1">Return Request Form</h3>
                                 <p class="text-secondary mb-0">Please provide accurate details</p>
                             </div>
                         </div>

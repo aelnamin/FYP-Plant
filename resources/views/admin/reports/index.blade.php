@@ -92,10 +92,10 @@
                 <div class="card border rounded-4 h-100 shadow-sm">
                     <div class="card-header border-0 bg-white pt-4 pb-3">
                         <div class="d-flex justify-content-between align-items-center">
-                            <h5 class="fw-bold mb-0 text-dark">
+                            <h3 class="h5 fw-bold mb-0 text-dark">
                                 <i class="fas fa-tasks text-primary me-2"></i>
                                 Order Status Breakdown
-                            </h5>
+                            </h3>
                             <span class="badge bg-light text-dark">
                                 {{ $statusBreakdown->count() }} statuses
                             </span>
@@ -148,10 +148,10 @@
                 <div class="card border rounded-4 h-100 shadow-sm">
                     <div class="card-header border-0 bg-white pt-4 pb-3">
                         <div class="d-flex justify-content-between align-items-center">
-                            <h5 class="fw-bold mb-0 text-dark">
+                            <h4 class="h5 fw-bold mb-0 text-dark">
                                 <i class="fas fa-crown text-warning me-2"></i>
                                 Top Performing Sellers
-                            </h5>
+                            </h4>
                             <span class="badge bg-warning bg-opacity-10 text-warning">
                                 Top {{ min(5, $topSellers->count()) }}
                             </span>

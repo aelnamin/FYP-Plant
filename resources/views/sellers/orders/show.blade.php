@@ -24,7 +24,7 @@
         </div>
 
         {{-- Seller Products --}}
-        <h5 class="fw-bold mb-3">Your Products in this Order</h5>
+        <h3 class="h5 fw-bold mb-3">Your Products in this Order</h3>
         @php
             $sellerItems = $order->items->filter(fn($item) => $item->product && $item->product->seller_id == auth()->id());
             $sellerTotal = $sellerItems->sum(fn($i) => $i->price * $i->quantity);
@@ -38,6 +38,7 @@
                             <img src="{{ $item->product->images->first()
                         ? asset('images/' . $item->product->images->first()->image_path)
                         : asset('images/default.png') }}" class="rounded-3"
+                                alt="{{ $item->product->product_name }}"
                                 style="width:100%; height:100%; object-fit:cover;">
                         </div>
                         <div class="flex-grow-1 ms-3">

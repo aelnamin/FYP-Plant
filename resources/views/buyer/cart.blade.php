@@ -50,7 +50,7 @@
         @if(session('success'))
             <div class="alert alert-light border-0 shadow-sm mb-4" role="alert" style="background-color: #f8f9fa;">
                 <i class="fas fa-check-circle me-2" style="color: #8a9c6a;"></i>{{ session('success') }}
-                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Dismiss notification"></button>
             </div>
         @endif
 
@@ -89,11 +89,12 @@
                                             <!-- Image -->
                                             <div class="col-3 col-md-2">
                                                 <img src="{{ $item->image_url }}" class="rounded-3 img-fluid border"
+                                                    alt="{{ $item->product->product_name }}"
                                                     style="width: 80px; height: 80px; object-fit: cover; border-color: #e9ecef !important;">
                                             </div>
                                             <!-- Details -->
                                             <div class="col-9 col-md-4">
-                                                <h6 class="fw-bold text-dark mb-1">{{ $item->product->product_name }}</h6>
+                                                <h2 class="h6 fw-bold text-dark mb-1">{{ $item->product->product_name }}</h2>
                                                 <p class="fw-semibold mb-1" style="color: #8a9c6a;">RM {{ number_format($subtotal, 2) }}
                                                 </p>
                                                 <p class="text-muted small mb-2">RM {{ number_format($price, 2) }} each</p>
@@ -165,7 +166,7 @@
                                 <div class="rounded-2 p-2 me-3" style="background-color: #e8f0e8;">
                                     <i class="fas fa-receipt" style="color: #8a9c6a;"></i>
                                 </div>
-                                <h5 class="fw-bold text-dark mb-0">Order Summary</h5>
+                                <h3 class="h5 fw-bold text-dark mb-0">Order Summary</h3>
                             </div>
                         </div>
                         <div class="card-body p-4">
@@ -188,7 +189,7 @@
 
                             <div class="d-flex justify-content-between align-items-center mb-4">
                                 <div>
-                                    <h6 class="fw-bold text-dark mb-1">Total</h6>
+                                    <h4 class="h6 fw-bold text-dark mb-1">Total</h4>
                                     <small class="text-secondary">Including delivery</small>
                                 </div>
                                 <h4 class="fw-bold mb-0" style="color: #8a9c6a;">
@@ -197,7 +198,7 @@
                             </div>
 
                             <a href="{{ route('buyer.checkout') }}" class="btn w-100 py-3 rounded-3 fw-bold mb-4 border-0"
-                                style="background-color: #8a9c6a; color: white;">
+                                style="background-color: #60794f; color: white;">
                                 <i class="fas fa-shopping-bag me-2"></i> Proceed to Checkout
                             </a>
 
@@ -205,11 +206,11 @@
                             <div class="text-center">
                                 <p class="text-secondary small mb-3">Secure Payment Methods</p>
                                 <div class="d-flex justify-content-center align-items-center mt-4 gap-2">
-                                    <img src="{{ asset('images/tng-logo.jpg') }}" width="35" class="img-fluid">
-                                    <img src="{{ asset('images/visa-logo.jpg') }}" width="35" class="img-fluid">
-                                    <img src="{{ asset('images/Master-logo.jpg') }}" width="35" class="img-fluid">
-                                    <img src="{{ asset('images/apple-logo.jpg') }}" width="35" class="img-fluid">
-                                    <img src="{{ asset('images/grab-pay-logo.png') }}" width="35" class="img-fluid">
+                                    <img src="{{ asset('images/tng-logo.jpg') }}" width="35" class="img-fluid" alt="Touch 'n Go">
+                                    <img src="{{ asset('images/visa-logo.jpg') }}" width="35" class="img-fluid" alt="Visa">
+                                    <img src="{{ asset('images/Master-logo.jpg') }}" width="35" class="img-fluid" alt="Mastercard">
+                                    <img src="{{ asset('images/apple-logo.jpg') }}" width="35" class="img-fluid" alt="Apple Pay">
+                                    <img src="{{ asset('images/grab-pay-logo.png') }}" width="35" class="img-fluid" alt="GrabPay">
                                 </div>
                             </div>
                         </div>
@@ -226,7 +227,7 @@
                     <h3 class="text-dark mb-3">Your cart is empty</h3>
                     <p class="text-secondary mb-4">Add some products to get started</p>
                     <a href="{{ route('products.browse') }}" class="btn px-4 rounded-3 border-0"
-                        style="background-color: #8a9c6a; color: white;">
+                        style="background-color: #60794f; color: white;">
                         <i class="fas fa-store me-2"></i> Start Shopping
                     </a>
                 </div>

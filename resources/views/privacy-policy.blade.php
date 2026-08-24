@@ -17,7 +17,7 @@
                 <!-- Introduction -->
                 <div class="card border-0 shadow-sm mb-4">
                     <div class="card-body p-4">
-                        <h3 class="h4 mb-3" style="color: #6A8F4E;">Introduction</h3>
+                        <h2 class="h4 mb-3" style="color: #4f713f;">Introduction</h2>
                         <p>Welcome to Aether & Leaf.Co ("we", "us", or "our"). This Privacy Policy explains how we handle
                             your personal information when you use our website <a href="/">aetherleaf.com</a>, our app, or
                             shop with us.</p>
@@ -28,9 +28,9 @@
                 <!-- Information We Collect -->
                 <div class="card border-0 shadow-sm mb-4">
                     <div class="card-body p-4">
-                        <h3 class="h4 mb-3" style="color: #6A8F4E;">Information We Collect</h3>
+                        <h2 class="h4 mb-3" style="color: #4f713f;">Information We Collect</h2>
 
-                        <h5 class="mt-4 mb-3">What You Provide</h5>
+                        <h3 class="h5 mt-4 mb-3">What You Provide</h3>
                         <ul class="list-group list-group-flush">
                             <li class="list-group-item border-0 px-0"><strong>Account Info:</strong> Name, email, password,
                                 phone, profile picture.</li>
@@ -42,7 +42,7 @@
                                 addresses, gardening interests.</li>
                         </ul>
 
-                        <h5 class="mt-4 mb-3">Automatically Collected Info</h5>
+                        <h3 class="h5 mt-4 mb-3">Automatically Collected Info</h3>
                         <ul class="list-group list-group-flush">
                             <li class="list-group-item border-0 px-0"><strong>Device Info:</strong> IP address, browser
                                 type, OS, device type.</li>
@@ -59,7 +59,7 @@
                 <!-- How We Use Your Information -->
                 <div class="card border-0 shadow-sm mb-4">
                     <div class="card-body p-4">
-                        <h3 class="h4 mb-3" style="color: #6A8F4E;">How We Use Your Info</h3>
+                        <h2 class="h4 mb-3" style="color: #4f713f;">How We Use Your Info</h2>
                         <p>We use your data mainly to provide and improve our services. This includes:</p>
                         <ul>
                             <li>Processing orders and delivering products</li>
@@ -74,7 +74,7 @@
                 <!-- Data Sharing & Disclosure -->
                 <div class="card border-0 shadow-sm mb-4">
                     <div class="card-body p-4">
-                        <h3 class="h4 mb-3" style="color: #6A8F4E;">Data Sharing & Disclosure</h3>
+                        <h2 class="h4 mb-3" style="color: #4f713f;">Data Sharing & Disclosure</h2>
                         <p>We respect your privacy and do not sell your data. We only share information in specific
                             situations:</p>
                         <ul>
@@ -89,7 +89,7 @@
                 <!-- Data Security -->
                 <div class="card border-0 shadow-sm mb-4">
                     <div class="card-body p-4">
-                        <h3 class="h4 mb-3" style="color: #6A8F4E;">Data Security</h3>
+                        <h2 class="h4 mb-3" style="color: #4f713f;">Data Security</h2>
                         <p>We use industry-standard security measures such as SSL, access controls, and regular backups to
                             protect your data. Please note that no online system is 100% secure.</p>
                     </div>
@@ -98,7 +98,7 @@
                 <!-- Your Rights -->
                 <div class="card border-0 shadow-sm mb-4">
                     <div class="card-body p-4">
-                        <h3 class="h4 mb-3" style="color: #6A8F4E;">Your Rights</h3>
+                        <h2 class="h4 mb-3" style="color: #4f713f;">Your Rights</h2>
                         <p>You can:</p>
                         <ul>
                             <li>Access and update your account info</li>
@@ -113,7 +113,7 @@
                 <!-- Children's Privacy -->
                 <div class="card border-0 shadow-sm mb-4">
                     <div class="card-body p-4">
-                        <h3 class="h4 mb-3" style="color: #6A8F4E;">Children's Privacy</h3>
+                        <h2 class="h4 mb-3" style="color: #4f713f;">Children's Privacy</h2>
                         <p>We do not knowingly collect information from children under 16. If you believe a child has
                             provided us info, please contact us and we will remove it.</p>
                     </div>
@@ -122,7 +122,7 @@
                 <!-- Contact -->
                 <div class="card border-success shadow-sm mb-4" style="border-width: 2px;">
                     <div class="card-body p-4">
-                        <h3 class="h4 mb-3" style="color: #6A8F4E;">Contact Us</h3>
+                        <h2 class="h4 mb-3" style="color: #4f713f;">Contact Us</h2>
                         <p>If you have questions about this Privacy Policy, reach out to us:</p>
                         <ul>
                             <li>Email: <a href="mailto:privacy@aetherleaf.com">aether&leaf@.com</a></li>
@@ -159,7 +159,7 @@
         }
 
         a {
-            color: #6A8F4E;
+            color: #4f713f;
             text-decoration: none;
         }
 

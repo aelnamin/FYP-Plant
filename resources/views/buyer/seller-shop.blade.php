@@ -215,7 +215,7 @@
             <div class="row align-items-center">
                 <div class="col-md-3 text-center">
                     <img src="{{ $seller->user->profile_picture ? asset($seller->user->profile_picture) : asset('images/default.png') }}"
-                        class="seller-avatar rounded-circle">
+                        class="seller-avatar rounded-circle" alt="{{ $seller->business_name }} profile photo">
                 </div>
                 <div class="col-md-9">
                     <h1 class="display-6 fw-bold mb-3" style="color: var(--primary-green);">
@@ -298,7 +298,7 @@
                                 </div>
 
                                 <div class="card-body">
-                                    <h6 class="fw-bold mb-2">{{ $p->product_name }}</h6>
+                                    <h3 class="h6 fw-bold mb-2">{{ $p->product_name }}</h3>
 
                                     <div class="product-meta mb-3">
                                         <div class="d-flex justify-content-between mb-2">
@@ -338,7 +338,7 @@
                                     class="card-img-top rounded-top-4" alt="{{ $p->product_name }}">
 
                                 <div class="card-body">
-                                    <h6 class="fw-bold mb-2">{{ $p->product_name }}</h6>
+                                    <h3 class="h6 fw-bold mb-2">{{ $p->product_name }}</h3>
 
                                     <div class="product-meta mb-3">
                                         <div class="d-flex justify-content-between mb-2">

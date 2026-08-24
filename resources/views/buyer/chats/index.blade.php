@@ -49,9 +49,9 @@
                                         <!-- Conversation details -->
                                         <div class="flex-grow-1 me-2 overflow-hidden">
                                             <div class="d-flex justify-content-between align-items-start mb-1">
-                                                <h6 class="mb-0 fw-semibold text-truncate">
+                                                <h5 class="h6 mb-0 fw-semibold text-truncate">
                                                     {{ optional($seller->seller)->business_name ?? 'Seller' }}
-                                                </h6>
+                                                </h5>
                                               
 
                                             </div>
@@ -96,7 +96,8 @@
                         <!-- Chat header -->
                         <div class="card-header bg-white border-bottom d-flex align-items-center">
                             <img src="{{ $activeSeller->profile_picture ? asset($activeSeller->profile_picture) : asset('images/default.png') }}"
-                                class="rounded-circle chat-header-avatar">
+                                class="rounded-circle chat-header-avatar"
+                                alt="{{ optional($activeSeller->seller)->business_name ?? 'Seller' }}">
                             <div class="ms-3">
                                 <h6 class="mb-0 fw-bold">{{ optional($activeSeller->seller)->business_name ?? 'Seller' }}</h6>
                                 <small class="text-muted"></small>
@@ -129,7 +130,7 @@
                                 <div class="input-group">
                                     <input type="text" name="message" class="form-control" placeholder="Type your message..."
                                         required>
-                                    <button class="btn btn-primary"><i class="fas fa-paper-plane"></i></button>
+                                    <button class="btn btn-primary" aria-label="Send message"><i class="fas fa-paper-plane" aria-hidden="true"></i></button>
                                 </div>
                             </form>
                         </div>
@@ -154,7 +155,7 @@
             <div class="modal-content border-0 shadow">
                 <div class="modal-header border-0 pb-0">
                     <h5 class="modal-title fw-bold">New Message</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close new message dialog"></button>
                 </div>
                 <div class="modal-body">
                     <div class="mb-3">

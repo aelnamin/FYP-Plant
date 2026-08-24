@@ -59,9 +59,9 @@
                                                 </div>
                                             </div>
                                             <div>
-                                                <h5 class="card-title mb-1">
+                                                <h2 class="h5 card-title mb-1">
                                                     Complaint #{{ str_pad($c->complaint_id, 6, '0', STR_PAD_LEFT) }}
-                                                </h5>
+                                                </h2>
                                                 <div class="d-flex align-items-center flex-wrap gap-2 mb-2">
                                                     <span class="badge bg-light text-dark border">
                                                         <i class="fas fa-shopping-bag me-1"></i>
@@ -152,7 +152,7 @@
                         <div class="card-body p-5 text-center">
                             <div class="mb-4">
                                 <i class="fas fa-clipboard-list fa-4x text-muted mb-4"></i>
-                                <h4 class="text-muted mb-2">No complaints yet</h4>
+                                <h3 class="h4 text-muted mb-2">No complaints yet</h3>
                                 <p class="text-muted mb-4">You haven't submitted any complaints. Start by submitting your first
                                     complaint.</p>
                                 <a href="{{ route('complaints.create') }}" class="btn btn-primary btn-lg">

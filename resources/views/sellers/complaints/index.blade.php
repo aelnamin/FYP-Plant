@@ -32,7 +32,7 @@
                                 <i class="fas fa-clock text-warning-800 fs-4"></i>
                             </div>
                             <div>
-                                <h6 class="text-primary-700 mb-1">Pending</h6>
+                                <h2 class="h6 text-primary-700 mb-1">Pending</h2>
                                 <h3 class="fw-bold text-gray-900 mb-0">
                                     {{ $complaints->where('status', 'pending')->count() }}
                                 </h3>
@@ -50,7 +50,7 @@
                                 <i class="fas fa-spinner text-info-800 fs-4"></i>
                             </div>
                             <div>
-                                <h6 class="text-primary-700 mb-1">In Progress</h6>
+                                <h4 class="h6 text-primary-700 mb-1">In Progress</h4>
                                 <h3 class="fw-bold text-gray-900 mb-0">
                                     {{ $complaints->where('status', 'in_progress')->count() }}
                                 </h3>
@@ -68,7 +68,7 @@
                                 <i class="fas fa-check-circle text-success-800 fs-4"></i>
                             </div>
                             <div>
-                                <h6 class="text-primary-700 mb-1">Resolved</h6>
+                                <h4 class="h6 text-primary-700 mb-1">Resolved</h4>
                                 <h3 class="fw-bold text-gray-900 mb-0">
                                     {{ $complaints->where('status', 'resolved')->count() }}
                                 </h3>
@@ -86,7 +86,7 @@
                                 <i class="fas fa-times-circle text-error-800 fs-4"></i>
                             </div>
                             <div>
-                                <h6 class="text-primary-700 mb-1">Rejected/Closed</h6>
+                                <h4 class="h6 text-primary-700 mb-1">Rejected/Closed</h4>
                                 <h3 class="fw-bold text-gray-900 mb-0">
                                     {{ $complaints->whereIn('status', ['rejected', 'closed'])->count() }}
                                 </h3>
@@ -100,9 +100,9 @@
         <!-- Complaints Table -->
         <div class="card border-primary-200 border-2 shadow-lg rounded-4 overflow-hidden">
             <div class="card-header bg-primary-50 border-0 py-4 px-5">
-                <h5 class="fw-bold text-gray-900 mb-0">
+                <h4 class="h5 fw-bold text-gray-900 mb-0">
                     <i class="fas fa-list me-2"></i>All Complaints
-                </h5>
+                </h4>
             </div>
 
             <div class="card-body p-0">

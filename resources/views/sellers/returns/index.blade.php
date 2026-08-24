@@ -34,7 +34,7 @@
             <div class="alert alert-primary-50 alert-dismissible fade show rounded-3 shadow-sm mb-4 border-0">
                 <i class="fas fa-check-circle me-2 text-primary-700"></i>
                 {{ session('success') }}
-                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Dismiss notification"></button>
             </div>
         @endif
 
@@ -42,7 +42,7 @@
             <div class="card border-0 shadow-lg rounded-4 bg-primary-50">
                 <div class="card-body p-5 text-center">
                     <i class="fas fa-inbox text-primary-600" style="font-size: 4rem;"></i>
-                    <h3 class="text-gray-900 mt-3">No Return Requests</h3>
+                    <h2 class="h3 text-gray-900 mt-3">No Return Requests</h2>
                     <p class="text-primary-700">You don’t have any return requests yet.</p>
                 </div>
             </div>
@@ -61,7 +61,7 @@
                                                 <i class="fas fa-undo text-primary-700"></i>
                                             </div>
                                             <div>
-                                                <h5 class="fw-bold mb-1">Return #{{ $return->id }}</h5>
+                                                <h3 class="h5 fw-bold mb-1">Return #{{ $return->id }}</h3>
                                                 <span class="badge rounded-pill px-3 py-2
                                                     {{ match ($return->status) {
                         'pending' => 'bg-warning-soft text-warning-800',

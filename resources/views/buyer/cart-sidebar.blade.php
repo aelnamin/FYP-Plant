@@ -167,12 +167,14 @@
                                 @csrf
                                 @method('PUT')
 
-                                <button type="submit" name="quantity" value="{{ $quantity - 1 }}" class="qty-btn" {{ $quantity <= 1 ? 'disabled' : '' }}>-
+                                <button type="submit" name="quantity" value="{{ $quantity - 1 }}" class="qty-btn"
+                                    aria-label="Decrease quantity of {{ $item->product->product_name }}" {{ $quantity <= 1 ? 'disabled' : '' }}>-
                                 </button>
 
                                 <span class="mx-2">{{ $quantity }}</span>
 
-                                <button type="submit" name="quantity" value="{{ $quantity + 1 }}" class="qty-btn">+
+                                <button type="submit" name="quantity" value="{{ $quantity + 1 }}" class="qty-btn"
+                                    aria-label="Increase quantity of {{ $item->product->product_name }}">+
                                 </button>
                             </form>
 
@@ -188,7 +190,8 @@
                         <form action="{{ route('cart.remove', $item->id) }}" method="POST" class="mt-1">
                             @csrf
                             @method('DELETE')
-                            <button class="btn btn-outline-dark btn-sm w-100">
+                            <button class="btn btn-outline-dark btn-sm w-100"
+                                aria-label="Remove {{ $item->product->product_name }} from cart">
                                 <i class="bi bi-trash"></i>
                             </button>
                         </form>

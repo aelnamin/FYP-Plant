@@ -22,7 +22,7 @@
                     <i class="fas fa-check-circle me-2" style="color: #4caf50;"></i>
                     <span>{{ session('success') }}</span>
                 </div>
-                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Dismiss notification"></button>
             </div>
         @endif
 
@@ -54,9 +54,9 @@
                             <!-- Card Body -->
                             <div class="card-body d-flex flex-column">
                                 <div class="mb-3">
-                                    <h5 class="fw-bold mb-2" style="color: #2c3e50;">
+                                    <h2 class="h5 fw-bold mb-2" style="color: #2c3e50;">
                                         {{ $review->product->product_name ?? 'Unknown Product' }}
-                                    </h5>
+                                    </h2>
 
                                     <!-- Rating Stars -->
                                     <div class="mb-3">
@@ -126,13 +126,13 @@
                         <i class="fas fa-star fa-3x" style="color: #8a9c6a40;"></i>
                     </div>
                 </div>
-                <h4 class="fw-bold mb-3" style="color: #2c3e50;">No Reviews Yet</h4>
+                <h3 class="h4 fw-bold mb-3" style="color: #2c3e50;">No Reviews Yet</h3>
                 <p class="text-muted mb-4" style="max-width: 400px; margin: 0 auto;">
                     You haven't submitted any reviews for your purchases.
                     Share your experience to help other shoppers!
                 </p>
                 <a href="{{ route('buyer.orders') }}" class="btn px-4 rounded-pill border-0"
-                    style="background: linear-gradient(135deg, #8a9c6a, #7a8b5a); color: white;">
+                    style="background: linear-gradient(135deg, #60794f, #52683f); color: white;">
                     <i class="fas fa-shopping-bag me-2"></i>View Your Orders
                 </a>
             </div>

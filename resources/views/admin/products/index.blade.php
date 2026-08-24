@@ -55,7 +55,7 @@
                 <div class="mb-3">
                     <i class="bi bi-box display-4 text-gray-300"></i>
                 </div>
-                <h5 class="text-gray-700 mb-2">No products found</h5>
+                <h2 class="h5 text-gray-700 mb-2">No products found</h2>
                 <p class="text-gray-500">Try adjusting your search or filters</p>
             </div>
         @else
@@ -81,6 +81,7 @@
                                                             <img src="{{ $product->images->first()
                                     ? asset('images/' . $product->images->first()->image_path)
                                     : asset('images/default.jpg') }}" class="rounded me-3"
+                                                                alt="{{ $product->product_name }}"
                                                                 style="width:60px;height:60px;object-fit:cover;">
                                                             <div>
                                                                 <div class="fw-semibold text-gray-900">{{ $product->product_name }}</div>

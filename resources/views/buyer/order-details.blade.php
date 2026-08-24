@@ -58,7 +58,7 @@
                                     <div class="rounded-2 p-2 me-2" style="background-color: #e8f0e8;">
                                         <i class="fas fa-user" style="color: #8a9c6a;"></i>
                                     </div>
-                                    <h6 class="fw-bold text-dark mb-0">Delivery Information</h6>
+                                    <h5 class="h6 fw-bold text-dark mb-0">Delivery Information</h5>
                                 </div>
                                 <div class="ps-4">
                                     <p class="fw-semibold text-dark mb-1">{{ $order->buyer->name }}</p>
@@ -277,7 +277,7 @@
                                 @foreach($items as $item)
                                     @php $product = $item->product; @endphp
                                     <a href="{{ route('buyer.reviews.create', ['order' => $order->id, 'product' => $product->id]) }}{{ $sellerId ? '?seller=' . $sellerId : '' }}"
-                                        class="btn rounded-pill py-2 border-0" style="background-color: #8a9c6a; color: white;">
+                                        class="btn rounded-pill py-2 border-0" style="background-color: #60794f; color: white;">
                                         <i class="bi bi-star me-2"></i> Rate {{ $product->product_name }}
                                     </a>
                                 @endforeach
@@ -290,7 +290,7 @@
                                         <div class="rounded-2 p-2 me-2" style="background-color: #e8f0e8;">
                                             <i class="fas fa-headset" style="color: #8a9c6a;"></i>
                                         </div>
-                                        <h6 class="fw-bold text-dark mb-0">Support Center</h6>
+                                        <h5 class="h6 fw-bold text-dark mb-0">Support Center</h5>
                                     </div>
                                     <div class="d-grid gap-2 mb-3">
                                         @if($sellerId && $selectedSeller)

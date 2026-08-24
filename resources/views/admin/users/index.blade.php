@@ -51,7 +51,7 @@
                 <div class="mb-3">
                     <i class="bi bi-people display-4 text-gray-300"></i>
                 </div>
-                <h5 class="text-gray-700 mb-2">No users found</h5>
+                <h2 class="h5 text-gray-700 mb-2">No users found</h2>
                 <p class="text-gray-500">Try adjusting your search or filters</p>
             </div>
         @else

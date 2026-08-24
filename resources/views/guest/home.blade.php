@@ -607,7 +607,7 @@
                             alt="{{ $p->product_name }}" style="height:280px; object-fit:cover;">
 
                         <div class="card-body">
-                            <h6 class="fw-bold">{{ $p->product_name }}</h6>
+                            <h3 class="h6 fw-bold">{{ $p->product_name }}</h3>
                             <div class="text-muted small"><i
                                     class="bi bi-shop me-2"></i>{{ $p->seller_business_name ?? 'Unknown Seller' }}</div>
                             <div class="fw-bold text-success mt-2">RM {{ number_format($p->price, 2) }}</div>
@@ -646,7 +646,7 @@
                             alt="{{ $p->product_name }}" style="height:280px; object-fit:cover;">
 
                         <div class="card-body">
-                            <h6 class="fw-bold">{{ $p->product_name }}</h6>
+                            <h3 class="h6 fw-bold">{{ $p->product_name }}</h3>
                             <div class="text-muted small"><i
                                     class="bi bi-shop me-2"></i>{{ $p->seller_business_name ?? 'Unknown Seller' }}</div>
                             <div class="fw-bold text-success mt-2">RM {{ number_format($p->price, 2) }}</div>
@@ -691,7 +691,7 @@
 
 
                         {{-- Seller Name --}}
-                        <h6 class="fw-bold">{{ $seller->business_name }}</h6>
+                        <h3 class="h6 fw-bold">{{ $seller->business_name }}</h3>
                         <p class="text-muted small"><i class="bi bi-patch-check"></i> Trusted Seller</p>
 
                         {{-- Visit Shop Button --}}
@@ -718,7 +718,7 @@
                                 <i class="bi bi-leaf"></i>
                             </div>
                             <div>
-                                <h4 class="fw-semibold mb-2">Discover Green Diversity</h4>
+                                <h3 class="h4 fw-semibold mb-2">Discover Green Diversity</h3>
                                 <p class="text-muted mb-0">
                                     Explore unique foliage, vibrant succulents, and over 100 species selected to suit
                                     every
@@ -732,7 +732,7 @@
                                 <i class="bi bi-box-seam"></i>
                             </div>
                             <div>
-                                <h4 class="fw-semibold mb-2">Grown with Love</h4>
+                                <h3 class="h4 fw-semibold mb-2">Grown with Love</h3>
                                 <p class="text-muted mb-0">
                                     Each plant is carefully nurtured and inspected to ensure it arrives healthy and
                                     beautiful at
@@ -746,7 +746,7 @@
                                 <i class="bi bi-truck"></i>
                             </div>
                             <div>
-                                <h4 class="fw-semibold mb-2">Fast Delivery</h4>
+                                <h3 class="h4 fw-semibold mb-2">Fast Delivery</h3>
                                 <p class="text-muted mb-0">
                                     Order by 4pm for same-day delivery across KL/Selangor—fresh, fast, and handled with
                                     care.

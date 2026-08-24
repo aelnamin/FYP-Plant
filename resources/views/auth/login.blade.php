@@ -30,7 +30,7 @@
         }
 
         .card-header {
-            background: linear-gradient(135deg, #5C7F51 0%, #A5B682 100%);
+            background: linear-gradient(135deg, #4a6b42 0%, #60794f 100%);
             padding: 30px;
             text-align: center;
         }
@@ -80,7 +80,7 @@
             margin-bottom: 30px;
         }
 
-        .welcome-text h3 {
+        .welcome-text .h3 {
             color: #5C7F51;
             font-weight: 600;
             margin-bottom: 8px;
@@ -137,7 +137,7 @@
         }
 
         .btn-login {
-            background: linear-gradient(135deg, #5C7F51 0%, #A5B682 100%);
+            background: linear-gradient(135deg, #4a6b42 0%, #60794f 100%);
             color: white;
             padding: 14px;
             border: none;
@@ -231,7 +231,7 @@
             <!-- Body -->
             <div class="card-body">
                 <div class="welcome-text">
-                    <h3>Welcome Back</h3>
+                    <h2 class="h3">Welcome Back</h2>
                     <p>Sign in to access your account</p>
                 </div>
 
@@ -255,7 +255,8 @@
                         <div class="password-wrapper">
                             <input type="password" name="password" id="password" class="form-control"
                                 placeholder="Enter your password" required>
-                            <button type="button" class="toggle-password" onclick="togglePassword()">
+                            <button type="button" class="toggle-password" onclick="togglePassword()"
+                                aria-label="Show password" aria-pressed="false">
                                 <i class="bi bi-eye" id="toggleIcon"></i>
                             </button>
                         </div>
@@ -304,15 +305,20 @@
         function togglePassword() {
             const passwordInput = document.getElementById('password');
             const toggleIcon = document.getElementById('toggleIcon');
+            const toggleButton = toggleIcon.closest('button');
 
             if (passwordInput.type === 'password') {
                 passwordInput.type = 'text';
                 toggleIcon.classList.remove('bi-eye');
                 toggleIcon.classList.add('bi-eye-slash');
+                toggleButton.setAttribute('aria-label', 'Hide password');
+                toggleButton.setAttribute('aria-pressed', 'true');
             } else {
                 passwordInput.type = 'password';
                 toggleIcon.classList.remove('bi-eye-slash');
                 toggleIcon.classList.add('bi-eye');
+                toggleButton.setAttribute('aria-label', 'Show password');
+                toggleButton.setAttribute('aria-pressed', 'false');
             }
         }
 

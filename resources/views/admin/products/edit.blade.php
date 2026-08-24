@@ -72,7 +72,8 @@
 
                     @foreach($product->images as $img)
                         <div class="col-md-3 text-center mb-3" data-image-id="{{ $img->id }}">
-                            <img src="{{ asset('images/' . $img->image_path) }}" class="img-fluid rounded mb-2">
+                            <img src="{{ asset('images/' . $img->image_path) }}" class="img-fluid rounded mb-2"
+                                alt="Existing image for {{ $product->product_name }}">
                             <input type="checkbox" name="remove_images[]" value="{{ $img->id }}" class="remove-checkbox">
                             Remove
                         </div>

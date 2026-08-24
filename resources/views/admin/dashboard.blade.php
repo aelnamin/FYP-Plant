@@ -124,7 +124,7 @@
             <div class="col-lg-8">
                 <div class="card border-0 shadow-sm">
                     <div class="card-header bg-transparent border-0 p-4">
-                        <h5 class="fw-semibold mb-1">Order Status</h5>
+                        <h3 class="h5 fw-semibold mb-1">Order Status</h3>
                         <p class="text-gray-600 small mb-0">Platform-wide overview</p>
                     </div>
                     <div class="card-body p-4 pt-0">
@@ -166,7 +166,7 @@
             <div class="col-lg-4">
                 <div class="card border-0 shadow-sm">
                     <div class="card-header bg-transparent border-0 p-3">
-                        <h5 class="fw-semibold mb-1">Actions</h5>
+                        <h4 class="h5 fw-semibold mb-1">Actions</h4>
                     </div>
                     <div class="card-body p-4 pt-0">
                         <div class="list-group list-group-flush">
@@ -216,7 +216,7 @@
                                             <div class="card-body p-3">
                                                 <div class="d-flex align-items-start gap-3">
                                                     <img src="{{ $p->images->first() ? asset('images/' . $p->images->first()->image_path) : asset('images/default.jpg') }}"
-                                                        class="rounded-3" style="width: 60px; height: 60px; object-fit: cover;">
+                                                        class="rounded-3" alt="{{ $p->product_name }}" style="width: 60px; height: 60px; object-fit: cover;">
                                                     <div class="flex-grow-1">
                                                         <div class="fw-semibold mb-1">{{ Str::limit($p->product_name, 25) }}
                                                         </div>

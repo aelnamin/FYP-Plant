@@ -97,9 +97,9 @@
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
                 <!-- Left Column: Log Growth Data Form -->
                 <div id="growth-form-container" class="hidden card bg-white rounded-xl p-6 shadow-md">
-                    <h3 class="text-xl font-semibold text-gray-800 mb-4 flex items-center">
+                    <h2 class="h3 text-xl font-semibold text-gray-800 mb-4 flex items-center">
                         <i class="fas fa-seedling mr-2 600"></i> Log Growth Data
-                    </h3>
+                    </h2>
                     <form id="growth-log-form" method="POST">
                         @csrf
                         <input type="hidden" name="plant_id" id="growth-plant-id">

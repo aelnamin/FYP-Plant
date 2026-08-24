@@ -29,7 +29,7 @@
 
                             <!-- Personal Information -->
                             <div class="mb-4">
-                                <h6 class="fw-semibold text-gray-700 mb-3">Personal Information</h6>
+                                <h2 class="h6 fw-semibold text-gray-700 mb-3">Personal Information</h2>
                                 <div class="row g-3">
                                     <div class="col-12">
                                         <label class="form-label">Full Name</label>
@@ -46,7 +46,7 @@
 
                             <!-- Password Update -->
                             <div class="mb-4">
-                                <h6 class="fw-semibold text-gray-700 mb-3">Password Update</h6>
+                                <h3 class="h6 fw-semibold text-gray-700 mb-3">Password Update</h3>
                                 <p class="text-gray-600 small mb-3">Leave password fields blank to keep current password</p>
                                 <div class="row g-3">
                                     <div class="col-md-6">
@@ -62,7 +62,7 @@
 
                             <!-- Contact Information -->
                             <div class="mb-4">
-                                <h6 class="fw-semibold text-gray-700 mb-3">Contact Information</h6>
+                                <h4 class="h6 fw-semibold text-gray-700 mb-3">Contact Information</h4>
                                 <div class="row g-3">
                                     <div class="col-md-6">
                                         <label class="form-label">Phone Number</label>

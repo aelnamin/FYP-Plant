@@ -54,7 +54,7 @@
                                     <div class="rounded-2 p-2 me-2" style="background-color: #e8f0e8;">
                                         <i class="fas fa-exclamation-triangle" style="color: #8a9c6a;"></i>
                                     </div>
-                                    <h5 class="fw-bold text-dark mb-0">Complaint Information</h5>
+                                    <h4 class="h5 fw-bold text-dark mb-0">Complaint Information</h4>
                                 </div>
                                 <div class="ps-4">
                                     <div class="mb-3">

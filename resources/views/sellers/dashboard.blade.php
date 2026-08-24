@@ -239,7 +239,7 @@
                     <div class="card-header bg-transparent border-0 p-4 pb-2">
                         <div class="d-flex justify-content-between align-items-center">
                             <div>
-                                <h5 class="mb-1">Recent Orders</h5>
+                                <h3 class="h5 mb-1">Recent Orders</h3>
                                 <p class="text-muted small mb-0">Latest customer purchases</p>
                             </div>
                             <a href="{{ route('sellers.orders.index') }}" class="btn btn-outline-success btn-sm">
@@ -265,9 +265,9 @@
                                         @foreach($recentOrders as $order)
                                             <tr class="border-bottom">
                                                 <td>
-                                                    <h6 class="mb-1">
+                                                    <h4 class="h6 mb-1">
                                                         #{{ str_pad($order->id, 10, '0', STR_PAD_LEFT) }}
-                                                    </h6>
+                                                    </h4>
                                                 </td>
                                                 <td>
                                                     <div class="d-flex align-items-center">
@@ -404,6 +404,7 @@
                                                                 <img src="{{ $firstImage
                                     ? asset('images/' . $firstImage->image_path)
                                     : asset('images/default-product.jpg') }}" class="rounded-2"
+                                                                    alt="{{ $product->product_name }}"
                                                                     style="width: 70px; height: 70px; object-fit: cover;">
 
                                                                 @if(($product->stock_quantity ?? 0) <= 10)

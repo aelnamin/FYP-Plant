@@ -24,7 +24,7 @@
                                 <i class="fas fa-exclamation-circle" style="color: #8a9c6a; font-size: 1.2rem;"></i>
                             </div>
                             <div>
-                                <h4 class="fw-bold text-dark mb-1">Complaint Form</h4>
+                                <h2 class="h4 fw-bold text-dark mb-1">Complaint Form</h2>
                                 <p class="text-secondary mb-0">All fields marked with * are required</p>
                             </div>
                         </div>
@@ -132,7 +132,7 @@
                                     <i class="fas fa-times me-2"></i>Cancel
                                 </a>
                                 <button type="submit" class="btn rounded-pill px-4 mb-3 mb-md-0 w-100 w-md-auto border-0"
-                                    style="background-color: #8a9c6a; color: white;">
+                                    style="background-color: #60794f; color: white;">
                                     <i class="fas fa-paper-plane me-2"></i>Submit Complaint
                                 </button>
                             </div>
@@ -147,7 +147,7 @@
                             <i class="fas fa-question-circle" style="color: #8a9c6a;"></i>
                         </div>
                         <div>
-                            <h6 class="fw-bold text-dark mb-2">Need Help?</h6>
+                            <h3 class="h6 fw-bold text-dark mb-2">Need Help?</h3>
                             <p class="text-secondary mb-0">
                                 Our support team typically responds within 24-48 hours. For urgent matters,
                                 include "URGENT" in your complaint message.

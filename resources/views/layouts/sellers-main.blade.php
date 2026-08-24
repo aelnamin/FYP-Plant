@@ -175,15 +175,15 @@
     <div class="container-fluid g-0">
         <div class="row g-0">
             {{-- SIDEBAR --}}
-            <aside class="col-lg-2 sidebar d-none d-lg-block">
+            <aside class="col-lg-2 sidebar d-none d-lg-block" id="sellerSidebar" aria-label="Seller navigation">
                 <div class="sidebar-header">
                     <img src="{{ Auth::user()->profile_picture
     ? asset(Auth::user()->profile_picture)
-    : asset('images/default.png') }}" class="rounded-circle profile-avatar" alt="Profile Picture">
+    : asset('images/default.png') }}" class="rounded-circle profile-avatar" alt="{{ Auth::user()->name }} profile photo">
 
-                    <h4 class="seller-name mt-3 mb-0">
+                    <p class="seller-name h4 mt-3 mb-0">
                         {{ Auth::user()->sellerProfile->business_name ?? Auth::user()->name }}
-                    </h4>
+                    </p>
                     <small class="text-muted d-block mt-1">Seller Account</small>
                 </div>
 
@@ -252,7 +252,8 @@
 
             {{-- MOBILE MENU TOGGLE (Hidden on desktop) --}}
             <div class="d-lg-none fixed-top p-3 bg-white shadow-sm">
-                <button class="btn btn-outline-success" type="button" id="sidebarToggle">
+                <button class="btn btn-outline-success" type="button" id="sidebarToggle"
+                    aria-label="Toggle seller navigation" aria-controls="sellerSidebar" aria-expanded="false">
                     <i class="fas fa-bars"></i>
                 </button>
                 <span class="ms-3 fw-semibold">Seller Dashboard</span>
@@ -276,6 +277,7 @@
             if (sidebarToggle) {
                 sidebarToggle.addEventListener('click', function () {
                     sidebar.classList.toggle('active');
+                    sidebarToggle.setAttribute('aria-expanded', sidebar.classList.contains('active') ? 'true' : 'false');
                 });
             }
 
@@ -286,6 +288,7 @@
                         !sidebarToggle.contains(event.target) &&
                         sidebar.classList.contains('active')) {
                         sidebar.classList.remove('active');
+                        sidebarToggle.setAttribute('aria-expanded', 'false');
                     }
                 }
             });

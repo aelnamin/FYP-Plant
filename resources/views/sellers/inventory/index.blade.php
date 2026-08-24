@@ -75,6 +75,7 @@
                                                     <img src="{{ $product->images->first()
                             ? asset('images/' . $product->images->first()->image_path)
                             : asset('images/default.jpg') }}" class="rounded me-2"
+                                                        alt="{{ $product->product_name }}"
                                                         style="width:60px;height:60px;object-fit:cover;">
 
                                                     <div>

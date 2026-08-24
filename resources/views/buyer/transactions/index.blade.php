@@ -23,7 +23,7 @@
                 <div class="col-md-3 col-6 mb-3">
                     <div class="card border-0 bg-light-warning bg-opacity-10 shadow-sm rounded-4">
                         <div class="card-body text-center py-3">
-                            <h3 class="fw-bold text-warning">{{ $orders->where('status', 'Pending')->count() }}</h3>
+                            <h2 class="h3 fw-bold text-warning">{{ $orders->where('status', 'Pending')->count() }}</h2>
                             <p class="text-muted mb-0">Pending</p>
                         </div>
                     </div>
@@ -63,10 +63,10 @@
                         <div class="card-header bg-light py-3 border-0">
                             <div class="d-flex justify-content-between align-items-center">
                                 <div>
-                                    <h5 class="mb-0">
+                                    <h4 class="h5 mb-0">
                                         <i class="bi bi-bag-check me-2 text-success"></i>
                                         Order #{{ str_pad($order->id, 6, '0', STR_PAD_LEFT) }}
-                                    </h5>
+                                    </h4>
                                     <small class="text-muted">
                                         <i class="bi bi-calendar3 me-1"></i>
                                         {{ $order->created_at->format('F d, Y \a\t h:i A') }}
@@ -92,7 +92,7 @@
                             {{-- Order Items Preview --}}
                             @if($order->items->count() > 0)
                                 <div class="mb-4">
-                                    <h6 class="text-muted mb-3">Items</h6>
+                                    <h5 class="h6 text-muted mb-3">Items</h5>
                                     <div class="row g-3">
                                         @foreach($order->items->take(2) as $item)
                                             @if($item->product)

@@ -32,6 +32,7 @@
                     <div class="d-flex justify-content-start gap-2 flex-wrap">
                         @foreach($product->images as $img)
                             <img src="{{ asset('images/' . $img->image_path) }}" width="70" height="70" class="rounded border"
+                                alt="{{ $product->product_name }} thumbnail"
                                 style="object-fit: cover; cursor: pointer;"
                                 onclick="document.getElementById('mainImage').src=this.src">
                         @endforeach

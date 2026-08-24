@@ -26,7 +26,7 @@
                                 </ul>
                             </div>
                         </div>
-                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Dismiss notification"></button>
                     </div>
                 @endif
 
@@ -40,7 +40,7 @@
                                 <p class="mb-0">{{ session('success') }}</p>
                             </div>
                         </div>
-                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Dismiss notification"></button>
                     </div>
                 @endif
 
@@ -54,7 +54,7 @@
                                 <p class="mb-0">{{ session('error') }}</p>
                             </div>
                         </div>
-                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Dismiss notification"></button>
                     </div>
                 @endif
 
@@ -195,6 +195,7 @@ $statusInfo = $statusColors[$sellerStatusNormalized] ?? ['bg' => 'bg-secondary',
                                                         <img src="{{ $item->product->images->first()
                                         ? asset('images/' . $item->product->images->first()->image_path)
                                         : asset('images/default.png') }}" class="rounded"
+                                                            alt="{{ $item->product->product_name }}"
                                                             style="width: 80px; height: 80px; object-fit: cover; border: 2px solid #e0e0e0;">
                                                     </div>
                                                     <div class="flex-grow-1">

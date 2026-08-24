@@ -29,7 +29,7 @@
  {{-- Order Status Timeline --}}
 <div class="card shadow-sm rounded-4 mb-4 border-0">
     <div class="card-body">
-        <h5 class="fw-bold mb-4">Order Status</h5>
+        <h2 class="h5 fw-bold mb-4">Order Status</h2>
 
         <div class="d-flex justify-content-between align-items-center position-relative timeline-container">
 
@@ -88,7 +88,7 @@
                     <div class="timeline-circle {{ $active ? 'active' : '' }}">
                         <i class="bi bi-{{ $icon }} fs-5"></i>
                     </div>
-                    <h6 class="fw-bold mt-2 text-capitalize">{{ $stage }}</h6>
+                    <h3 class="h6 fw-bold mt-2 text-capitalize">{{ $stage }}</h3>
                     <small class="text-muted text-center">
                         @if($stage === 'placed')
                             {{ $order->created_at->timezone('Asia/Kuala_Lumpur')->format('d M, h:i A') }}
@@ -110,11 +110,11 @@
             <div class="col-lg-8">
                 <div class="card shadow-sm rounded-4 border-0 h-100">
                     <div class="card-header bg-light border-0 py-3">
-                        <h5 class="fw-bold mb-0">
+                        <h4 class="h5 fw-bold mb-0">
                             <i class="bi bi-cart3 text-me-2" style="color: #8a9c6a;"></i>
                             Products from {{ $items->first()?->product?->seller->business_name ?? 'Seller' }}
                             ({{ $items->count() }})
-                        </h5>
+                        </h4>
                     </div>
                     <div class="card-body">
                         <div class="list-group list-group-flush">
@@ -124,11 +124,12 @@
                                         style="border-color: #e9ecef !important;">
                                         <img src="{{ $item->product->images->first() ? asset('images/' . $item->product->images->first()->image_path) : asset('images/default.jpg') }}"
                                             class="rounded-3 me-3"
+                                            alt="{{ $item->product->product_name }}"
                                             style="width: 120px; height: 120px; object-fit: cover; border: 1px solid #e9ecef;">
                                         <div class="flex-grow-1">
-                                            <h6 class="fw-semibold text-dark mb-1" style="font-size: 0.95rem;">
+                                            <h5 class="h6 fw-semibold text-dark mb-1" style="font-size: 0.95rem;">
                                                 {{ $item->product->product_name }}
-                                            </h6>
+                                            </h5>
                                             <p class="text-secondary small mb-1">Qty: {{ $item->quantity }}</p>
                                             <div class="text-secondary small mb-1">
                                                 <i class="fas fa-tag me-1"></i>
@@ -192,7 +193,7 @@
 
                         {{-- Payment Info --}}
                         <div class="mt-4">
-                            <h6 class="fw-bold mb-3">Payment Information</h6>
+                            <h5 class="h6 fw-bold mb-3">Payment Information</h5>
                             <div class="d-flex justify-content-between mb-2">
                                 <span class="text-secondary">Payment Method</span>
                                 <span>{{ $transaction->payment_method_label }}</span>

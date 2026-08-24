@@ -271,7 +271,7 @@
                                 alt="{{ $p->product_name }}" style="height:280px; object-fit:cover;">
 
                             <div class="card-body">
-                                <h6 class="fw-bold">{{ $p->product_name }}</h6>
+                                <h3 class="h6 fw-bold">{{ $p->product_name }}</h3>
                                 <div class="text-muted small"><i
                                         class="bi bi-shop me-2"></i>{{ $p->seller_business_name ?? 'Unknown Seller' }}</div>
                                 <div class="fw-bold text-success mt-2">RM {{ number_format($p->price, 2) }}</div>
@@ -311,7 +311,7 @@
                                 alt="{{ $p->product_name }}" style="height:280px; object-fit:cover;">
 
                             <div class="card-body">
-                                <h6 class="fw-bold">{{ $p->product_name }}</h6>
+                                <h3 class="h6 fw-bold">{{ $p->product_name }}</h3>
                                 <div class="text-muted small"><i
                                         class="bi bi-shop me-2"></i>{{ $p->seller_business_name ?? 'Unknown Seller' }}</div>
                                 <div class="fw-bold text-success mt-2">RM {{ number_format($p->price, 2) }}</div>
@@ -357,7 +357,7 @@
 
 
                                 {{-- Seller Name --}}
-                                <h6 class="fw-bold">{{ $seller->business_name }}</h6>
+                                <h3 class="h6 fw-bold">{{ $seller->business_name }}</h3>
                                 <p class="text-muted small"><i class="bi bi-patch-check"></i> Trusted Seller</p>
 
                                 {{-- Visit Shop Button --}}

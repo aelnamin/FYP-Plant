@@ -37,7 +37,7 @@
                                     alt="{{ $product->product_name }}" class="rounded me-3" width="80" height="80"
                                     style="object-fit: cover;">
                                 <div>
-                                    <h5 class="fw-bold mb-1">{{ $product->product_name }}</h5>
+                                    <h3 class="h5 fw-bold mb-1">{{ $product->product_name }}</h3>
                                     <p class="text-muted small mb-0">Please share your honest feedback</p>
                                 </div>
                             </div>

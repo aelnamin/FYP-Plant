@@ -212,6 +212,7 @@
             <div class="col-md-1 d-flex flex-column gap-2">
                 @foreach ($product->images as $image)
                     <img src="{{ asset('images/' . $image->image_path) }}" class="thumb-img"
+                        alt="{{ $product->product_name }} thumbnail"
                         onclick="document.getElementById('mainPreview').src=this.src">
                 @endforeach
             </div>
@@ -221,12 +222,12 @@
                 <img id="mainPreview" src="{{ $product->images->first()
                     ? asset('images/' . $product->images->first()->image_path)
                     : asset('images/default.jpg') }}"
-                    class="main-image">
+                    class="main-image" alt="{{ $product->product_name }}">
             </div>
 
             {{-- RIGHT: Product Details --}}
             <div class="col-md-6">
-                <h2 class="fw-bold">{{ $product->product_name }}</h2>
+                <h1 class="h2 fw-bold">{{ $product->product_name }}</h1>
 
                 @if($product->seller)
                 <a href="{{ route('seller-shop', $product->seller->id) }}" class="text-decoration-none text-dark">
@@ -238,9 +239,9 @@
         : asset('images/default.png') }}" class="seller-profile-img me-3" alt="{{ $product->seller->business_name }}">
 
                             <div>
-                                <h5 class="fw-bold mb-1">
+                                <h2 class="h5 fw-bold mb-1">
                                     {{ $product->seller->business_name }}
-                                </h5>
+                                </h2>
                                 <span class="verified-badge">
                                     <i class="bi bi-check-circle"></i> Verified Seller
                                 </span>
@@ -340,9 +341,9 @@
                     <div class="d-flex align-items-center gap-3">
                         {{-- Quantity selector --}}
                         <div class="qty-pill">
-                            <button type="button" class="qty-btn" id="decrement">−</button>
+                            <button type="button" class="qty-btn" id="decrement" aria-label="Decrease quantity">−</button>
                             <span class="qty-value" id="quantity">1</span>
-                            <button type="button" class="qty-btn" id="increment">+</button>
+                            <button type="button" class="qty-btn" id="increment" aria-label="Increase quantity">+</button>
                         </div>
 
                         <input type="hidden" name="quantity" id="quantityInput" value="1">
@@ -391,7 +392,7 @@
 
         {{-- Product Description --}}
         <div class="mt-4">
-            <h4 class="fw-bold">Product Description</h4>
+            <h3 class="h4 fw-bold">Product Description</h3>
             <div class="col-6">
                 <p style="line-height: 1.6;">{!! nl2br(e($product->description)) !!}</p>
             </div>
@@ -471,9 +472,9 @@
                             <div class="col-6 col-md-3">
                                 <div class="card border-0 product-card shadow-sm h-100 rounded-4">
                                     <img src="{{ $p->images->first() ? asset('images/' . $p->images->first()->image_path) : asset('images/default.jpg') }}"
-                                        class="card-img-top" style="height:220px; object-fit:cover;">
+                                        class="card-img-top" alt="{{ $p->product_name }}" style="height:220px; object-fit:cover;">
                                     <div class="card-body">
-                                        <h6 class="fw-bold">{{ $p->product_name }}</h6>
+                                        <h5 class="h6 fw-bold">{{ $p->product_name }}</h5>
                                         <div class="text-success fw-bold">RM {{ number_format($p->price, 2) }}</div>
                                     </div>
                                     <div class="card-footer bg-white border-0">
