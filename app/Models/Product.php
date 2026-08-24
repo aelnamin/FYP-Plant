@@ -6,6 +6,8 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\ProductGrowthLog;
 use App\Models\ProductCareLog;
+use App\Models\ProductImage;
+use App\Models\Seller;
 
 
 class Product extends Model
@@ -33,6 +35,34 @@ class Product extends Model
     protected $casts = [
         'variants' => 'array',
     ];
+
+    /**
+     * Select only the data needed by storefront product cards.
+     *
+     * Using scalar subqueries avoids loading every image and a separate seller
+     * relationship for cards that only render one image and one seller name.
+     */
+    public function scopeForStorefrontCards($query)
+    {
+        return $query
+            ->select([
+                'products.id',
+                'products.product_name',
+                'products.price',
+                'products.created_at',
+            ])
+            ->addSelect([
+                'image_path' => ProductImage::query()
+                    ->select('image_path')
+                    ->whereColumn('product_images.product_id', 'products.id')
+                    ->orderBy('product_images.id')
+                    ->limit(1),
+                'seller_business_name' => Seller::query()
+                    ->select('business_name')
+                    ->whereColumn('sellers.id', 'products.seller_id')
+                    ->limit(1),
+            ]);
+    }
 
     public function seller()
     {

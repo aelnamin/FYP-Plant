@@ -1,4 +1,5 @@
 @extends('layouts.main')
+@section('skip-font-awesome', true)
 
 @section('title', 'Buyer Dashboard')
 
@@ -265,13 +266,14 @@
                     <div class="col-6 col-md-3">
                         <div class="card shadow-sm product-card border-0 rounded-4 h-100">
 
-                            <img src="{{ $p->images->first() ? asset('images/' . $p->images->first()->image_path) : asset('images/default.jpg') }}"
-                                class="card-img-top rounded-top-4" style="height:280px; object-fit:cover;">
+                            <img src="{{ $p->image_path ? asset('images/' . $p->image_path) : asset('images/default.jpg') }}"
+                                class="card-img-top rounded-top-4" width="600" height="560" loading="lazy" decoding="async"
+                                alt="{{ $p->product_name }}" style="height:280px; object-fit:cover;">
 
                             <div class="card-body">
                                 <h6 class="fw-bold">{{ $p->product_name }}</h6>
                                 <div class="text-muted small"><i
-                                        class="bi bi-shop me-2"></i>{{ $p->seller->business_name ?? 'Unknown Seller' }}</div>
+                                        class="bi bi-shop me-2"></i>{{ $p->seller_business_name ?? 'Unknown Seller' }}</div>
                                 <div class="fw-bold text-success mt-2">RM {{ number_format($p->price, 2) }}</div>
                             </div>
 
@@ -304,13 +306,14 @@
                     <div class="col-6 col-md-3">
                         <div class="card shadow-sm product-card border-0 rounded-4 h-100">
 
-                            <img src="{{ $p->images->first() ? asset('images/' . $p->images->first()->image_path) : asset('images/default.jpg') }}"
-                                class="card-img-top rounded-top-4" style="height:280px; object-fit:cover;">
+                            <img src="{{ $p->image_path ? asset('images/' . $p->image_path) : asset('images/default.jpg') }}"
+                                class="card-img-top rounded-top-4" width="600" height="560" loading="lazy" decoding="async"
+                                alt="{{ $p->product_name }}" style="height:280px; object-fit:cover;">
 
                             <div class="card-body">
                                 <h6 class="fw-bold">{{ $p->product_name }}</h6>
                                 <div class="text-muted small"><i
-                                        class="bi bi-shop me-2"></i>{{ $p->seller->business_name ?? 'Unknown Seller' }}</div>
+                                        class="bi bi-shop me-2"></i>{{ $p->seller_business_name ?? 'Unknown Seller' }}</div>
                                 <div class="fw-bold text-success mt-2">RM {{ number_format($p->price, 2) }}</div>
                             </div>
 
@@ -346,9 +349,10 @@
                             <div class="text-center p-4 bg-white card product-card border-0 rounded-4 h-100 overflow hidden">
 
                                 {{-- Profile Picture --}}
-                                <img src="{{ $seller->user && $seller->user->profile_picture
-                    ? asset($seller->user->profile_picture)
+                                <img src="{{ $seller->profile_picture_path
+                    ? asset($seller->profile_picture_path)
                     : asset('images/default.png') }}" class="rounded-circle mx-auto mb-3"
+                                    width="90" height="90" loading="lazy" decoding="async"
                                     style="width:90px; height:90px; object-fit:cover;" alt="{{ $seller->business_name }}">
 
 

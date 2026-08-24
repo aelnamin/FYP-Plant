@@ -4,9 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Models\Category;
 use App\Models\Product;
+use App\Models\OrderItem;
 use App\Models\Seller;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 
 class HomeController extends Controller
 {
@@ -16,22 +16,25 @@ class HomeController extends Controller
     public function index()
     {
         // Best Sellers (products with sales)
-        $bestSellers = Product::with(['images', 'seller'])
+        $salesByProduct = OrderItem::query()
+            ->select('product_id')
+            ->selectRaw('SUM(quantity) as total_sold')
+            ->groupBy('product_id');
+
+        $bestSellers = Product::forStorefrontCards()
+            ->joinSub($salesByProduct, 'sales', function ($join) {
+                $join->on('sales.product_id', '=', 'products.id');
+            })
+            ->addSelect('sales.total_sold')
             ->where('approval_status', 'Approved')
-            ->whereHas('orderItems')
-            ->withCount([
-                'orderItems as total_sold' => function ($query) {
-                    $query->select(DB::raw('SUM(quantity)'));
-                }
-            ])
             ->orderByDesc('total_sold')
             ->take(8)
             ->get();
 
         // Latest Products (latest approved products)
-        $latestProducts = Product::with(['images', 'seller'])
+        $latestProducts = Product::forStorefrontCards()
             ->where('approval_status', 'Approved')
-            ->latest()
+            ->latest('products.created_at')
             ->take(8)
             ->get();
 
@@ -41,7 +44,10 @@ class HomeController extends Controller
             ->get();
 
         // Categories for filtering
-        $categories = Category::all();
+        $categories = Category::query()
+            ->select(['id', 'category_name'])
+            ->orderBy('id')
+            ->get();
 
         return view('guest.home', compact(
             'bestSellers',

@@ -1,14 +1,17 @@
 @extends('layouts.main')
+@section('skip-font-awesome', true)
+
+@push('head')
+    <link rel="preload" as="image" type="image/webp"
+        href="{{ asset('images/hero-plant-1280.webp') }}"
+        imagesrcset="{{ asset('images/hero-plant-768.webp') }} 768w, {{ asset('images/hero-plant-1280.webp') }} 1280w, {{ asset('images/hero-plant-1537.webp') }} 1537w, {{ asset('images/hero-plant-1920.webp') }} 1920w"
+        imagesizes="100vw" fetchpriority="high">
+@endpush
 
 @section('full-width-content')
 
     {{-- SHOW BANNER ONLY FOR GUESTS / NON-BUYERS --}}
     @if(!Auth::check() || Auth::user()->role !== 'buyer')
-
-        <head>
-            <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
-
-        </head>
 
         <style>
             :root {
@@ -212,6 +215,11 @@
             .product-card:hover {
                 transform: translateY(-8px);
                 box-shadow: 0 15px 30px rgba(92, 127, 81, 0.15);
+            }
+
+            .homepage-deferred-section {
+                content-visibility: auto;
+                contain-intrinsic-size: auto 780px;
             }
 
             /* Homepage hero */
@@ -475,16 +483,22 @@
                 </div>
                 <div class="carousel-inner">
                     <div class="carousel-item active">
-                        <img src="{{ asset('images/0210df71-d45f-47c7-ad13-a0961e6321b4.png') }}" class="home-hero__image"
-                            alt="A curated collection of healthy indoor plants">
+                        <img src="{{ asset('images/hero-plant-1280.webp') }}"
+                            srcset="{{ asset('images/hero-plant-768.webp') }} 768w, {{ asset('images/hero-plant-1280.webp') }} 1280w, {{ asset('images/hero-plant-1537.webp') }} 1537w, {{ asset('images/hero-plant-1920.webp') }} 1920w"
+                            sizes="100vw" width="1537" height="1023" class="home-hero__image"
+                            alt="A curated collection of healthy indoor plants" fetchpriority="high" decoding="async">
                     </div>
                     <div class="carousel-item">
-                        <img src="{{ asset('images/2c4fba5e-9f01-4211-b7ed-6ad162103f39.png') }}" class="home-hero__image"
-                            alt="Green plants styled for a welcoming home">
+                        <img src="{{ asset('images/hero-home-1280.webp') }}"
+                            srcset="{{ asset('images/hero-home-768.webp') }} 768w, {{ asset('images/hero-home-1280.webp') }} 1280w, {{ asset('images/hero-home-1537.webp') }} 1537w, {{ asset('images/hero-home-1920.webp') }} 1920w"
+                            sizes="100vw" width="1537" height="1023" class="home-hero__image"
+                            alt="Green plants styled for a welcoming home" loading="lazy" fetchpriority="low" decoding="async">
                     </div>
                     <div class="carousel-item">
-                        <img src="{{ asset('images/9605776d-88f0-464d-b6f0-2dfe42e39b47.png') }}" class="home-hero__image"
-                            alt="Plant and gardening essentials from trusted sellers">
+                        <img src="{{ asset('images/hero-essentials-1280.webp') }}"
+                            srcset="{{ asset('images/hero-essentials-768.webp') }} 768w, {{ asset('images/hero-essentials-1280.webp') }} 1280w, {{ asset('images/hero-essentials-1537.webp') }} 1537w, {{ asset('images/hero-essentials-1920.webp') }} 1920w"
+                            sizes="100vw" width="1537" height="1023" class="home-hero__image"
+                            alt="Plant and gardening essentials from trusted sellers" loading="lazy" fetchpriority="low" decoding="async">
                     </div>
                 </div>
             </div>
@@ -546,7 +560,8 @@
                 class="text-decoration-none text-dark">
 
                 <div class="category-card text-center p-3 shadow-sm rounded-4">
-                    <img src="{{ asset('images/' . $image) }}" alt="{{ $cat->category_name }}" class="category-img">
+                    <img src="{{ asset('images/' . $image) }}" alt="{{ $cat->category_name }}" class="category-img"
+                        width="48" height="48" loading="lazy" decoding="async">
 
                     <p class="mt-2 mb-0 small fw-semibold">
                         {{ $cat->category_name }}
@@ -560,7 +575,8 @@
         <a href="{{ route('products.browse', request()->except('category')) }}" class="text-decoration-none text-dark">
 
             <div class="category-card text-center p-3 shadow-sm rounded-4">
-                <img src="{{ asset('images/all-products.png') }}" alt="All Categories" class="category-img">
+                <img src="{{ asset('images/all-products.png') }}" alt="All Categories" class="category-img"
+                    width="48" height="48" loading="lazy" decoding="async">
 
                 <p class="mt-2 mb-0 small fw-semibold">All</p>
             </div>
@@ -569,7 +585,7 @@
     </div>
 
     <!-- BEST SELLERS -->
-    <div class="container mt-5">
+    <div class="container mt-5 homepage-deferred-section">
         <div class="text-center mb-5">
             <h2 class="section-title best-sellers">
                 Best Sellers
@@ -586,13 +602,14 @@
                 <div class="col-6 col-md-3">
                     <div class="card shadow-sm product-card border-0 rounded-4 h-100">
 
-                        <img src="{{ $p->images->first() ? asset('images/' . $p->images->first()->image_path) : asset('images/default.jpg') }}"
-                            class="card-img-top rounded-top-4" style="height:280px; object-fit:cover;">
+                        <img src="{{ $p->image_path ? asset('images/' . $p->image_path) : asset('images/default.jpg') }}"
+                            class="card-img-top rounded-top-4" width="600" height="560" loading="lazy" decoding="async"
+                            alt="{{ $p->product_name }}" style="height:280px; object-fit:cover;">
 
                         <div class="card-body">
                             <h6 class="fw-bold">{{ $p->product_name }}</h6>
                             <div class="text-muted small"><i
-                                    class="bi bi-shop me-2"></i>{{ $p->seller->business_name ?? 'Unknown Seller' }}</div>
+                                    class="bi bi-shop me-2"></i>{{ $p->seller_business_name ?? 'Unknown Seller' }}</div>
                             <div class="fw-bold text-success mt-2">RM {{ number_format($p->price, 2) }}</div>
                         </div>
 
@@ -609,7 +626,7 @@
 
 
     <!-- Latest Products -->
-    <div class="container mt-5">
+    <div class="container mt-5 homepage-deferred-section">
         <div class="text-center mb-5">
             <h2 class="section-title latest-products">
                 Latest Products
@@ -624,13 +641,14 @@
                 <div class="col-6 col-md-3">
                     <div class="card shadow-sm product-card border-0 rounded-4 h-100">
 
-                        <img src="{{ $p->images->first() ? asset('images/' . $p->images->first()->image_path) : asset('images/default.jpg') }}"
-                            class="card-img-top rounded-top-4" style="height:280px; object-fit:cover;">
+                        <img src="{{ $p->image_path ? asset('images/' . $p->image_path) : asset('images/default.jpg') }}"
+                            class="card-img-top rounded-top-4" width="600" height="560" loading="lazy" decoding="async"
+                            alt="{{ $p->product_name }}" style="height:280px; object-fit:cover;">
 
                         <div class="card-body">
                             <h6 class="fw-bold">{{ $p->product_name }}</h6>
                             <div class="text-muted small"><i
-                                    class="bi bi-shop me-2"></i>{{ $p->seller->business_name ?? 'Unknown Seller' }}</div>
+                                    class="bi bi-shop me-2"></i>{{ $p->seller_business_name ?? 'Unknown Seller' }}</div>
                             <div class="fw-bold text-success mt-2">RM {{ number_format($p->price, 2) }}</div>
                         </div>
 
@@ -647,7 +665,7 @@
     </div>
 
     <!-- Top Sellers -->
-    <div class="container mt-5">
+    <div class="container mt-5 homepage-deferred-section">
         <div class="text-center mb-5">
             <h2 class="section-title top-sellers">
                 Top Sellers
@@ -665,9 +683,10 @@
                     <div class="text-center p-4 bg-white card product-card border-0 rounded-4 h-100 overflow hidden">
 
                         {{-- Profile Picture --}}
-                        <img src="{{ $seller->user && $seller->user->profile_picture
-                ? asset($seller->user->profile_picture)
+                        <img src="{{ $seller->profile_picture_path
+                ? asset($seller->profile_picture_path)
                 : asset('images/default.png') }}" class="rounded-circle mx-auto mb-3"
+                            width="90" height="90" loading="lazy" decoding="async"
                             style="width:90px; height:90px; object-fit:cover;" alt="{{ $seller->business_name }}">
 
 
@@ -687,7 +706,7 @@
     </div>
 
 
-    <div class="container my-5">
+    <div class="container my-5 homepage-deferred-section">
         <div class="row">
 
             <!-- FEATURES & ABOUT -->

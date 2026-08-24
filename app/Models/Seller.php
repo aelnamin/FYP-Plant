@@ -59,7 +59,17 @@ class Seller extends Model
     public function scopeStorefrontTopSellers($query)
     {
         return $query
-            ->with('user')
+            ->select([
+                'sellers.id',
+                'sellers.business_name',
+                'sellers.user_id',
+            ])
+            ->addSelect([
+                'profile_picture_path' => User::query()
+                    ->select('profile_picture')
+                    ->whereColumn('users.id', 'sellers.user_id')
+                    ->limit(1),
+            ])
             ->withAvg('reviews', 'rating')
             ->where('verification_status', 'Approved')
             ->whereNotIn('business_name', ['Green Thumb', 'Tropical Leaf'])

@@ -2,16 +2,21 @@
 <html lang="en">
 
 <head>
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
-
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@yield('title', 'FYPPlant')</title>
 
+    <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
+
     <link rel="stylesheet"
         href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    @if (! View::hasSection('skip-font-awesome'))
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    @endif
+    @stack('head')
 
     <style>
         /* --- BODY FLEX LAYOUT --- */
@@ -253,7 +258,8 @@
         <nav class="navbar navbar-expand-lg navbar-light shadow-sm" style="background-color:#FFFFFF;">
             <div class="container">
                 <a class="navbar-brand d-flex align-items-center gap-2" href="/" style="color: #6A8F4E;">
-                    <img src="{{ asset('images/logo3.png') }}" alt="Logo" style="height: 56px; width: auto;">
+                    <img src="{{ asset('images/logo3.png') }}" alt="Logo" width="56" height="56"
+                        decoding="async" style="height: 56px; width: 56px;">
                     <span>Aether & Leaf.Co</span>
                 </a>
 
@@ -407,9 +413,9 @@
                 <div class="col-lg-4 col-md-6 mb-4">
                     <h5>Contact Us</h5>
                     <div class="contact-info mb-4">
-                        <p class="mb-2"><i class="fas fa-map-marker-alt"></i> 1016, Jalan Sultan Ismail, 50250 Kuala Lumpur</p>
-                        <p class="mb-2"><i class="fas fa-phone"></i> +60 17-274 3933</p>
-                        <p class="mb-2"><i class="fas fa-envelope"></i> aether&leaf@.com</p>
+                        <p class="mb-2"><i class="bi bi-geo-alt-fill"></i> 1016, Jalan Sultan Ismail, 50250 Kuala Lumpur</p>
+                        <p class="mb-2"><i class="bi bi-telephone-fill"></i> +60 17-274 3933</p>
+                        <p class="mb-2"><i class="bi bi-envelope-fill"></i> aether&leaf@.com</p>
                     </div>
 
                     <div class="col-lg-8 col-md-6 mb-4">
